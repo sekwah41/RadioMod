@@ -18,7 +18,11 @@ import net.minecraft.world.World;
 public class TestRadio extends Block implements ITileEntityProvider {
 
     private final AxisAlignedBB BOUNDING_BOX;
-
+    
+    public static final int RUNSTATE_OFF = -1;
+    public static final int RUNSTATE_BOOTINGUP = 0;
+    public static final int RUNSTATE_ON = 1;
+    
     public TestRadio() {
         super(Material.GLASS);
         BOUNDING_BOX = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);

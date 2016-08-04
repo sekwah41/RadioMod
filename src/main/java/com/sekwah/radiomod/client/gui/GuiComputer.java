@@ -71,6 +71,13 @@ public class GuiComputer extends GuiScreen {
 		
 		switch(this.computerState) {
 			case 0:
+				if(this.loadingProgress >= this.loadingDummies.length) break;
+				LoadingDummy currentDummy = this.loadingDummies[this.loadingProgress];
+				if(!currentDummy.isLoaded()){
+					currentDummy.decreaseLoadingTime();
+				}else{
+					this.loadingProgress++;
+				}
 			break;
 			case 1:
 			break;
