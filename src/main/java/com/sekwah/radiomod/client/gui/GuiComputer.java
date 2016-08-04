@@ -3,6 +3,7 @@ package com.sekwah.radiomod.client.gui;
 import java.io.IOException;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.TestRadio;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -70,7 +71,7 @@ public class GuiComputer extends GuiScreen {
 		super.updateScreen();
 		
 		switch(this.computerState) {
-			case 0:
+			case TestRadio.RUNSTATE_BOOTINGUP:
 				if(this.loadingProgress >= this.loadingDummies.length) break;
 				LoadingDummy currentDummy = this.loadingDummies[this.loadingProgress];
 				if(!currentDummy.isLoaded()){
@@ -79,7 +80,7 @@ public class GuiComputer extends GuiScreen {
 					this.loadingProgress++;
 				}
 			break;
-			case 1:
+			case TestRadio.RUNSTATE_ON:
 			break;
 		}
 	}
