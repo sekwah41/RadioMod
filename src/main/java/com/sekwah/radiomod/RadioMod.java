@@ -1,6 +1,7 @@
 package com.sekwah.radiomod;
 
 import com.sekwah.radiomod.blocks.RadioBlocks;
+import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
@@ -52,6 +53,7 @@ public class RadioMod {
 
         proxy.preInit();
         RadioBlocks.registerBlocks();
+        RadioSounds.registerSounds();
     }
 
 }
