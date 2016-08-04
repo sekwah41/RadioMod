@@ -1,4 +1,4 @@
-package com.sekwah.radiomod.blocks.models;
+package com.sekwah.radiomod.client.model.tile;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;

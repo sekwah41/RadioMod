@@ -1,7 +1,8 @@
 package com.sekwah.radiomod.blocks.renderers;
 
-import com.sekwah.radiomod.blocks.models.ModelBonsaiTree;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
+import com.sekwah.radiomod.client.model.tile.ModelBonsaiTree;
+
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
