@@ -43,7 +43,7 @@ public class GuiComputer extends GuiScreen {
 	public void initGui() {
 		super.initGui();
 		this.buttonList.clear();
-		
+
 		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup, 1.0F));
 	}
 

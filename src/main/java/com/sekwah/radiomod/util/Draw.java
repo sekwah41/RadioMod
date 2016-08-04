@@ -14,10 +14,10 @@ public class Draw {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vertexbuffer = tessellator.getBuffer();
         vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        vertexbuffer.pos((double)(xCoord + 0.0F), (double)(yCoord + (float)height), (double)0).tex(minU, minV + maxV).endVertex();
-        vertexbuffer.pos((double)(xCoord + width), (double)(yCoord + (float)height), (double)0).tex(minU + maxU, minV + maxV).endVertex();
-        vertexbuffer.pos((double)(xCoord + width), (double)(yCoord + 0.0F), (double)0).tex(minU + maxU, minV).endVertex();
-        vertexbuffer.pos((double)(xCoord + 0.0F), (double)(yCoord + 0.0F), (double)0).tex(minU, minV).endVertex();
+        vertexbuffer.pos(xCoord, yCoord + height, 0D).tex(minU, minV + maxV).endVertex();
+        vertexbuffer.pos(xCoord + width, yCoord + height, 0D).tex(minU + maxU, minV + maxV).endVertex();
+        vertexbuffer.pos(xCoord + width, yCoord + 0.0D, 0D).tex(minU + maxU, minV).endVertex();
+        vertexbuffer.pos(xCoord, yCoord + 0.0D, 0D).tex(minU, minV).endVertex();
         tessellator.draw();
     }
 }

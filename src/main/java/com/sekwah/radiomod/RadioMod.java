@@ -40,6 +40,8 @@ public class RadioMod {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
     	NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandlerRadio());
+
+        proxy.registerBlockRenderers();
     }
 
     @Mod.EventHandler
@@ -52,6 +54,7 @@ public class RadioMod {
         configFolder = event.getModConfigurationDirectory();
 
         proxy.preInit();
+
         RadioBlocks.registerBlocks();
         RadioSounds.registerSounds();
     }
