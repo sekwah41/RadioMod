@@ -21,8 +21,8 @@ plugins {
 }
 */
 version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+group= "com.sekwah.radiomod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "radiomod"
 
 minecraft {
     version = "1.10.2-12.18.1.2011"

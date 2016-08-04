@@ -1,5 +1,6 @@
 package com.sekwah.radiomod;
 
+import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.generic.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -44,6 +45,8 @@ public class RadioMod {
     public void preInit(FMLPreInitializationEvent event) {
         configFolder = event.getModConfigurationDirectory();
 
+
+        RadioBlocks.registerBlocks();
 
     }
 
