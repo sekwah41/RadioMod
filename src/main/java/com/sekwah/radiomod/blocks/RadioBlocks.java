@@ -18,12 +18,14 @@ public class RadioBlocks {
     private static TestRadio testRadio;
 
     public static void registerBlocks() {
+
         testRadio = new TestRadio();
-        testRadio.setUnlocalizedName("testRadio");
-        registerBlock(testRadio);
+        registerBlock(testRadio, "testRadio");
+
     }
 
-    public static void registerBlock(Block block){
+    public static void registerBlock(Block block, String name){
+        block.setUnlocalizedName(name);
         GameRegistry.register(block, block.getRegistryName());
         GameRegistry.register(new ItemBlock(block), block.getRegistryName());
     }
