@@ -3,6 +3,7 @@ package com.sekwah.radiomod.blocks;
 import javax.annotation.Nullable;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
 import net.minecraft.block.Block;
@@ -39,7 +40,7 @@ public class TestRadio extends Block implements ITileEntityProvider {
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return null;
+        return new TileEntityBase();
     }
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
