@@ -45,9 +45,8 @@ public class RadioMod {
     public void preInit(FMLPreInitializationEvent event) {
         configFolder = event.getModConfigurationDirectory();
 
-
+        proxy.preInit();
         RadioBlocks.registerBlocks();
-
     }
 
 }

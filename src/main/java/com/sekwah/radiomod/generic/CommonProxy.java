@@ -6,7 +6,11 @@ package com.sekwah.radiomod.generic;
  * @author sekwah41
  */
 public class CommonProxy {
-
+	
+	public void preInit() {
+		
+	}
+	
     public boolean isClient(){
         return false;
     }
