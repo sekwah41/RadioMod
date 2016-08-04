@@ -1,10 +1,13 @@
 package com.sekwah.radiomod.client;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.renderers.TileEntityTestRadioRenderer;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.generic.CommonProxy;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 /**
  * Created by on 04/08/2016.
@@ -22,7 +25,7 @@ public class ClientProxy extends CommonProxy {
     }
     
     public void registerBlockRenderers(){
-        //ClientRegistry.bindTileEntitySpecialRenderer();
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBase.class, new TileEntityTestRadioRenderer());
     }
 
 }

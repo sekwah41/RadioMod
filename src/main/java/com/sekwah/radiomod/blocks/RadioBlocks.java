@@ -20,13 +20,13 @@ public class RadioBlocks {
     public static void registerBlocks() {
 
         testRadio = new TestRadio();
-        registerBlock(testRadio, "testRadio");
+        registerBlock(testRadio, "test_radio");
 
     }
 
     public static void registerBlock(Block block, String name){
-        block.setUnlocalizedName(name);
-        GameRegistry.register(block, block.getRegistryName());
+        block.setRegistryName(name);
+        GameRegistry.register(block);
         GameRegistry.register(new ItemBlock(block), block.getRegistryName());
     }
 
