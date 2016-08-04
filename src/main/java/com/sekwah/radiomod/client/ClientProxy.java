@@ -21,7 +21,6 @@ public class ClientProxy extends CommonProxy {
     }
     
     public void preInit() {
-        super.preInit();
     	GuiComputer.startupLogo = new ResourceLocation(RadioMod.modid, "textures/gui/startupLogo.png");
     }
     

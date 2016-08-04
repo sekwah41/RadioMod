@@ -3,7 +3,6 @@ package com.sekwah.radiomod.blocks;
 import javax.annotation.Nullable;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
 import net.minecraft.block.Block;
@@ -35,14 +34,12 @@ public class TestRadio extends Block implements ITileEntityProvider {
     
     public TestRadio() {
         super(Material.GLASS);
-        BOUNDING_BOX = new AxisAlignedBB(0.3D, 0.0D, 0.3D, 0.7D, 0.7D, 0.7D);
+        BOUNDING_BOX = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
     }
 
-    /**
-     * Returns a new instance of a block's tile entity class. Called on placing the block.
-     */
-    public TileEntity createNewTileEntity(World par1World, int meta) {
-        return new TileEntityBase();
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return null;
     }
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
@@ -55,9 +52,5 @@ public class TestRadio extends Block implements ITileEntityProvider {
     	playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)hitX, (int)hitY, (int)hitZ);
     	
         return true;
-    }
-
-    public boolean isOpaqueCube() {
-        return false;
     }
 }

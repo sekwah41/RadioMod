@@ -25,7 +25,6 @@ public class RadioBlocks {
     }
 
     public static void registerBlock(Block block, String name){
-
         block.setRegistryName(name);
         GameRegistry.register(block);
         GameRegistry.register(new ItemBlock(block), block.getRegistryName());
