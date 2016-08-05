@@ -35,6 +35,6 @@ public class TileEntityBase extends TileEntity implements ITickable {
     }
 
     public int getRunState() {
-    	return TestRadio.RUNSTATE_BOOTINGUP;
+    	return TestRadio.RUNSTATE_OFF;
     }
 }

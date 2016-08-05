@@ -1,4 +1,7 @@
 {
     "radio.startup.click": {"category": "master", "sounds": [{"name": "radiomod:radio/startup_click", "stream": false}]},
-    "radio.startup.finish": {"category": "master", "sounds": [{"name": "radiomod:radio/startup_finish", "stream": false}]}
+    "radio.startup.finish": {"category": "master", "sounds": [{"name": "radiomod:radio/startup_finish", "stream": false}]},
+    "radio.powerbutton.click": {"category": "master", "sounds": [{"name": "radiomod:radio/powerbutton_click", "stream": false}]},
+    "radio.powerbutton.release": {"category": "master", "sounds": [{"name": "radiomod:radio/powerbutton_release", "stream": false}]},
+    "radio.powerbutton.off": {"category": "master", "sounds": [{"name": "radiomod:radio/powerbutton_off", "stream": false}]}
 }

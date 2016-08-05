@@ -41,4 +41,24 @@ public class Draw {
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
 	}
+	
+	public static void drawXGradient(double xCoord, double yCoord, double width, double height, float r, float g, float b, float a, float r1, float g1, float b1, float a1) {
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(7425);
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        vertexbuffer.pos(xCoord, yCoord + height, 0D).color(r, g, b, a).endVertex();
+        vertexbuffer.pos(xCoord + width, yCoord + height, 0D).color(r1, g1, b1, a1).endVertex();
+        vertexbuffer.pos(xCoord + width, yCoord + 0.0D, 0D).color(r1, g1, b1, a1).endVertex();
+        vertexbuffer.pos(xCoord, yCoord + 0.0D, 0D).color(r, g, b, a).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+	}
 }

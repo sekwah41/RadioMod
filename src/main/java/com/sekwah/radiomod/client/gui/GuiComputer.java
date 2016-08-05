@@ -6,6 +6,8 @@ import com.sekwah.radiomod.blocks.RadioBlock;
 import org.lwjgl.opengl.GL11;
 
 import com.sekwah.radiomod.client.sound.RadioSounds;
+import com.sekwah.radiomod.music.song.Song;
+import com.sekwah.radiomod.music.song.SongPrivate;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -24,24 +26,21 @@ public class GuiComputer extends GuiScreen {
     protected int bgHeight = 187;
 	public static ResourceLocation computerBg;
 	public static ResourceLocation startupLogo;
+	public GuiVisualizer guiVisualizer;
 	
 	private int computerState;
-	private float startupSequence = 0;
-	private int loadingProgress = 0;
-	private float currentStartupTime = 0;
-	private float startupLogoFadeout = 0;
-	private LoadingDummy[] loadingDummies = new LoadingDummy[]{
-		new LoadingDummy("Loading assets...", 4),
-		new LoadingDummy("Setting up the color scheme...", 4),
-		new LoadingDummy("Prepearing snazzy interface items...", 3),
-		new LoadingDummy("User validation...", 2),
-		new LoadingDummy("Connecting to the great music database...", 5)
-	};
+	private float startupSequence;
+	private int loadingProgress;
+	private float currentStartupTime;
+	private float startupLogoFadeout;
+	private LoadingDummy[] loadingDummies;
+	
+	public boolean powerButtonClicked = false;
+	public boolean greenLightWhiteFlash = true;
+	public float songTitleScroll = 0;
 	
 	public GuiComputer(int computerStateIn) {
 		this.computerState = computerStateIn;
-
-		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F));
 
 		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
 		//RadioMod.instance.musicManager.playStreamUrl("http://stream.dancewave.online:8080/dance.mp3");
@@ -51,15 +50,53 @@ public class GuiComputer extends GuiScreen {
 	public void initGui() {
 		super.initGui();
 		this.buttonList.clear();
+		
+		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-40, (int)this.getScreenCenterY()-30, (int)80, (int)60);
 	}
-
+	
+	public void bootupComputer() {
+		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
+		
+		this.greenLightWhiteFlash = true;
+		this.startupSequence = 0;
+		this.loadingProgress = 0;
+		this.currentStartupTime = 0;
+		this.startupLogoFadeout = 0;
+		
+		this.loadingDummies = new LoadingDummy[]{
+			new LoadingDummy("Loading assets...", 4),
+			new LoadingDummy("Setting up the color scheme...", 4),
+			new LoadingDummy("Prepearing snazzy interface items...", 3),
+			new LoadingDummy("User validation...", 2),
+			new LoadingDummy("Connecting to the great music database...", 5)
+		};
+		
+		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F));
+		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_release, 1.0F));
+	}
+	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
+		this.drawDefaultBackground();
+		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		this.mc.renderEngine.bindTexture(computerBg);
 		Draw.drawTexture(this.width/2-this.bgWidth/2, this.height/2-this.bgHeight/2, 0, 0, 1, ((float)this.bgHeight)/256, this.bgWidth, this.bgHeight);
+		
+		if(this.powerButtonClicked) {
+			Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+167, 0, 192F/256, 16F/256, 16F/256, 16, 16);
+		}
+		
+		if(this.computerState != RadioBlock.RUNSTATE_OFF) {
+			if(this.greenLightWhiteFlash){
+				Draw.drawRect(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 16, 5, 1, 1, 1, 1);
+				this.greenLightWhiteFlash = false;
+			}else{
+				Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 0, 187F/256, 16F/256, 5F/256, 16, 5);
+			}
+		}
 		
 		switch(this.computerState) {
 			case RadioBlock.RUNSTATE_BOOTINGUP:
@@ -78,7 +115,56 @@ public class GuiComputer extends GuiScreen {
 				if(this.getStartupLogoProgress() >= 1){
 					float alpha = (20-this.startupLogoFadeout)/20.0f;
 					if(alpha < 0) alpha = 0;
-					Draw.drawRect(0, 0, this.width, this.height, 1, 1, 1, alpha);
+					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 1, 1, 1, alpha);
+				}
+			break;
+			case RadioBlock.RUNSTATE_PLAYING:
+				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
+					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
+					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
+				}
+				this.guiVisualizer.draw();
+				
+				if(getCurrentPlayedSong() != null) {
+					String songTitle = this.getCurrentPlayedSong().getFullDisplayTitle();
+					int titleLength = songTitle.length();
+					int titleWidth = this.fontRendererObj.getStringWidth(songTitle+"       ");
+					
+					if(titleWidth > 180) {
+						float offset = 0;
+						songTitle += "       "+songTitle+"       ";
+						for(int i = 0; i < titleLength; i++) {
+							if(offset - this.songTitleScroll < 0) {
+								offset += this.fontRendererObj.getCharWidth(songTitle.charAt(0));
+								songTitle = songTitle.substring(1, songTitle.length());
+							}else{
+								break;
+							}
+						}
+						float newLength = this.fontRendererObj.getStringWidth(songTitle);
+						System.out.println(newLength);
+						for(int i = songTitle.length()-1; i >= 0; i--) {
+							if(newLength > 180) {
+								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
+								songTitle = songTitle.substring(0, songTitle.length()-1);
+							}else{
+								break;
+							}
+						}
+						
+						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-90 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenCenterY()-50), 0xffffff);
+						
+						Draw.drawXGradient(this.getScreenCenterX()-90, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 1, 0, 0, 0, 0);
+						Draw.drawXGradient(this.getScreenCenterX()+90-40, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 0, 0, 0, 0, 1);
+						Draw.drawRect(this.getScreenCenterX()+90, (int)(this.getScreenCenterY()-50), 10, 10, 0, 0, 0, 1);
+						
+						this.songTitleScroll+=0.5f;
+						while(this.songTitleScroll >= titleWidth) {
+							this.songTitleScroll -= titleWidth;
+						}
+					}else{
+						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenCenterY()-50), 0xffffff);
+					}
 				}
 			break;
 		}
@@ -92,11 +178,28 @@ public class GuiComputer extends GuiScreen {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
+		
+		if(mouseX >= this.width/2-this.bgWidth/2+205 && mouseX <= this.width/2-this.bgWidth/2+205+16 &&
+		   mouseY >= this.height/2-this.bgHeight/2+167 && mouseY <= this.height/2-this.bgHeight/2+167+16) {
+			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_click, 1.0F));
+			this.powerButtonClicked = true;
+		}
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		super.mouseReleased(mouseX, mouseY, state);
+		
+		if(this.powerButtonClicked) {
+			if(this.computerState == RadioBlock.RUNSTATE_OFF){
+				this.bootupComputer();
+			}else{
+				this.computerState = RadioBlock.RUNSTATE_OFF;
+				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
+			}
+		}
+		
+		this.powerButtonClicked = false;
 	}
 
 	@Override
@@ -128,7 +231,7 @@ public class GuiComputer extends GuiScreen {
 					}
 				}else{
 					if(this.startupLogoFadeout > 50) {
-						this.computerState = RadioBlock.RUNSTATE_ON;
+						this.computerState = RadioBlock.RUNSTATE_PLAYING;
 					}
 				}
 			break;
@@ -187,5 +290,9 @@ public class GuiComputer extends GuiScreen {
 	
 	public float getScreenCenterY() {
 		return this.getScreenY() + this.getScreenHeight()/2;
+	}
+	
+	public Song getCurrentPlayedSong() {
+		return SongPrivate.privateSongCollection.size() > 0 ? SongPrivate.privateSongCollection.get(0) : null;
 	}
 }

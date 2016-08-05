@@ -35,6 +35,7 @@ public class RadioBlock extends Block implements ITileEntityProvider {
     public static final int RUNSTATE_OFF = -1;
     public static final int RUNSTATE_BOOTINGUP = 0;
     public static final int RUNSTATE_ON = 1;
+    public static final int RUNSTATE_PLAYING = 2;
 
     public RadioBlock() {
         super(Material.GLASS);
@@ -56,7 +57,7 @@ public class RadioBlock extends Block implements ITileEntityProvider {
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)hitX, (int)hitY, (int)hitZ);
+        playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
 
         return true;
     }
