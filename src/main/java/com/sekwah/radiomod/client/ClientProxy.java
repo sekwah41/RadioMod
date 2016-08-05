@@ -1,8 +1,10 @@
 package com.sekwah.radiomod.client;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.renderers.TileEntityRadioRenderer;
 import com.sekwah.radiomod.blocks.renderers.TileEntityTestRadioRenderer;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.generic.CommonProxy;
 
@@ -25,7 +27,9 @@ public class ClientProxy extends CommonProxy {
     }
     
     public void registerBlockRenderers(){
+
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBase.class, new TileEntityTestRadioRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadio.class, new TileEntityRadioRenderer());
     }
 
 }

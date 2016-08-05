@@ -2,10 +2,9 @@ package com.sekwah.radiomod.client.gui;
 
 import java.io.IOException;
 
+import com.sekwah.radiomod.blocks.RadioBlock;
 import org.lwjgl.opengl.GL11;
 
-import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.TestRadio;
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.util.Draw;
 
@@ -13,10 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -60,7 +55,7 @@ public class GuiComputer extends GuiScreen {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
 		switch(this.computerState) {
-			case TestRadio.RUNSTATE_BOOTINGUP:
+			case RadioBlock.RUNSTATE_BOOTINGUP:
 				this.currentStartupTime+=partialTicks;
 				if(this.getStartupLogoProgress() >= 1){
 					startupLogoFadeout+=partialTicks;
@@ -113,7 +108,7 @@ public class GuiComputer extends GuiScreen {
 		super.updateScreen();
 		
 		switch(this.computerState) {
-			case TestRadio.RUNSTATE_BOOTINGUP:
+			case RadioBlock.RUNSTATE_BOOTINGUP:
 				if(areDummiesLoading()){
 					LoadingDummy currentDummy = this.loadingDummies[this.loadingProgress];
 					if(!currentDummy.isLoaded()){
@@ -127,11 +122,11 @@ public class GuiComputer extends GuiScreen {
 					}
 				}else{
 					if(this.startupLogoFadeout > 50) {
-						this.computerState = TestRadio.RUNSTATE_ON;
+						this.computerState = RadioBlock.RUNSTATE_ON;
 					}
 				}
 			break;
-			case TestRadio.RUNSTATE_ON:
+			case RadioBlock.RUNSTATE_ON:
 			break;
 		}
 	}

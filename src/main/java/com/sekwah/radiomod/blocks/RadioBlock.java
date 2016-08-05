@@ -1,18 +1,15 @@
 package com.sekwah.radiomod.blocks;
 
-import javax.annotation.Nullable;
-
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
-
+import com.sun.istack.internal.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -21,22 +18,26 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
- * Created by on 04/08/2016.
+ * Created by on 05/08/2016.
  *
  * @author sekwah41
  */
-public class TestRadio extends RadioBlock implements ITileEntityProvider {
+public class RadioBlock extends Block implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
     private final AxisAlignedBB BOUNDING_BOX;
 
-    public TestRadio() {
+    public static final int RUNSTATE_OFF = -1;
+    public static final int RUNSTATE_BOOTINGUP = 0;
+    public static final int RUNSTATE_ON = 1;
+
+    public RadioBlock() {
+        super(Material.GLASS);
         BOUNDING_BOX = new AxisAlignedBB(0.3D, 0.0D, 0.3D, 0.7D, 0.7D, 0.7D);
     }
 
@@ -45,7 +46,7 @@ public class TestRadio extends RadioBlock implements ITileEntityProvider {
      */
     public TileEntity createNewTileEntity(World par1World, int meta) {
         RadioMod.logger.info("Test");
-        return new TileEntityBase();
+        return new TileEntityRadio();
     }
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
