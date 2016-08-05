@@ -43,7 +43,7 @@ public class FileManager {
 	
 	public static SongPrivate loadSongFromFile(File file) {
 		String author = null;
-		String title = file.getName();
+		String title = file.getName().replace(".mp3", "");
 		
 		return new SongPrivate(author, title);
 	}

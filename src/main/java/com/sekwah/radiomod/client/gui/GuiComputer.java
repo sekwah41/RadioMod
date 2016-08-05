@@ -6,6 +6,7 @@ import com.sekwah.radiomod.blocks.RadioBlock;
 import org.lwjgl.opengl.GL11;
 
 import com.sekwah.radiomod.client.sound.RadioSounds;
+import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import com.sekwah.radiomod.util.Draw;
@@ -41,7 +42,9 @@ public class GuiComputer extends GuiScreen {
 	
 	public GuiComputer(int computerStateIn) {
 		this.computerState = computerStateIn;
-
+		
+		FileManager.loadPrivateSongs();
+		
 		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
 		//RadioMod.instance.musicManager.playStreamUrl("http://stream.dancewave.online:8080/dance.mp3");
 		//RadioMod.instance.musicManager.playStreamUrl("https://api.soundcloud.com/tracks/215534268/stream?client_id=23c5983facf3240a2f14515f05f34873");
@@ -128,11 +131,12 @@ public class GuiComputer extends GuiScreen {
 				if(getCurrentPlayedSong() != null) {
 					String songTitle = this.getCurrentPlayedSong().getFullDisplayTitle();
 					int titleLength = songTitle.length();
-					int titleWidth = this.fontRendererObj.getStringWidth(songTitle+"       ");
+					int titleWidth = this.fontRendererObj.getStringWidth(songTitle);
 					
 					if(titleWidth > 180) {
 						float offset = 0;
-						songTitle += "       "+songTitle+"       ";
+						songTitle += "          ";
+						songTitle += songTitle;
 						for(int i = 0; i < titleLength; i++) {
 							if(offset - this.songTitleScroll < 0) {
 								offset += this.fontRendererObj.getCharWidth(songTitle.charAt(0));
@@ -142,7 +146,7 @@ public class GuiComputer extends GuiScreen {
 							}
 						}
 						float newLength = this.fontRendererObj.getStringWidth(songTitle);
-						System.out.println(newLength);
+						
 						for(int i = songTitle.length()-1; i >= 0; i--) {
 							if(newLength > 180) {
 								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
@@ -154,8 +158,8 @@ public class GuiComputer extends GuiScreen {
 						
 						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-90 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenCenterY()-50), 0xffffff);
 						
-						Draw.drawXGradient(this.getScreenCenterX()-90, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 1, 0, 0, 0, 0);
-						Draw.drawXGradient(this.getScreenCenterX()+90-40, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 0, 0, 0, 0, 1);
+						Draw.drawXGradient(this.getScreenCenterX()-90-1, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 1, 0, 0, 0, 0);
+						Draw.drawXGradient(this.getScreenCenterX()+90-40+1, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 0, 0, 0, 0, 1);
 						Draw.drawRect(this.getScreenCenterX()+90, (int)(this.getScreenCenterY()-50), 10, 10, 0, 0, 0, 1);
 						
 						this.songTitleScroll+=0.5f;
@@ -277,7 +281,7 @@ public class GuiComputer extends GuiScreen {
 	}
 	
 	public float getScreenWidth() {
-		return this.bgWidth-40;
+		return this.bgWidth-41;
 	}
 	
 	public float getScreenHeight() {
