@@ -46,6 +46,11 @@ public class GuiComputer extends GuiScreen {
 	public boolean greenLightWhiteFlash = true;
 	public float songTitleScroll = 0;
 	
+	/*
+	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2)
+	 */
+	public int currentScreen = 0;
+	
 	public GuiComputer(int computerStateIn) {
 		this.computerState = computerStateIn;
 		
@@ -60,7 +65,7 @@ public class GuiComputer extends GuiScreen {
 		super.initGui();
 		this.buttonList.clear();
 		
-		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-35, (int)this.getScreenCenterY()-25, (int)70, (int)50);
+		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25, (int)90, (int)50);
 	}
 	
 	public void bootupComputer() {
@@ -94,23 +99,7 @@ public class GuiComputer extends GuiScreen {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
 		this.drawDefaultBackground();
-		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		this.mc.renderEngine.bindTexture(computerBg);
-		Draw.drawTexture(this.width/2-this.bgWidth/2, this.height/2-this.bgHeight/2, 0, 0, 1, ((float)this.bgHeight)/256, this.bgWidth, this.bgHeight);
-		
-		if(this.powerButtonClicked) {
-			Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+167, 0, 192F/256, 16F/256, 16F/256, 16, 16);
-		}
-		
-		if(this.computerState != RadioBlock.RUNSTATE_OFF) {
-			if(this.greenLightWhiteFlash){
-				Draw.drawRect(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 16, 5, 1, 1, 1, 1);
-				this.greenLightWhiteFlash = false;
-			}else{
-				Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 0, 187F/256, 16F/256, 5F/256, 16, 5);
-			}
-		}
+		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, 1);
 		
 		switch(this.computerState) {
 			case RadioBlock.RUNSTATE_BOOTINGUP:
@@ -120,10 +109,10 @@ public class GuiComputer extends GuiScreen {
 				}
 				
 				this.mc.renderEngine.bindTexture(startupLogo);
-				Draw.drawTexture(this.getScreenCenterX()-4*this.getStartupLogoScale(), this.getScreenCenterY()-5.5*this.getStartupLogoScale() + (1-this.getStartupLogoProgress())*11*this.getStartupLogoScale(), 0, 0.6875*(1-this.getStartupLogoProgress()), 0.5, 0.6875*(this.getStartupLogoProgress()), 8*this.getStartupLogoScale(), 11*this.getStartupLogoScale()*this.getStartupLogoProgress());
+				Draw.drawTexture(this.getScreenCenterX()-4*this.getStartupLogoScale(), this.getScreenCenterY()-5.5*this.getStartupLogoScale() + (1-this.getStartupLogoProgress())*11*this.getStartupLogoScale() - 10, 0, 0.6875*(1-this.getStartupLogoProgress()), 0.5, 0.6875*(this.getStartupLogoProgress()), 8*this.getStartupLogoScale(), 11*this.getStartupLogoScale()*this.getStartupLogoProgress());
 				
 				if(areDummiesLoading()){
-					this.drawCenteredString(this.fontRendererObj, this.loadingDummies[this.loadingProgress].getTextToDisplay(), this.width/2, (int)(this.height/2+5.5*this.getStartupLogoScale())+10, 0xffffff);
+					this.drawCenteredString(this.fontRendererObj, this.loadingDummies[this.loadingProgress].getTextToDisplay(), this.width/2, (int)(this.height/2+5.5*this.getStartupLogoScale())+5, 0xffffff);
 				}
 				
 				if(this.getStartupLogoProgress() >= 1){
@@ -132,7 +121,7 @@ public class GuiComputer extends GuiScreen {
 					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 1, 1, 1, alpha);
 				
 					this.mc.renderEngine.bindTexture(computerBg);
-					Draw.drawTexture(this.getScreenCenterX()-62, this.getScreenCenterY()+32, 1-124F/256, 1-30F/256, 124F/256, 30F/256, 124, 30);
+					Draw.drawTexture(this.getScreenCenterX()-62, this.getScreenCenterY()+26, 1-124F/256, 1-30F/256, 124F/256, 30F/256, 124, 30);
 					
 					alpha = (this.startupLogoFadeout-40)/20.0f;
 					if(alpha < 0) alpha = 0;
@@ -141,7 +130,8 @@ public class GuiComputer extends GuiScreen {
 				}
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
-				Draw.drawYGradient(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
+				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
+				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 				
 				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
 					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
@@ -157,6 +147,8 @@ public class GuiComputer extends GuiScreen {
 					if(titleWidth > 180) {
 						float offset = 0;
 						songTitle += "          ";
+						titleLength = songTitle.length();
+						titleWidth = this.fontRendererObj.getStringWidth(songTitle);
 						songTitle += songTitle;
 						for(int i = 0; i < titleLength; i++) {
 							if(offset - this.songTitleScroll < 0) {
@@ -179,9 +171,9 @@ public class GuiComputer extends GuiScreen {
 						
 						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-90 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenCenterY()-50), 0xffffff);
 						
-						Draw.drawXGradient(this.getScreenCenterX()-90-1, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 1, 0, 0, 0, 0);
-						Draw.drawXGradient(this.getScreenCenterX()+90-40+1, (int)(this.getScreenCenterY()-50), 40, 10, 0, 0, 0, 0, 0, 0, 0, 1);
-						Draw.drawRect(this.getScreenCenterX()+90, (int)(this.getScreenCenterY()-50), 10, 10, 0, 0, 0, 1);
+						Draw.drawXGradient(this.getScreenCenterX()-90-1, (int)(this.getScreenCenterY()-50), 40, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0], this.bgColor[1], this.bgColor[2], 0);
+						Draw.drawXGradient(this.getScreenCenterX()+90-40+1, (int)(this.getScreenCenterY()-50), 40, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 0, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
+						Draw.drawRect(this.getScreenCenterX()+90, (int)(this.getScreenCenterY()-50), 10, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 						
 						this.songTitleScroll+=0.5f;
 						while(this.songTitleScroll >= titleWidth) {
@@ -204,6 +196,22 @@ public class GuiComputer extends GuiScreen {
 				if(alpha > 1) alpha = 1;
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 			break;
+		}
+		
+		this.mc.renderEngine.bindTexture(computerBg);
+		Draw.drawTexture(this.width/2-this.bgWidth/2, this.height/2-this.bgHeight/2, 0, 0, 1, ((float)this.bgHeight)/256, this.bgWidth, this.bgHeight);
+		
+		if(this.powerButtonClicked) {
+			Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+167, 0, 192F/256, 16F/256, 16F/256, 16, 16);
+		}
+		
+		if(this.computerState != RadioBlock.RUNSTATE_OFF) {
+			if(this.greenLightWhiteFlash){
+				Draw.drawRect(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 16, 5, 1, 1, 1, 1);
+				this.greenLightWhiteFlash = false;
+			}else{
+				Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 0, 187F/256, 16F/256, 5F/256, 16, 5);
+			}
 		}
 	}
 
