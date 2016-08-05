@@ -25,6 +25,11 @@ import net.minecraft.util.ResourceLocation;
 public class GuiComputer extends GuiScreen {
 	protected int bgWidth = 256;
     protected int bgHeight = 187;
+    protected float[] bgColor = new float[]{
+    	0,
+    	0.4f,
+    	0.4f
+    };
 	public static ResourceLocation computerBg;
 	public static ResourceLocation startupLogo;
 	public GuiVisualizer guiVisualizer;
@@ -34,6 +39,7 @@ public class GuiComputer extends GuiScreen {
 	private int loadingProgress;
 	private float currentStartupTime;
 	private float startupLogoFadeout;
+	private float desktopFadein;
 	private LoadingDummy[] loadingDummies;
 	
 	public boolean powerButtonClicked = false;
@@ -54,7 +60,7 @@ public class GuiComputer extends GuiScreen {
 		super.initGui();
 		this.buttonList.clear();
 		
-		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-40, (int)this.getScreenCenterY()-30, (int)80, (int)60);
+		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-35, (int)this.getScreenCenterY()-25, (int)70, (int)50);
 	}
 	
 	public void bootupComputer() {
@@ -76,6 +82,11 @@ public class GuiComputer extends GuiScreen {
 		
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F));
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_release, 1.0F));
+	}
+	
+	public void finishBootup() {
+		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.desktopFadein = 20;
 	}
 	
 	@Override
@@ -119,9 +130,19 @@ public class GuiComputer extends GuiScreen {
 					float alpha = (20-this.startupLogoFadeout)/20.0f;
 					if(alpha < 0) alpha = 0;
 					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 1, 1, 1, alpha);
+				
+					this.mc.renderEngine.bindTexture(computerBg);
+					Draw.drawTexture(this.getScreenCenterX()-62, this.getScreenCenterY()+32, 1-124F/256, 1-30F/256, 124F/256, 30F/256, 124, 30);
+					
+					alpha = (this.startupLogoFadeout-40)/20.0f;
+					if(alpha < 0) alpha = 0;
+					if(alpha > 1) alpha = 1;
+					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 				}
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
+				Draw.drawYGradient(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
+				
 				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
 					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
 					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
@@ -169,7 +190,19 @@ public class GuiComputer extends GuiScreen {
 					}else{
 						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenCenterY()-50), 0xffffff);
 					}
+					
+					this.mc.renderEngine.bindTexture(computerBg);
+					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+					Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
+				
+				if(this.desktopFadein > 0) this.desktopFadein-=partialTicks;
+				
+				float alpha = (this.desktopFadein)/20.0f;
+				if(alpha < 0) alpha = 0;
+				if(alpha > 1) alpha = 1;
+				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 			break;
 		}
 	}
@@ -234,8 +267,8 @@ public class GuiComputer extends GuiScreen {
 							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_finish, 1.0F));
 					}
 				}else{
-					if(this.startupLogoFadeout > 50) {
-						this.computerState = RadioBlock.RUNSTATE_PLAYING;
+					if(this.startupLogoFadeout > 60) {
+						this.finishBootup();
 					}
 				}
 			break;
@@ -250,7 +283,7 @@ public class GuiComputer extends GuiScreen {
 	}
 	
 	public float getStartupLogoScale() {
-		return (float)((5)*(1+(1-Math.pow((1-this.startupLogoFadeout/50)*4, 2)/16.0f)*0.3f));
+		return (float)((5)*(1+(1-Math.pow((1-this.startupLogoFadeout/60)*4, 2)/16.0f)*0.3f));
 	}
 	
 	public float getStartupLogoProgress() {
