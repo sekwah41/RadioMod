@@ -5,6 +5,7 @@ import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
+import com.sekwah.radiomod.music.MusicManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -37,6 +38,8 @@ public class RadioMod {
 
     private File configFolder;
 
+    public MusicManager musicManager;
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
     	NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandlerRadio());
@@ -57,6 +60,8 @@ public class RadioMod {
 
         RadioBlocks.registerBlocks();
         RadioSounds.registerSounds();
+
+        this.musicManager = new MusicManager();
     }
 
 }

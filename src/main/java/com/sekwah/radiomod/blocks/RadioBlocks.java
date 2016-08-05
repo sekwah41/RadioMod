@@ -1,8 +1,10 @@
 package com.sekwah.radiomod.blocks;
 
+import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -20,7 +22,7 @@ public class RadioBlocks {
     public static void registerBlocks() {
 
         testRadio = new TestRadio();
-        registerBlock(testRadio, "test_radio");
+        registerTileBlock(testRadio, "test_radio", TileEntityBase.class);
 
     }
 
@@ -28,6 +30,11 @@ public class RadioBlocks {
         block.setRegistryName(name);
         GameRegistry.register(block);
         GameRegistry.register(new ItemBlock(block), block.getRegistryName());
+    }
+
+    public static void registerTileBlock(Block block, String name, Class<? extends TileEntity> tileEntityClass){
+        registerBlock(block, name);
+        GameRegistry.registerTileEntity(tileEntityClass, name);
     }
 
 

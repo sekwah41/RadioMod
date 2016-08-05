@@ -7,9 +7,12 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -27,6 +31,8 @@ import net.minecraft.world.World;
  * @author sekwah41
  */
 public class TestRadio extends Block implements ITileEntityProvider {
+
+    public static final PropertyDirection FACING = BlockDirectional.FACING;
 
     private final AxisAlignedBB BOUNDING_BOX;
 
@@ -58,6 +64,21 @@ public class TestRadio extends Block implements ITileEntityProvider {
 
         return true;
     }
+
+    /*public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLiving, ItemStack par6ItemStack) {
+        //int dir = MathHelper.floor_double((double)((par5EntityLiving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
+        int dir = MathHelper.floor_double((double) ((par5EntityLiving.rotationYaw * 8F) / 360F) + 0.5D);
+        par1World.setBlockState().setBlockMetadataWithNotify(par2, par3, par4, dir + 2, 0);
+    }*/
+
+    /**
+     * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
+     * IBlockstate
+     */
+    /*public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+    }*/
 
     /**
      * Used to determine ambient occlusion and culling when rebuilding chunks for render

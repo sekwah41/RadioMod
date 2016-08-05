@@ -43,6 +43,10 @@ public class GuiComputer extends GuiScreen {
 		this.computerState = computerStateIn;
 		
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup, 1.0F));
+
+		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
+		//RadioMod.instance.musicManager.playStreamUrl("http://stream.dancewave.online:8080/dance.mp3");
+		RadioMod.instance.musicManager.playStreamUrl("https://cf-media.sndcdn.com/EOqjn9HTjKlM.128.mp3?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiKjovL2NmLW1lZGlhLnNuZGNkbi5jb20vRU9xam45SFRqS2xNLjEyOC5tcDMiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE0NzAzNjE3MjN9fX1dfQ__&Signature=rvQk0qciorE~Hl~d~ohYOWMhk9momlEhbNsCru1qIVDs~pxVQorhgsQVIFk1B11o0Al3DNFc6KB88deoe5BspoUpXhDAYEnJ6HY34MU2zcrKja4N46lFNytPv2RdSG53SLLdt5AhgtoEoEluwRliMrP4tMt7av-Q-jJKIOjpj35tdvlP8Mf488~LHl~QmFFeVTnl~RPbHnl2AuWH8fceVD-fZXg96M~oA8vzi-CtPdvjlLwCQmWlbYXOL6U7AfSyg4ENi8rsa4oBsR5eBGZRwIccrQpiXK5KDGRYALeY9XOEcruFItCsBub4q~FxtO2G1u3NFIKoJ2ixbVThu8tZ~g__&Key-Pair-Id=APKAJAGZ7VMH2PFPW6UQ");
 	}
 	
 	public void initGui() {
