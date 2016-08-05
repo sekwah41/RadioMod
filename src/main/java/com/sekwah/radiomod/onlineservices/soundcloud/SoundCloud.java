@@ -20,6 +20,10 @@ public class SoundCloud {
         this.clientId = clientId;
     }
 
+    public enum LoadedType{
+        TRACKDATA
+    }
+
     /*
         https://developers.soundcloud.com/docs/api/reference#tracks
 
