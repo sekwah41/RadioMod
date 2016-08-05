@@ -1,3 +1,4 @@
 {
-    "radio.startup": {"category": "master", "sounds": [{"name": "radiomod:radio/startup", "stream": false}]}
+    "radio.startup.click": {"category": "master", "sounds": [{"name": "radiomod:radio/startup_click", "stream": false}]},
+    "radio.startup.finish": {"category": "master", "sounds": [{"name": "radiomod:radio/startup_finish", "stream": false}]}
 }

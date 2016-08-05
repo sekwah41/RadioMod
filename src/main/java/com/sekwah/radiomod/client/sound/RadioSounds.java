@@ -7,10 +7,12 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class RadioSounds {
-	public static SoundEvent radio_startup;
+	public static SoundEvent radio_startup_click;
+	public static SoundEvent radio_startup_finish;
 	
 	public static void registerSounds() {
-		radio_startup = registerSound("radio.startup");
+		radio_startup_click = registerSound("radio.startup.click");
+		radio_startup_finish = registerSound("radio.startup.finish");
 	}
 	
 	private static SoundEvent registerSound(String soundName) {
