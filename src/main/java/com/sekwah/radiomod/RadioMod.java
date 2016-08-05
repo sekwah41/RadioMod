@@ -6,6 +6,7 @@ import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 
 import com.sekwah.radiomod.music.MusicManager;
+import com.sekwah.radiomod.onlineservices.soundcloud.SoundCloud;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -26,6 +27,7 @@ import java.io.File;
  */
 @Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version)
 public class RadioMod {
+
 	@Instance
 	public static RadioMod instance;
 	
@@ -39,6 +41,8 @@ public class RadioMod {
     private File configFolder;
 
     public MusicManager musicManager;
+
+    public SoundCloud soundCloud;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -55,6 +59,8 @@ public class RadioMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         configFolder = event.getModConfigurationDirectory();
+
+        this.soundCloud = new SoundCloud("23c5983facf3240a2f14515f05f34873");
 
         proxy.preInit();
 
