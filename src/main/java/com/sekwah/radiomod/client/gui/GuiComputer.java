@@ -40,6 +40,7 @@ public class GuiComputer extends GuiScreen {
 	private float currentStartupTime;
 	private float startupLogoFadeout;
 	private float desktopFadein;
+	private float shutdownSequence;
 	private LoadingDummy[] loadingDummies;
 	
 	public boolean powerButtonClicked = false;
@@ -90,8 +91,14 @@ public class GuiComputer extends GuiScreen {
 	}
 	
 	public void finishBootup() {
-		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.computerState = RadioBlock.RUNSTATE_ON;
 		this.desktopFadein = 20;
+	}
+	
+	public void shutdownComputer() {
+		this.computerState = RadioBlock.RUNSTATE_OFF;
+		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
+		this.shutdownSequence = 10;
 	}
 	
 	@Override
@@ -102,6 +109,16 @@ public class GuiComputer extends GuiScreen {
 		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, 1);
 		
 		switch(this.computerState) {
+			case RadioBlock.RUNSTATE_OFF:
+				if(this.shutdownSequence > 0) this.shutdownSequence-=partialTicks;
+				float vSeq = (10-this.shutdownSequence)/5.0f;
+				float hSeq = (5-this.shutdownSequence)/5.0f;
+				if(vSeq < 0) vSeq = 0;
+				if(hSeq < 0) hSeq = 0;
+				if(vSeq > 1) vSeq = 1;
+				if(hSeq > 1) hSeq = 1;
+				Draw.drawRect(this.getScreenX()+this.getScreenWidth()/2*hSeq, this.getScreenY()+(this.getScreenHeight()-2)/2*vSeq, this.getScreenWidth()*(1-hSeq), (this.getScreenHeight()-2)*(1-vSeq)+2, 1, 1, 1, 1);
+			break;
 			case RadioBlock.RUNSTATE_BOOTINGUP:
 				this.currentStartupTime+=partialTicks;
 				if(this.getStartupLogoProgress() >= 1){
@@ -128,6 +145,17 @@ public class GuiComputer extends GuiScreen {
 					if(alpha > 1) alpha = 1;
 					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 				}
+			break;
+			case RadioBlock.RUNSTATE_ON:
+				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
+				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
+				
+				
+				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+				String screenTitle = this.currentScreen == 0 ? "Songs" : this.currentScreen == 1 ? "My Playlists" : "Bookmarked";
+				this.drawCenteredString(this.fontRendererObj, screenTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
+				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
+				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
@@ -188,15 +216,13 @@ public class GuiComputer extends GuiScreen {
 					Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
-				
-				if(this.desktopFadein > 0) this.desktopFadein-=partialTicks;
-				
-				float alpha = (this.desktopFadein)/20.0f;
-				if(alpha < 0) alpha = 0;
-				if(alpha > 1) alpha = 1;
-				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 			break;
 		}
+		if(this.desktopFadein > 0) this.desktopFadein-=partialTicks;
+		float alpha = (this.desktopFadein)/20.0f;
+		if(alpha < 0) alpha = 0;
+		if(alpha > 1) alpha = 1;
+		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 		
 		this.mc.renderEngine.bindTexture(computerBg);
 		Draw.drawTexture(this.width/2-this.bgWidth/2, this.height/2-this.bgHeight/2, 0, 0, 1, ((float)this.bgHeight)/256, this.bgWidth, this.bgHeight);
@@ -239,8 +265,7 @@ public class GuiComputer extends GuiScreen {
 			if(this.computerState == RadioBlock.RUNSTATE_OFF){
 				this.bootupComputer();
 			}else{
-				this.computerState = RadioBlock.RUNSTATE_OFF;
-				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
+				this.shutdownComputer();
 			}
 		}
 		
