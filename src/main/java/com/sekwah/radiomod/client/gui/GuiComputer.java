@@ -20,6 +20,9 @@ import net.minecraft.util.ResourceLocation;
  * @author GoblinBob
  */
 public class GuiComputer extends GuiScreen {
+	protected int bgWidth = 256;
+    protected int bgHeight = 187;
+	public static ResourceLocation computerBg;
 	public static ResourceLocation startupLogo;
 	
 	private int computerState;
@@ -54,6 +57,10 @@ public class GuiComputer extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		this.mc.renderEngine.bindTexture(computerBg);
+		Draw.drawTexture(this.width/2-this.bgWidth/2, this.height/2-this.bgHeight/2, 0, 0, 1, ((float)this.bgHeight)/256, this.bgWidth, this.bgHeight);
+		
 		switch(this.computerState) {
 			case RadioBlock.RUNSTATE_BOOTINGUP:
 				this.currentStartupTime+=partialTicks;
@@ -61,12 +68,11 @@ public class GuiComputer extends GuiScreen {
 					startupLogoFadeout+=partialTicks;
 				}
 				
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
 				this.mc.renderEngine.bindTexture(startupLogo);
-				Draw.drawTexture(this.width/2-4*this.getStartupLogoScale(), this.height/2-5.5*this.getStartupLogoScale() + (1-this.getStartupLogoProgress())*11*this.getStartupLogoScale(), 0, 0.6875*(1-this.getStartupLogoProgress()), 0.5, 0.6875*(this.getStartupLogoProgress()), 8*this.getStartupLogoScale(), 11*this.getStartupLogoScale()*this.getStartupLogoProgress());
+				Draw.drawTexture(this.getScreenCenterX()-4*this.getStartupLogoScale(), this.getScreenCenterY()-5.5*this.getStartupLogoScale() + (1-this.getStartupLogoProgress())*11*this.getStartupLogoScale(), 0, 0.6875*(1-this.getStartupLogoProgress()), 0.5, 0.6875*(this.getStartupLogoProgress()), 8*this.getStartupLogoScale(), 11*this.getStartupLogoScale()*this.getStartupLogoProgress());
 				
 				if(areDummiesLoading()){
-					this.drawCenteredString(this.fontRendererObj, this.loadingDummies[this.loadingProgress].getTextToDisplay(), this.width/2, (int)(this.height/2+5.5*this.getStartupLogoScale())+20, 0xffffff);
+					this.drawCenteredString(this.fontRendererObj, this.loadingDummies[this.loadingProgress].getTextToDisplay(), this.width/2, (int)(this.height/2+5.5*this.getStartupLogoScale())+10, 0xffffff);
 				}
 				
 				if(this.getStartupLogoProgress() >= 1){
@@ -137,7 +143,7 @@ public class GuiComputer extends GuiScreen {
 	}
 	
 	public float getStartupLogoScale() {
-		return (float)((this.width*0.015f)*(1+(1-Math.pow((1-this.startupLogoFadeout/50)*4, 2)/16.0f)*0.3f));
+		return (float)((5)*(1+(1-Math.pow((1-this.startupLogoFadeout/50)*4, 2)/16.0f)*0.3f));
 	}
 	
 	public float getStartupLogoProgress() {
@@ -157,5 +163,29 @@ public class GuiComputer extends GuiScreen {
 	
 	public boolean areDummiesLoading() {
 		return this.loadingProgress < this.loadingDummies.length;
+	}
+	
+	public float getScreenX() {
+		return this.width/2-this.bgWidth/2 + 20;
+	}
+	
+	public float getScreenY() {
+		return this.height/2-this.bgHeight/2 + 20;
+	}
+	
+	public float getScreenWidth() {
+		return this.bgWidth-40;
+	}
+	
+	public float getScreenHeight() {
+		return this.bgHeight-20-41;
+	}
+	
+	public float getScreenCenterX() {
+		return this.getScreenX() + this.getScreenWidth()/2;
+	}
+	
+	public float getScreenCenterY() {
+		return this.getScreenY() + this.getScreenHeight()/2;
 	}
 }
