@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.blocks.tileentities;
 
+import com.sekwah.radiomod.blocks.TestRadio;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
@@ -11,8 +13,6 @@ import net.minecraft.util.ITickable;
  * @author sekwah41
  */
 public class TileEntityBase extends TileEntity implements ITickable {
-
-
     @Override
     public void update() {
 
@@ -34,5 +34,7 @@ public class TileEntityBase extends TileEntity implements ITickable {
         return compound;
     }
 
-
+    public int getRunState() {
+    	return TestRadio.RUNSTATE_BOOTINGUP;
+    }
 }

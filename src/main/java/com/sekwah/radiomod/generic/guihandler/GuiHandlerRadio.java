@@ -1,8 +1,10 @@
 package com.sekwah.radiomod.generic.guihandler;
 
+import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -25,9 +27,11 @@ public class GuiHandlerRadio implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		TileEntityBase tileEntity = (TileEntityBase) world.getTileEntity(new BlockPos(x, y, z));
+		
 		switch(ID) {
 			case GUIID_COMPUTER:
-				return new GuiComputer(0);
+				return new GuiComputer(tileEntity != null ? tileEntity.getRunState() : 0);
 			case GUIID_MP3PLAYER:
 				return null;
 		}
