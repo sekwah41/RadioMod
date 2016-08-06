@@ -144,6 +144,20 @@ public class GuiComputer extends GuiScreen {
 		this.tileEntity.musicSource.stopMusic();
 		this.computerState = RadioBlock.RUNSTATE_ON;
 	}
+	
+	private void previousSong() {
+		this.stopSong();
+		int nextSong = this.playedSong-1;
+		if(nextSong < 0) nextSong = SongPrivate.privateSongCollection.size()-1;
+		this.playSong(nextSong);
+	}
+	
+	private void nextSong() {
+		this.stopSong();
+		int nextSong = this.playedSong+1;
+		if(nextSong >= SongPrivate.privateSongCollection.size()) nextSong = 0;
+		this.playSong(nextSong);
+	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -321,6 +335,18 @@ public class GuiComputer extends GuiScreen {
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
 					this.stopSong();
 				}
+				
+				if(mouseX >= this.getScreenCenterX()-20-8 && mouseX <= this.getScreenCenterX()-20-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					previousSong();
+				}
+				if(mouseX >= this.getScreenCenterX()+20-8 && mouseX <= this.getScreenCenterX()+20-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					nextSong();
+				}
+				//Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+				//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+				//Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 			break;
 		}
 	}
