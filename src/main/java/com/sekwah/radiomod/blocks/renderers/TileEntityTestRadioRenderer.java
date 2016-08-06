@@ -4,8 +4,6 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.client.model.tile.ModelBonsaiTree;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -20,11 +18,11 @@ public class TileEntityTestRadioRenderer extends TileEntitySpecialRenderer<TileE
     //This method is called when minecraft renders a tile entity
     public void renderTileEntityAt(TileEntityBase te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        this.renderBonsaiBlock(x, y, z, te, (double)partialTicks);
+        this.renderRadio(x, y, z, te, (double)partialTicks);
     }
 
     // this method isnt called yet sadly, make sure its called before fixing this code
-    public void renderBonsaiBlock(double x, double y, double z, TileEntityBase par1TileEntityBonsai, double partialTicks) {
+    public void renderRadio(double x, double y, double z, TileEntityBase par1TileEntityBonsai, double partialTicks) {
 
         GL11.glPushMatrix();
         GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F);

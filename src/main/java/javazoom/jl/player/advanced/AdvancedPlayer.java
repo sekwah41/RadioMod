@@ -37,18 +37,18 @@ import javazoom.jl.player.FactoryRegistry;
 public class AdvancedPlayer
 {
 	/** The MPEG audio bitstream.*/
-	private Bitstream bitstream;
+	protected Bitstream bitstream;
 	/** The MPEG audio decoder. */
-	private Decoder decoder;
+	protected Decoder decoder;
 	/** The AudioDevice the audio samples are written to. */
-	private AudioDevice audio;
+	protected AudioDevice audio;
 	/** Has the player been closed? */
-	private boolean closed = false;
+	protected boolean closed = false;
 	/** Has the player played back all frames from the stream? */
-	private boolean complete = false;
-	private int lastPosition = 0;
+	protected boolean complete = false;
+	protected int lastPosition = 0;
 	/** Listener for the playback process */
-	private PlaybackListener listener;
+	protected PlaybackListener listener;
 
 	/**
 	 * Creates a new <code>Player</code> instance.
@@ -202,7 +202,7 @@ public class AdvancedPlayer
 	/**
 	 * Constructs a <code>PlaybackEvent</code>
 	 */
-	private PlaybackEvent createEvent(int id)
+	protected PlaybackEvent createEvent(int id)
 	{
 		return createEvent(audio, id);
 	}
@@ -210,7 +210,7 @@ public class AdvancedPlayer
 	/**
 	 * Constructs a <code>PlaybackEvent</code>
 	 */
-	private PlaybackEvent createEvent(AudioDevice dev, int id)
+	protected PlaybackEvent createEvent(AudioDevice dev, int id)
 	{
 		return new PlaybackEvent(this, id, dev.getPosition());
 	}

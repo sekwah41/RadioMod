@@ -3,10 +3,8 @@ package com.sekwah.radiomod.blocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -17,18 +15,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class RadioBlocks {
 
 
-    // Radio blocks
-    private static TestRadio testRadio;
+    // Radio block
+    public static TestRadio TESTRADIO;
 
-    private static RadioBlock radioBlock;
+    public static RadioBlock RADIOBLOCK;
 
     public static void registerBlocks() {
 
-        testRadio = new TestRadio();
-        registerTileBlock(testRadio, "test_radio", TileEntityBase.class);
+        TESTRADIO = new TestRadio();
+        registerTileBlock(TESTRADIO, "test_radio", TileEntityBase.class);
 
-        radioBlock = new RadioBlock();
-        registerTileBlock(radioBlock, "radio_block", TileEntityRadio.class);
+        RADIOBLOCK = new RadioBlock();
+        registerTileBlock(RADIOBLOCK, "radio_block", TileEntityRadio.class);
 
     }
 

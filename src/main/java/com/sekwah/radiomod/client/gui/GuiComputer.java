@@ -87,7 +87,7 @@ public class GuiComputer extends GuiScreen {
 		this.loadingDummies = new LoadingDummy[]{
 			new LoadingDummy("Loading assets...", 4),
 			new LoadingDummy("Setting up the color scheme...", 4),
-			new LoadingDummy("Prepearing snazzy interface items...", 3),
+			new LoadingDummy("Prepearing snazzy interface item...", 3),
 			new LoadingDummy("User validation...", 2),
 			new LoadingDummy("Connecting to the great music database...", 5)
 		};

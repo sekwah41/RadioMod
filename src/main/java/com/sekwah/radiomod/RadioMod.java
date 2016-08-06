@@ -6,21 +6,27 @@ import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MusicManager;
+import com.sekwah.radiomod.network.packets.RadioMessage;
+import com.sekwah.radiomod.network.packets.client.ClientPlaySongPacket;
 import com.sekwah.radiomod.onlineservices.soundcloud.SoundCloud;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Random;
 
 /**
  * Created by on 04/08/2016.
@@ -42,6 +48,8 @@ public class RadioMod {
 
     private File configFolder;
     public File modFolder;
+
+    public static SimpleNetworkWrapper packetNetwork;
     
     public MusicManager musicManager;
 
@@ -49,9 +57,9 @@ public class RadioMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+
     	NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandlerRadio());
 
-        proxy.registerBlockRenderers();
     }
 
     @Mod.EventHandler
@@ -61,6 +69,9 @@ public class RadioMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+
+        this.packetNetwork();
+
         configFolder = event.getModConfigurationDirectory();
         modFolder = new File(Minecraft.getMinecraft().mcDataDir,"mods/"+RadioMod.modid);
         modFolder.mkdir();
@@ -74,6 +85,19 @@ public class RadioMod {
         FileManager.preInit();
 
         this.musicManager = new MusicManager();
+
+
+        proxy.registerBlockRenderers();
+    }
+
+    private void packetNetwork() {
+        /**
+         * Internet Radio Mod
+         */
+        packetNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("IRM");
+        packetNetwork.registerMessage(ClientPlaySongPacket.class, RadioMessage.class, 0, Side.CLIENT);
+        //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
+        //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 1, Side.CLIENT);
     }
 
 }

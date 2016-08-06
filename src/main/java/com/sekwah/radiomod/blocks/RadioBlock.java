@@ -5,6 +5,7 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sun.istack.internal.Nullable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -26,7 +27,7 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class RadioBlock extends Block implements ITileEntityProvider {
+public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 

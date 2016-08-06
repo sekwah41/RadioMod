@@ -1,6 +1,8 @@
 package com.sekwah.radiomod.client;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.renderers.TileEntityRadioRenderer;
 import com.sekwah.radiomod.blocks.renderers.TileEntityTestRadioRenderer;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
@@ -8,7 +10,11 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.generic.CommonProxy;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 /**
@@ -31,6 +37,13 @@ public class ClientProxy extends CommonProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBase.class, new TileEntityTestRadioRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadio.class, new TileEntityRadioRenderer());
+
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, TileEntityRadio.class);
+
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.TESTRADIO), 0, TileEntityBase.class);
+
+        //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":radio_block", "inventory"));
+        //ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":test_radio", "inventory"));
     }
 
 }
