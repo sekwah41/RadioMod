@@ -9,6 +9,9 @@ import javazoom.jl.player.advanced.PlaybackListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by on 04/08/2016.
@@ -21,6 +24,10 @@ public class MusicManager {
 
     private int pausedOnFrame = 0;
 
+    public final float framesPerTick = 1180 / 30f / 20f;
+
+    public Map<String,MusicSource> radioSources = new HashMap<String,MusicSource>();
+
     public MusicManager(){
     }
 
@@ -32,6 +39,12 @@ public class MusicManager {
     public void playStreamUrl(String streamUrl){
         Thread musicPlayer = new Thread(new RadioRunnable(streamUrl));
         musicPlayer.start();
+    }
+
+    public void stopAllPlayers() {
+        for(MusicSource source: this.radioSources.values()){
+            source.stopMusic();
+        }
     }
 
     class MusicRunnable implements Runnable {

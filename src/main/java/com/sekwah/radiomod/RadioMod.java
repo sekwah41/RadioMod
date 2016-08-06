@@ -76,8 +76,8 @@ public class RadioMod {
         this.packetNetwork();
 
         configFolder = event.getModConfigurationDirectory();
-        modFolder = new File(Minecraft.getMinecraft().mcDataDir,"mods/"+RadioMod.modid);
-        modFolder.mkdir();
+
+        proxy.setupMusic();
         
         this.soundCloud = new SoundCloud("23c5983facf3240a2f14515f05f34873");
 

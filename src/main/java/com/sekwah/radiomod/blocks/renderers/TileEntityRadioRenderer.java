@@ -4,7 +4,7 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
-import com.sekwah.radiomod.client.model.tile.ModelComputer;
+import com.sekwah.radiomod.client.model.tile.ModelMp3DockRadio;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntityRadio> {
 
-    public final ModelComputer model = new ModelComputer();
+    public final ModelMp3DockRadio model = new ModelMp3DockRadio();
 
     //This method is called when minecraft renders a tile entity
     public void renderTileEntityAt(TileEntityRadio te, double x, double y, double z, float partialTicks, int destroyStage)
@@ -51,15 +51,15 @@ public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntit
         int dir = par1TileEntity.getBlockMetadata();
         switch(par1TileEntity.getRunState()){
             case RadioBlock.RUNSTATE_OFF:
-                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
             case RadioBlock.RUNSTATE_BOOTINGUP:
-                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
             case RadioBlock.RUNSTATE_ON:
-                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
             case RadioBlock.RUNSTATE_PLAYING:
-                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
             default:
-                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+                this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
         }
         GlStateManager.enableRescaleNormal();
         this.model.render(x,y,z,rotation);

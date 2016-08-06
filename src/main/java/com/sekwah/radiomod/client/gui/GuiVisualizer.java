@@ -21,6 +21,9 @@ public class GuiVisualizer {
 	private int y;
 	private int width;
 	private int height;
+
+	// http://uk.mathworks.com/help/signal/ref/spectrogram.html?requestedDomain=uk.mathworks.com
+	// Read over this stuff and some other spectrogram stuff, that may be the solution to visualising.
 	
 	public GuiVisualizer(int xIn, int yIn, int widthIn, int heightIn) {
 		this.x = xIn;

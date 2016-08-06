@@ -1,7 +1,6 @@
 package com.sekwah.radiomod.client.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sekwah.radiomod.RadioMod;
@@ -72,6 +71,9 @@ public class GuiComputer extends GuiScreen {
 
 	public TileEntityRadio tileEntity;
 
+	private int pauseFrame = 0;
+	private int songID = -1;
+
 	public GuiComputer(TileEntityRadio tileEntity) {
 		if(tileEntity != null){
 			this.tileEntity = tileEntity;
@@ -136,7 +138,7 @@ public class GuiComputer extends GuiScreen {
 	public void shutdownComputer() {
 		this.computerState = RadioBlock.RUNSTATE_OFF;
 
-		this.tileEntity.musicSource.stopMusic();
+		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
 
 		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(true, this.tileEntity.getPos()));
 
@@ -152,21 +154,28 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	private void playSong(int index) {
+		this.playSong(index, 0);
+	}
+
+	private void playSong(int index, int frame) {
+		this.songID = index;
 		this.computerState = RadioBlock.RUNSTATE_PLAYING;
 		this.playedSong = index;
-		
+
 		switch(this.currentTab) {
 			case 0:
-				this.tileEntity.musicSource.playBuiltInSongCollection(index);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).playBuiltInSongCollection(index, frame);
 			break;
 			case 1:
-				this.tileEntity.musicSource.playPrivateSongCollection(index);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).playPrivateSongCollection(index, frame);
 			break;
 		}
 	}
 
 	private void stopSong() {
-		this.tileEntity.musicSource.stopMusic();
+		this.pauseFrame = 0;
+		this.songID = -1;
+		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
 		this.computerState = RadioBlock.RUNSTATE_ON;
 	}
 	
@@ -186,6 +195,16 @@ public class GuiComputer extends GuiScreen {
 		int nextSong = this.playedSong+1;
 		if(nextSong >= getSongCollection().size()) nextSong = 0;
 		this.playSong(nextSong);
+	}
+
+	private void togglePlay(){
+		if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getIsPlaying()){
+			pauseFrame = RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getCurrentFrame();
+			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
+		}
+		else{
+			this.playSong(songID, pauseFrame);
+		}
 	}
 
 	@Override
@@ -274,7 +293,7 @@ public class GuiComputer extends GuiScreen {
 					int titleLength = songTitle.length();
 					int titleWidth = this.fontRendererObj.getStringWidth(songTitle);
 
-					if(titleWidth > 165) {
+					if(titleWidth > 150) {
 						float offset = 0;
 						songTitle += "          ";
 						titleLength = songTitle.length();
@@ -291,7 +310,7 @@ public class GuiComputer extends GuiScreen {
 						float newLength = this.fontRendererObj.getStringWidth(songTitle);
 
 						for(int i = songTitle.length()-1; i >= 0; i--) {
-							if(newLength > 165) {
+							if(newLength > 170) {
 								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
 								songTitle = songTitle.substring(0, songTitle.length()-1);
 							}else{
@@ -303,7 +322,7 @@ public class GuiComputer extends GuiScreen {
 
 						Draw.drawXGradient(this.getScreenCenterX()-85-1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
 						Draw.drawXGradient(this.getScreenCenterX()+85-40+1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-						Draw.drawRect(this.getScreenCenterX()+85, this.getScreenY(), 10, 10, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+						Draw.drawRect(this.getScreenCenterX()+85, this.getScreenY(), 20, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 
 						this.songTitleScroll+=0.5f;
 						while(this.songTitleScroll >= titleWidth) {
@@ -315,7 +334,14 @@ public class GuiComputer extends GuiScreen {
 
 					this.mc.renderEngine.bindTexture(computerBg);
 					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
-					Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					// TODO draw play and pause.
+					if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getIsPlaying()){
+						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					}
+					else{
+						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					}
+					//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
 				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
@@ -393,6 +419,12 @@ public class GuiComputer extends GuiScreen {
 				if(mouseX >= this.getScreenCenterX()+20-8 && mouseX <= this.getScreenCenterX()+20-8+16 &&
 				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
 					nextSong();
+				}
+
+				if(mouseX >= this.getScreenCenterX()-8 && mouseX <= this.getScreenCenterX()-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					togglePlay();
+					//RadioMod.logger.info("Test");
 				}
 				//Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
 				//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);

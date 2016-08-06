@@ -32,13 +32,22 @@ public class MusicSource {
 
     private Thread currentThread;
 
+    private int pauseFrame = 0;
+
+    private States songState = States.STOPPED;
+
+    public enum States {
+        PAUSED,
+        STOPPED,
+        PLAYING
+    }
+
     /**
      * Used for playing the current song
      */
     private CustomPlayer player = null;
 
-    public MusicSource(TileEntityRadio tileEntity){
-        this.tileEntity = tileEntity;
+    public MusicSource(){
     }
 
     /**
@@ -49,36 +58,49 @@ public class MusicSource {
         if(player != null && !player.getClosed()){
             player.stop();
         }
+        songState = States.PAUSED;
         return true;
     }
 
     public void playPrivateSongCollection(int songID){
+        this.playPrivateSongCollection(songID, 0);
+    }
+
+    public void playPrivateSongCollection(int songID, int frame){
         if(songID > SongPrivate.privateSongCollection.size() || songID < 0){
             return;
         }
         this.stopMusic();
-        Thread musicPlayer = new Thread(new PrivateMusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName()));
+        Thread musicPlayer = new Thread(new PrivateMusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName(), frame));
         musicPlayer.start();
     }
 
-    public void playAssetsSound(String songName){
+    public void playAssetsSound(String songName, int frame){
         this.stopMusic();
-        Thread musicPlayer = new Thread(new MusicRunnable(songName));
+        Thread musicPlayer = new Thread(new MusicRunnable(songName, frame));
         musicPlayer.start();
     }
-    
+
     public void playBuiltInSongCollection(int songID){
+        this.playBuiltInSongCollection(songID, 0);
+    }
+    
+    public void playBuiltInSongCollection(int songID, int frame){
     	if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
             return;
         }
         this.stopMusic();
-        Thread musicPlayer = new Thread(new MusicRunnable(SongBuiltIn.builtInSongCollection.get(songID).getFileName()));
+        Thread musicPlayer = new Thread(new MusicRunnable(SongBuiltIn.builtInSongCollection.get(songID).getFileName(), frame));
         musicPlayer.start();
     }
 
     public void playStreamUrl(String streamUrl){
+        this.playStreamUrl(streamUrl,0);
+    }
+
+    public void playStreamUrl(String streamUrl, int frame){
         this.stopMusic();
-        Thread musicPlayer = new Thread(new RadioRunnable(streamUrl));
+        Thread musicPlayer = new Thread(new RadioRunnable(streamUrl, frame));
         musicPlayer.start();
     }
 
@@ -94,8 +116,11 @@ public class MusicSource {
 
         private final String location;
 
-        public PrivateMusicRunnable(String location){
+        private final int startFrame;
+
+        public PrivateMusicRunnable(String location, int startFrame){
             this.location = location;
+            this.startFrame = startFrame;
         }
 
         @Override
@@ -115,9 +140,10 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                         //currentFrame = event.getFrame();
+                        player = null;
                     }
                 });
-                player.play();
+                player.playFrom(startFrame);
             } catch (JavaLayerException | FileNotFoundException e) {
                 player = null;
                 e.printStackTrace();
@@ -128,10 +154,14 @@ public class MusicSource {
     class MusicRunnable implements Runnable {
 
         private final String songName;
+        private final int startFrame;
 
-        public MusicRunnable(String songName){
+        public MusicRunnable(String songName, int frame){
             this.songName = songName;
+            this.startFrame = frame;
         }
+
+
 
         @Override
         public void run() {
@@ -145,9 +175,10 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                         //currentFrame = event.getFrame();
+                        player = null;
                     }
                 });
-                player.play();
+                player.playFrom(startFrame);
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();
@@ -158,9 +189,11 @@ public class MusicSource {
     class RadioRunnable implements Runnable {
 
         private final String streamString;
+        private final int startFrame;
 
-        public RadioRunnable(String streamString){
+        public RadioRunnable(String streamString, int startFrame){
             this.streamString = streamString;
+            this.startFrame = startFrame;
         }
 
         @Override
@@ -180,9 +213,10 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                        // currentFrame = event.getFrame();
+                       player = null;
                     }
                 });
-                player.play();
+                player.playFrom(startFrame);
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();

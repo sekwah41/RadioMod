@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.generic;
 
+import net.minecraftforge.common.MinecraftForge;
+
 /**
  * Created by on 04/08/2016.
  *
@@ -15,8 +17,16 @@ public class CommonProxy {
         return false;
     }
 
+    public void addEvents(){
+        MinecraftForge.EVENT_BUS.register(new EventServerHook());
+    };
+
     public void registerBlockRenderers(){
 
     }
 
+
+    public void setupMusic() {
+
+    }
 }

@@ -30,19 +30,18 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class RadioBlock extends BlockContainer implements ITileEntityProvider {
+public class ComputerBlock extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
-    private final AxisAlignedBB NS_BOUNDING_BOX = new AxisAlignedBB(0.26D, 0.0D, 0.36D, 0.74D, 0.3D, 0.64D);
-    private final AxisAlignedBB EW_BOUNDING_BOX = new AxisAlignedBB(0.36D, 0.0D, 0.26D, 0.64D, 0.3D, 0.74D);
+    private final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.1D, 0.0D, 0.1D, 0.9D, 0.7D, 0.9D);
 
     public static final int RUNSTATE_OFF = -1;
     public static final int RUNSTATE_BOOTINGUP = 0;
     public static final int RUNSTATE_ON = 1;
     public static final int RUNSTATE_PLAYING = 2;
 
-    public RadioBlock() {
+    public ComputerBlock() {
         super(Material.ROCK);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
@@ -71,28 +70,13 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
-
-        //RadioMod.logger.info(state.getValue(FACING) == EnumFacing.EAST);
-        switch ((EnumFacing)state.getValue(FACING))
-        {
-            case NORTH:
-                return NS_BOUNDING_BOX;
-            case SOUTH:
-                return NS_BOUNDING_BOX;
-            case EAST:
-                return EW_BOUNDING_BOX;
-            case WEST:
-                return EW_BOUNDING_BOX;
-            default:
-                return NS_BOUNDING_BOX;
-        }
-        //return BOUNDING_BOX;
+        return BOUNDING_BOX;
     }
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
     	playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
-    	
+
         return true;
     }
 

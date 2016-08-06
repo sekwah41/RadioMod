@@ -1,5 +1,6 @@
 package com.sekwah.radiomod.music.player;
 
+import com.sekwah.radiomod.RadioMod;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.SampleBuffer;
@@ -15,11 +16,15 @@ import java.io.InputStream;
  */
 public class CustomPlayer extends AdvancedPlayer {
 
-    public CustomPlayer(InputStream stream) throws JavaLayerException {
-        super(stream);
-    }
+	private float volume = 1.0f;
 
-    public CustomPlayer(InputStream stream, AudioDevice device) throws JavaLayerException
+	private int currentFrame = 1;
+
+	public CustomPlayer(InputStream stream) throws JavaLayerException {
+		super(stream);
+	}
+
+	public CustomPlayer(InputStream stream, AudioDevice device) throws JavaLayerException
 	{
 		super(stream, device);
 	}
@@ -29,10 +34,26 @@ public class CustomPlayer extends AdvancedPlayer {
 	}
 
 	public int getFrame(){
-		return audio.getPosition();
+		return currentFrame;
 	}
 
-    /**
+	/**
+	 * Plays a range of MPEG audio frames
+	 * @param start	The first frame to play
+	 * @return true if the last frame was played, or false if there are more frames.
+	 */
+	public void playFrom(final int start) throws JavaLayerException
+	{
+		boolean ret = true;
+		int offset = start;
+		while (offset-- > 0 && ret) {
+			ret = skipFrame();
+			currentFrame++;
+		}
+		play();
+	}
+
+	/**
 	 * Decodes a single frame.
 	 *
 	 * @return true if there are no more frames to decode, false otherwise.
@@ -55,7 +76,15 @@ public class CustomPlayer extends AdvancedPlayer {
 				out = audio;
 				if(out != null)
 				{
-					out.write(output.getBuffer(), 0, output.getBufferLength());
+					short[] samples = output.getBuffer();
+
+					for (int samp = 0; samp < samples.length; samp++)
+					{
+						// TODO get volumes from minecraft to effect this.
+						short newValue = (short) (samples[samp] * this.volume);
+						samples[samp] = newValue;
+					}
+					out.write(samples, 0, output.getBufferLength());
 				}
 			}
 
@@ -65,12 +94,14 @@ public class CustomPlayer extends AdvancedPlayer {
 		{
 			throw new JavaLayerException("Exception decoding audio frame", ex);
 		}
+		currentFrame++;
+		RadioMod.logger.info(currentFrame);
 		return true;
 	}
 
-    public AudioDevice getAudioDevice(){
-         return this.audio;
-    }
+	public AudioDevice getAudioDevice(){
+		return this.audio;
+	}
 
 	public boolean getClosed() {
 		return closed;

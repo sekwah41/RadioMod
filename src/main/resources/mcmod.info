@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "modid": "radiomod",
+  "name": "Radio Mod",
+  "description": "A music and internet radio mod for minecraft.",
+  "version": "0.0.1",
+  "mcversion": "1.10.2",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["sekwah41", "GoblinBob", "RazzleberryFox", "ProfMobius"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
