@@ -30,6 +30,8 @@ public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntit
         
         int dir = par1TileEntityBonsai.getBlockMetadata();
         this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
+        GlStateManager.enableRescaleNormal();
         this.model.render(x,y,z,dir * (45F));
+        GlStateManager.disableRescaleNormal();
     }
 }

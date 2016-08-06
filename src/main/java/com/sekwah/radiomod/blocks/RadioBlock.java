@@ -39,7 +39,7 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
     public static final int RUNSTATE_PLAYING = 2;
 
     public RadioBlock() {
-        super(Material.GLASS);
+        super(Material.ROCK);
         BOUNDING_BOX = new AxisAlignedBB(0.3D, 0.0D, 0.3D, 0.7D, 0.7D, 0.7D);
     }
 
