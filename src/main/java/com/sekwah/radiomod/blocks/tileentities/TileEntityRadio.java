@@ -1,7 +1,8 @@
 package com.sekwah.radiomod.blocks.tileentities;
 
-import com.sekwah.radiomod.blocks.TestRadio;
+import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.music.MusicSource;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -41,6 +42,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     }
 
     public int getRunState() {
-    	return TestRadio.RUNSTATE_OFF;
+    	return RadioBlock.RUNSTATE_OFF;
     }
 }
