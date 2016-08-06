@@ -6,7 +6,7 @@ import java.util.List;
 public class SongPrivate extends Song {
 	public static List<SongPrivate> privateSongCollection = new ArrayList<SongPrivate>();
 	
-	public SongPrivate(String authorIn, String titleIn) {
-		super(authorIn, titleIn);
+	public SongPrivate(String authorIn, String titleIn, String fileName) {
+		super(authorIn, titleIn, fileName);
 	}
 }
