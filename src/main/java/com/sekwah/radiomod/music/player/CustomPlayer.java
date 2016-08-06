@@ -24,6 +24,14 @@ public class CustomPlayer extends AdvancedPlayer {
 		super(stream, device);
 	}
 
+	public AudioDevice getAudio(){
+		return audio;
+	}
+
+	public int getFrame(){
+		return audio.getPosition();
+	}
+
     /**
 	 * Decodes a single frame.
 	 *
