@@ -2,6 +2,7 @@ package com.sekwah.radiomod;
 
 import java.io.File;
 
+import com.sekwah.radiomod.items.RadioItems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,6 +83,7 @@ public class RadioMod {
         proxy.preInit();
 
         RadioBlocks.registerBlocks();
+        RadioItems.registerItems();
         RadioSounds.registerSounds();
         FileManager.preInit();
 
