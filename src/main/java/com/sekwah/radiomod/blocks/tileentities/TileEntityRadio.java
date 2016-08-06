@@ -2,7 +2,6 @@ package com.sekwah.radiomod.blocks.tileentities;
 
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.music.MusicSource;
-import com.sun.istack.internal.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +38,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     	}
     }
 
-    @Nullable
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         return new SPacketUpdateTileEntity(this.pos, 4, this.getUpdateTag());
