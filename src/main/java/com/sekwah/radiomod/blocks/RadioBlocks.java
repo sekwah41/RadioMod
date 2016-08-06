@@ -1,6 +1,5 @@
 package com.sekwah.radiomod.blocks;
 
-import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;

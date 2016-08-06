@@ -4,8 +4,6 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.renderers.TileEntityRadioRenderer;
-import com.sekwah.radiomod.blocks.renderers.TileEntityTestRadioRenderer;
-import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.client.gui.GuiMobile;
