@@ -147,9 +147,14 @@ public class ModelComputer extends ModelBase
     {
         GlStateManager.pushMatrix();
 
-        GlStateManager.translate((float) x + 0.5F, (float) y + 0.245f, (float) z + 0.61F);
+        GlStateManager.translate((float) x, (float) y, (float) z);
+
+        //GlStateManager.translate((float) x + 0.5F, (float) y + 0.245f, (float) z + 0.61F);
         GlStateManager.rotate(180, 1F, 0F, 0F);
+        GlStateManager.translate(0.5F, -0.245f, -0.5F);
+
         GlStateManager.rotate(rotation, 0F, 1F, 0F);
+        GlStateManager.translate(0f,0f,-0.145f);
         GlStateManager.scale(0.16f,0.16f,0.16f);
 
         float par1 = 0.0625F;
