@@ -38,6 +38,8 @@ public class GuiComputer extends GuiScreen {
 	public GuiVisualizer guiVisualizer;
 	public GuiListSongs guiSongList;
 	
+	private PositionedSoundRecord startupFinishSoundRecord;
+	
 	private int computerState;
 	private int playedSong;
 	private float startupSequence;
@@ -118,6 +120,9 @@ public class GuiComputer extends GuiScreen {
 		this.computerState = RadioBlock.RUNSTATE_OFF;
 		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(true, this.tileEntity.getPos()));
 		
+		if(this.startupFinishSoundRecord != null){
+			Minecraft.getMinecraft().getSoundHandler().stopSound(this.startupFinishSoundRecord);
+		}
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
 		this.shutdownSequence = 10;
 	}
@@ -368,8 +373,10 @@ public class GuiComputer extends GuiScreen {
 						this.loadingProgress++;
 						if(this.areDummiesLoading())
 							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F+(1+this.loadingProgress)*0.05f));
-						else
-							Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_finish, 1.0F));
+						else{
+							this.startupFinishSoundRecord = PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_finish, 1.0F);
+							Minecraft.getMinecraft().getSoundHandler().playSound(this.startupFinishSoundRecord);
+						}
 					}
 				}else{
 					if(this.startupLogoFadeout > 60) {
