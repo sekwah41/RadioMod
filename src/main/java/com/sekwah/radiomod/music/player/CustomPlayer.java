@@ -64,4 +64,7 @@ public class CustomPlayer extends AdvancedPlayer {
          return this.audio;
     }
 
+	public boolean getClosed() {
+		return closed;
+	}
 }

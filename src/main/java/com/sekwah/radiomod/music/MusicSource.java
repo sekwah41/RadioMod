@@ -29,8 +29,6 @@ public class MusicSource {
 
     private Song currentSong;
 
-    private boolean isPlaying = false;
-
     private Thread currentThread;
 
     /**
@@ -47,7 +45,7 @@ public class MusicSource {
      * @return returns true if the music stops or is already stopped.
      */
     public boolean stopMusic(){
-        if(isPlaying && player != null){
+        if(player != null && !player.getClosed()){
             player.stop();
         }
         return true;
@@ -75,7 +73,7 @@ public class MusicSource {
     }
 
     public boolean getIsPlaying(){
-        return isPlaying;
+        return player != null;
     }
 
     class PrivateMusicRunnable implements Runnable {
@@ -103,12 +101,11 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                         currentFrame = event.getFrame();
-                        isPlaying = false;
                     }
                 });
                 player.play();
             } catch (JavaLayerException | FileNotFoundException e) {
-                isPlaying = false;
+                player = null;
                 e.printStackTrace();
             }
         }
@@ -134,13 +131,11 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                         currentFrame = event.getFrame();
-                        isPlaying = false;
                     }
                 });
-                isPlaying = true;
                 player.play();
             } catch (JavaLayerException e) {
-                isPlaying = false;
+                player = null;
                 e.printStackTrace();
             }
         }
@@ -171,13 +166,11 @@ public class MusicSource {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
                         currentFrame = event.getFrame();
-                        isPlaying = false;
                     }
                 });
-                isPlaying = true;
                 player.play();
             } catch (JavaLayerException e) {
-                isPlaying = false;
+                player = null;
                 e.printStackTrace();
             }
         }
