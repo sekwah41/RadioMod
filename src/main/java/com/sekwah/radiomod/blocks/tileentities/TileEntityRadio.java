@@ -2,10 +2,13 @@ package com.sekwah.radiomod.blocks.tileentities;
 
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.music.MusicSource;
-
+import com.sun.istack.internal.Nullable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by on 05/08/2016.
@@ -16,6 +19,8 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public final MusicSource musicSource;
 
+    private int rotation = 0;
+
     public TileEntityRadio(){
         this.musicSource = new MusicSource();
     }
@@ -25,14 +30,21 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     }
 
+    @Nullable
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        return new SPacketUpdateTileEntity(this.pos, 4, this.getUpdateTag());
+    }
+
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        this.rotation = compound.getByte("Rot");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-
+        compound.setByte("Rot", (byte)(this.rotation & 255));
         /**
          * Check chest for largs nbt writing {@link net.minecraft.tileentity.TileEntityChest}
          * Need to start using links more. They are pretty useful :D
@@ -43,5 +55,16 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public int getRunState() {
     	return RadioBlock.RUNSTATE_OFF;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public int getRotation()
+    {
+        return this.rotation;
+    }
+
+    public void setRotation(int rotation)
+    {
+        this.rotation = rotation;
     }
 }

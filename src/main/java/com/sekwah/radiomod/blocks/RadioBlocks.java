@@ -1,7 +1,7 @@
 package com.sekwah.radiomod.blocks;
 
+import com.sekwah.radiomod.blocks.tileentities.TileEntityBase;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
@@ -13,9 +13,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  * @author sekwah41
  */
 public class RadioBlocks {
+
+
+    // Radio block
     public static RadioBlock RADIOBLOCK;
 
     public static void registerBlocks() {
+
         RADIOBLOCK = new RadioBlock();
         registerTileBlock(RADIOBLOCK, "radio_block", TileEntityRadio.class);
 

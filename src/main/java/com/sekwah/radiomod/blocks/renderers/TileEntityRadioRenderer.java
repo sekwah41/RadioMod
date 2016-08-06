@@ -7,6 +7,7 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.model.tile.ModelComputer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -26,12 +27,31 @@ public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntit
     }
 
     // this method isnt called yet sadly, make sure its called before fixing this code
-    public void renderRadio(double x, double y, double z, TileEntityRadio par1TileEntityBonsai, double partialTicks) {
+    public void renderRadio(double x, double y, double z, TileEntityRadio par1TileEntity, double partialTicks) {
+
+        EnumFacing enumfacing = EnumFacing.getFront(par1TileEntity.getBlockMetadata() & 7);
+
+        float rotation = 0;
+
+        switch (enumfacing)
+            {
+                case NORTH:
+                    break;
+                case SOUTH:
+                    rotation = 180.0F;
+                    break;
+                case WEST:
+                    rotation = 270.0F;
+                    break;
+                case EAST:
+                default:
+                    rotation = 90.0F;
+            }
         
-        int dir = par1TileEntityBonsai.getBlockMetadata();
+        int dir = par1TileEntity.getBlockMetadata();
         this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/computer.png"));
         GlStateManager.enableRescaleNormal();
-        this.model.render(x,y,z,dir * (45F));
+        this.model.render(x,y,z,rotation);
         GlStateManager.disableRescaleNormal();
     }
 }

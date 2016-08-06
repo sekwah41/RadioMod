@@ -33,7 +33,7 @@ import java.util.Random;
  *
  * @author sekwah41
  */
-@Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version)
+@Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version, acceptedMinecraftVersions="[1.10.2]")
 public class RadioMod {
 
 	@Instance

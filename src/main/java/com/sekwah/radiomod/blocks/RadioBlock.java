@@ -9,14 +9,18 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -31,7 +35,7 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
-    private final AxisAlignedBB BOUNDING_BOX;
+    private AxisAlignedBB BOUNDING_BOX;
 
     public static final int RUNSTATE_OFF = -1;
     public static final int RUNSTATE_BOOTINGUP = 0;
@@ -40,7 +44,8 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public RadioBlock() {
         super(Material.ROCK);
-        BOUNDING_BOX = new AxisAlignedBB(0.3D, 0.0D, 0.3D, 0.7D, 0.7D, 0.7D);
+        BOUNDING_BOX = new AxisAlignedBB(0.1D, 0.0D, 0.1D, 0.9D, 0.7D, 0.9D);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
     /**
@@ -51,6 +56,20 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
         return new TileEntityRadio();
     }
 
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+    {
+        return new ItemStack(RadioBlocks.RADIOBLOCK);
+    }
+
+    /**
+     * Returns the blockstate with the given rotation from the passed blockstate. If inapplicable, returns the passed
+     * blockstate.
+     */
+    public IBlockState withRotation(IBlockState state, Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
+    }
+
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return BOUNDING_BOX;
@@ -58,16 +77,44 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
+
         playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
 
         return true;
     }
 
-    /*public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLiving, ItemStack par6ItemStack) {
-        //int dir = MathHelper.floor_double((double)((par5EntityLiving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
-        int dir = MathHelper.floor_double((double) ((par5EntityLiving.rotationYaw * 8F) / 360F) + 0.5D);
-        par1World.setBlockState().setBlockMetadataWithNotify(par2, par3, par4, dir + 2, 0);
-    }*/
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, new IProperty[] {FACING});
+    }
+
+    /**
+     * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
+     * IBlockstate
+     */
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
+        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+    }
+
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7));
+    }
+
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
+    public int getMetaFromState(IBlockState state)
+    {
+        int i = 0;
+        i = i | ((EnumFacing)state.getValue(FACING)).getIndex();
+
+        return i;
+    }
 
     /**
      * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
