@@ -20,6 +20,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public final MusicSource musicSource;
 
     private int rotation = 0;
+    private int runState = RadioBlock.RUNSTATE_OFF;
 
     public TileEntityRadio(){
         this.musicSource = new MusicSource();
@@ -39,12 +40,14 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         this.rotation = compound.getByte("Rot");
+        this.runState = compound.getInteger("RunState");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         compound.setByte("Rot", (byte)(this.rotation & 255));
+        compound.setInteger("RunState", this.runState);
         /**
          * Check chest for largs nbt writing {@link net.minecraft.tileentity.TileEntityChest}
          * Need to start using links more. They are pretty useful :D
@@ -54,7 +57,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     }
 
     public int getRunState() {
-    	return RadioBlock.RUNSTATE_OFF;
+    	return this.runState;
     }
 
     @SideOnly(Side.CLIENT)
