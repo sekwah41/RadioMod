@@ -12,6 +12,7 @@ import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MusicManager;
+import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.network.packets.RadioMessage;
 import com.sekwah.radiomod.network.packets.client.ClientPlaySongPacket;
 import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
@@ -85,6 +86,7 @@ public class RadioMod {
         RadioBlocks.registerBlocks();
         RadioItems.registerItems();
         RadioSounds.registerSounds();
+        SongBuiltIn.registerBuiltInSongs();
         FileManager.preInit();
 
         this.musicManager = new MusicManager();

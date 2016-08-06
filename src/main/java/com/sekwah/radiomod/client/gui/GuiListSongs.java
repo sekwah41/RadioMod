@@ -45,6 +45,7 @@ public class GuiListSongs extends GuiListExtended
     
     public void fillOut(List<? extends Song> songList) {
     	entries.clear();
+    	if(songList == null) return;
     	for(int i = 0;i < songList.size();i++){
     		Song song = songList.get(i);
     		entries.add(new GuiListSongsEntry(this, song.getAuthor(), song.getTitle()));

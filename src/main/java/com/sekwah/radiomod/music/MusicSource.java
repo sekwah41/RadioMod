@@ -4,6 +4,7 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.music.player.CustomPlayer;
 import com.sekwah.radiomod.music.song.Song;
+import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.JavaLayerException;
@@ -51,7 +52,7 @@ public class MusicSource {
         return true;
     }
 
-    public void playSongCollection(int songID){
+    public void playPrivateSongCollection(int songID){
         if(songID > SongPrivate.privateSongCollection.size() || songID < 0){
             return;
         }
@@ -63,6 +64,15 @@ public class MusicSource {
     public void playAssetsSound(String songName){
         this.stopMusic();
         Thread musicPlayer = new Thread(new MusicRunnable(songName));
+        musicPlayer.start();
+    }
+    
+    public void playBuiltInSongCollection(int songID){
+    	if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
+            return;
+        }
+        this.stopMusic();
+        Thread musicPlayer = new Thread(new MusicRunnable(SongBuiltIn.builtInSongCollection.get(songID).getFileName()));
         musicPlayer.start();
     }
 
