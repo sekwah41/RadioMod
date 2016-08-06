@@ -1,5 +1,10 @@
 package com.sekwah.radiomod;
 
+import java.io.File;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.generic.CommonProxy;
@@ -7,26 +12,21 @@ import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MusicManager;
 import com.sekwah.radiomod.network.packets.RadioMessage;
+import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
 import com.sekwah.radiomod.network.packets.client.ClientPlaySongPacket;
+import com.sekwah.radiomod.network.packets.server.ServerBootupComputerPacket;
 import com.sekwah.radiomod.onlineservices.soundcloud.SoundCloud;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.File;
-import java.util.Random;
 
 /**
  * Created by on 04/08/2016.
@@ -86,7 +86,6 @@ public class RadioMod {
 
         this.musicManager = new MusicManager();
 
-
         proxy.registerBlockRenderers();
     }
 
@@ -96,8 +95,12 @@ public class RadioMod {
          */
         packetNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("IRM");
         packetNetwork.registerMessage(ClientPlaySongPacket.class, RadioMessage.class, 0, Side.CLIENT);
+        packetNetwork.registerMessage(ClientUpdateComputerPacket.Handler.class, ClientUpdateComputerPacket.class, 1, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 1, Side.CLIENT);
+        
+        //Server packets starting from 100 and up (just a cosmetic thing for me ;))
+        packetNetwork.registerMessage(ServerBootupComputerPacket.Handler.class, ServerBootupComputerPacket.class, 100, Side.SERVER);
     }
 
 }

@@ -2,13 +2,17 @@ package com.sekwah.radiomod.client.gui;
 
 import java.io.IOException;
 
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+
 import org.lwjgl.opengl.GL11;
 
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongPrivate;
+import com.sekwah.radiomod.network.packets.server.ServerBootupComputerPacket;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -55,12 +59,18 @@ public class GuiComputer extends GuiScreen {
 	 */
 	public int currentScreen = 0;
 	
-	public GuiComputer(int computerStateIn) {
-		this.computerState = computerStateIn;
-		
-		this.finishBootup();
-		
+	public TileEntityRadio tileEntity;
+	
+	public GuiComputer(TileEntityRadio tileEntity) {
+		if(tileEntity != null){
+			this.tileEntity = tileEntity;
+			this.computerState = this.tileEntity.getRunState();
+		}
 		FileManager.loadPrivateSongs();
+		
+		if(this.computerState == RadioBlock.RUNSTATE_BOOTINGUP) {
+			this.setupLoadingDummies();
+		}
 		
 		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
 		//RadioMod.instance.musicManager.playStreamUrl("http://stream.dancewave.online:8080/dance.mp3");
@@ -75,15 +85,7 @@ public class GuiComputer extends GuiScreen {
 		this.guiSongList = new GuiListSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
 	}
 	
-	public void bootupComputer() {
-		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
-		
-		this.greenLightWhiteFlash = true;
-		this.startupSequence = 0;
-		this.loadingProgress = 0;
-		this.currentStartupTime = 0;
-		this.startupLogoFadeout = 0;
-		
+	public void setupLoadingDummies() {
 		this.loadingDummies = new LoadingDummy[]{
 			new LoadingDummy("Loading assets...", 4),
 			new LoadingDummy("Setting up the color scheme...", 4),
@@ -91,6 +93,20 @@ public class GuiComputer extends GuiScreen {
 			new LoadingDummy("User validation...", 2),
 			new LoadingDummy("Connecting to the great music database...", 5)
 		};
+	}
+	
+	public void bootupComputer() {
+		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
+		
+		RadioMod.packetNetwork.sendToServer(new ServerBootupComputerPacket(true, this.tileEntity.getPos()));
+		
+		this.setupLoadingDummies();
+		
+		this.greenLightWhiteFlash = true;
+		this.startupSequence = 0;
+		this.loadingProgress = 0;
+		this.currentStartupTime = 0;
+		this.startupLogoFadeout = 0;
 		
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F));
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_release, 1.0F));

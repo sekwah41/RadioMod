@@ -3,6 +3,8 @@ package com.sekwah.radiomod.blocks.tileentities;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.music.MusicSource;
 import com.sun.istack.internal.Nullable;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -21,14 +23,20 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     private int rotation = 0;
     private int runState = RadioBlock.RUNSTATE_OFF;
-
+    private int bootupSequence = 0;
+    
     public TileEntityRadio(){
         this.musicSource = new MusicSource();
     }
 
     @Override
     public void update() {
-
+    	switch(this.getRunState()) {
+    		case RadioBlock.RUNSTATE_BOOTINGUP:
+    			if(this.bootupSequence > 0)this.bootupSequence--;
+    			else this.setRunState(RadioBlock.RUNSTATE_ON);
+    		break;
+    	}
     }
 
     @Nullable
@@ -69,5 +77,22 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public void setRotation(int rotation)
     {
         this.rotation = rotation;
+    }
+    
+    public void bootUp() {
+    	this.runState = RadioBlock.RUNSTATE_BOOTINGUP;
+    	System.out.println("BOOTING UPPPPP!!!!!");
+    	this.bootupSequence = 50;
+    }
+    
+    public void shutdown() {
+		this.runState = RadioBlock.RUNSTATE_OFF;
+	}
+    
+    public void setRunState(int runStateIn) {
+    	if(runStateIn == RadioBlock.RUNSTATE_BOOTINGUP && this.runState != RadioBlock.RUNSTATE_BOOTINGUP){
+    		this.bootUp();
+    	}
+    	this.runState = runStateIn;
     }
 }

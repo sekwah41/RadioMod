@@ -77,9 +77,8 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-
-        playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
-
+    	playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
+    	
         return true;
     }
 
