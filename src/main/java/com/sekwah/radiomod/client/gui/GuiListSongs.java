@@ -1,6 +1,7 @@
 package com.sekwah.radiomod.client.gui;
 
 import com.google.common.collect.Lists;
+import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import com.sekwah.radiomod.util.Draw;
 
@@ -40,14 +41,12 @@ public class GuiListSongs extends GuiListExtended
         this.guiComputer = guiComputerIn;
         this.left = (int) guiComputerIn.getScreenX();
         this.right = this.left + widthIn;
-        
-        this.fillOut();
     }
     
-    public void fillOut() {
+    public void fillOut(List<? extends Song> songList) {
     	entries.clear();
-    	for(int i = 0;i < SongPrivate.privateSongCollection.size();i++){
-    		SongPrivate song = SongPrivate.privateSongCollection.get(i);
+    	for(int i = 0;i < songList.size();i++){
+    		Song song = songList.get(i);
     		entries.add(new GuiListSongsEntry(this, song.getAuthor(), song.getTitle()));
     	}
     }

@@ -55,7 +55,7 @@ public class GuiComputer extends GuiScreen {
 	public float songTitleScroll = 0;
 
 	/*
-	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2)
+	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2), Radio Stations (3), SoundCloud (4)
 	 */
 	public int currentScreen = 0;
 
@@ -114,8 +114,10 @@ public class GuiComputer extends GuiScreen {
 	public void finishBootup() {
 		this.computerState = RadioBlock.RUNSTATE_ON;
 		this.desktopFadein = 20;
+		
+		this.guiSongList.fillOut(SongPrivate.privateSongCollection);
 	}
-
+	
 	public void shutdownComputer() {
 		this.computerState = RadioBlock.RUNSTATE_OFF;
 
@@ -213,10 +215,19 @@ public class GuiComputer extends GuiScreen {
 				}
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-				String screenTitle = this.currentScreen == 0 ? "Songs" : this.currentScreen == 1 ? "My Playlists" : "Bookmarked";
+				String screenTitle = this.currentScreen == 0 ? "Songs" : this.currentScreen == 1 ? "My Playlists" : this.currentScreen == 2 ? "Bookmarked" : this.currentScreen == 3 ? "Radio Stations" : "SoundCloud";
 				this.drawCenteredString(this.fontRendererObj, screenTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
 				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
 				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
+				
+				this.mc.renderEngine.bindTexture(this.computerBg);
+				if(!(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				if(this.currentScreen > 0) Draw.drawTexture(this.getScreenX()+2, this.getScreenY(), 4*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				
+				if(!(mouseX >= this.getScreenX()+this.getScreenWidth()-16-1 && mouseX <= this.getScreenX()+this.getScreenWidth() && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				if(this.currentScreen < 3) Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-16-2, this.getScreenY(), 3*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
@@ -330,6 +341,16 @@ public class GuiComputer extends GuiScreen {
 				if(this.currentScreen == 0) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
 				}
+				
+				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
+					this.currentScreen--;
+				}
+				
+				if(mouseX >= this.getScreenX()+this.getScreenWidth()-16-1 && mouseX <= this.getScreenX()+this.getScreenWidth() && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
+					this.currentScreen++;
+				}
+				
+				this.currentScreen = Math.max(0, Math.min(this.currentScreen, 4));
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
