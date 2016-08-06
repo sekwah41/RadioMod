@@ -1,6 +1,7 @@
 package com.sekwah.radiomod.music;
 
 import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.music.player.CustomPlayer;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongPrivate;
@@ -24,7 +25,7 @@ import java.net.URL;
  */
 public class MusicSource {
 
-    private final RadioBlock radioBlock;
+    private TileEntityRadio tileEntity;
 
     private int currentFrame;
 
@@ -39,8 +40,8 @@ public class MusicSource {
      */
     private CustomPlayer player = null;
 
-    public MusicSource(RadioBlock block){
-        this.radioBlock = block;
+    public MusicSource(TileEntityRadio tileEntity){
+        this.tileEntity = tileEntity;
     }
 
     /**

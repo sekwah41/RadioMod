@@ -5,13 +5,11 @@ import net.minecraft.util.ResourceLocation;
 public class Song {
 	private String title;
 	private String author;
-	private String fileName;
 	private ResourceLocation coverArt;
 	
-	public Song(String authorIn, String titleIn, String fileName) {
+	public Song(String authorIn, String titleIn) {
 		this.author = authorIn;
 		this.title = titleIn;
-		this.fileName = fileName;
 	}
 	
 	public boolean doesHaveAuthor() {
@@ -24,10 +22,6 @@ public class Song {
 	
 	public String getAuthor() {
 		return this.author;
-	}
-
-	public String getFileName() {
-		return this.fileName;
 	}
 	
 	public String getTitle() {

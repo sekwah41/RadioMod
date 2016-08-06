@@ -26,7 +26,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int bootupSequence = 0;
     
     public TileEntityRadio(){
-        this.musicSource = new MusicSource();
+        this.musicSource = new MusicSource(this);
     }
 
     @Override
