@@ -17,6 +17,14 @@ public class Song {
 	}
 	
 	public String getFullDisplayTitle() {
-		return this.doesHaveAuthor() ? this.author+" "+this.title : this.title; 
+		return this.doesHaveAuthor() ? this.author+" - "+this.title : this.title; 
+	}
+	
+	public String getAuthor() {
+		return this.author;
+	}
+	
+	public String getTitle() {
+		return this.title;
 	}
 }

@@ -45,6 +45,12 @@ public class FileManager {
 		String author = null;
 		String title = file.getName().replace(".mp3", "");
 		
+		if(author == null && title.contains(" - ")) {
+			String[] parts = title.split("-");
+			author = parts[0].trim();
+			title = parts[1].trim();
+		}
+		
 		return new SongPrivate(author, title);
 	}
 	

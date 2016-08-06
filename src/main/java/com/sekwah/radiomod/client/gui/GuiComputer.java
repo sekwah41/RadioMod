@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -26,15 +27,17 @@ public class GuiComputer extends GuiScreen {
 	protected int bgWidth = 256;
     protected int bgHeight = 187;
     protected float[] bgColor = new float[]{
-    	0,
-    	0.4f,
-    	0.4f
+    	0.5f,
+    	0.3f,
+    	0.0f
     };
 	public static ResourceLocation computerBg;
 	public static ResourceLocation startupLogo;
 	public GuiVisualizer guiVisualizer;
+	public GuiListSongs guiSongList;
 	
 	private int computerState;
+	private int playedSong;
 	private float startupSequence;
 	private int loadingProgress;
 	private float currentStartupTime;
@@ -55,6 +58,8 @@ public class GuiComputer extends GuiScreen {
 	public GuiComputer(int computerStateIn) {
 		this.computerState = computerStateIn;
 		
+		this.finishBootup();
+		
 		FileManager.loadPrivateSongs();
 		
 		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
@@ -67,6 +72,7 @@ public class GuiComputer extends GuiScreen {
 		this.buttonList.clear();
 		
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25, (int)90, (int)50);
+		this.guiSongList = new GuiListSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
 	}
 	
 	public void bootupComputer() {
@@ -101,6 +107,19 @@ public class GuiComputer extends GuiScreen {
 		this.shutdownSequence = 10;
 	}
 	
+	public void selectSong(GuiListSongsEntry selectedSongEntry) {
+		this.playSong(selectedSongEntry.getIndex());
+	}
+	
+	private void playSong(int index) {
+		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.playedSong = index;
+	}
+	
+	private void stopSong() {
+		this.computerState = RadioBlock.RUNSTATE_ON;
+	}
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -150,6 +169,9 @@ public class GuiComputer extends GuiScreen {
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 				
+				if(this.currentScreen == 0) {
+					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
+				}
 				
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 				String screenTitle = this.currentScreen == 0 ? "Songs" : this.currentScreen == 1 ? "My Playlists" : "Bookmarked";
@@ -167,12 +189,13 @@ public class GuiComputer extends GuiScreen {
 				}
 				this.guiVisualizer.draw();
 				
+				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 				if(getCurrentPlayedSong() != null) {
 					String songTitle = this.getCurrentPlayedSong().getFullDisplayTitle();
 					int titleLength = songTitle.length();
 					int titleWidth = this.fontRendererObj.getStringWidth(songTitle);
 					
-					if(titleWidth > 180) {
+					if(titleWidth > 165) {
 						float offset = 0;
 						songTitle += "          ";
 						titleLength = songTitle.length();
@@ -189,7 +212,7 @@ public class GuiComputer extends GuiScreen {
 						float newLength = this.fontRendererObj.getStringWidth(songTitle);
 						
 						for(int i = songTitle.length()-1; i >= 0; i--) {
-							if(newLength > 180) {
+							if(newLength > 165) {
 								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
 								songTitle = songTitle.substring(0, songTitle.length()-1);
 							}else{
@@ -197,18 +220,18 @@ public class GuiComputer extends GuiScreen {
 							}
 						}
 						
-						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-90 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenCenterY()-50), 0xffffff);
+						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-85 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenY()+5), 0xffffff);
 						
-						Draw.drawXGradient(this.getScreenCenterX()-90-1, (int)(this.getScreenCenterY()-50), 40, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0], this.bgColor[1], this.bgColor[2], 0);
-						Draw.drawXGradient(this.getScreenCenterX()+90-40+1, (int)(this.getScreenCenterY()-50), 40, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 0, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
-						Draw.drawRect(this.getScreenCenterX()+90, (int)(this.getScreenCenterY()-50), 10, 10, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
+						Draw.drawXGradient(this.getScreenCenterX()-85-1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
+						Draw.drawXGradient(this.getScreenCenterX()+85-40+1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+						Draw.drawRect(this.getScreenCenterX()+85, this.getScreenY(), 10, 10, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 						
 						this.songTitleScroll+=0.5f;
 						while(this.songTitleScroll >= titleWidth) {
 							this.songTitleScroll -= titleWidth;
 						}
 					}else{
-						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenCenterY()-50), 0xffffff);
+						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
 					}
 					
 					this.mc.renderEngine.bindTexture(computerBg);
@@ -216,6 +239,13 @@ public class GuiComputer extends GuiScreen {
 					Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
+				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
+				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
+			
+				this.mc.renderEngine.bindTexture(this.computerBg);
+				if(!(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				Draw.drawTexture(this.getScreenX()+2, this.getScreenY(), 4*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			break;
 		}
 		if(this.desktopFadein > 0) this.desktopFadein-=partialTicks;
@@ -255,6 +285,19 @@ public class GuiComputer extends GuiScreen {
 			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_click, 1.0F));
 			this.powerButtonClicked = true;
 		}
+		
+		switch(this.computerState) {
+			case RadioBlock.RUNSTATE_ON:
+				if(this.currentScreen == 0) {
+					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
+				}
+			break;
+			case RadioBlock.RUNSTATE_PLAYING:
+				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
+					this.stopSong();
+				}
+			break;
+		}
 	}
 
 	@Override
@@ -270,13 +313,27 @@ public class GuiComputer extends GuiScreen {
 		}
 		
 		this.powerButtonClicked = false;
+		
+		switch(this.computerState) {
+			case RadioBlock.RUNSTATE_ON:
+				if(this.currentScreen == 0) {
+					this.guiSongList.mouseReleased(mouseX, mouseY, state);
+				}
+			break;
+		}
 	}
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
 		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
 	}
-
+	
+	public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        this.guiSongList.handleMouseInput();
+    }
+	
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
@@ -363,6 +420,6 @@ public class GuiComputer extends GuiScreen {
 	}
 	
 	public Song getCurrentPlayedSong() {
-		return SongPrivate.privateSongCollection.size() > 0 ? SongPrivate.privateSongCollection.get(0) : null;
+		return SongPrivate.privateSongCollection.size() > 0 ? SongPrivate.privateSongCollection.get(this.playedSong) : null;
 	}
 }
