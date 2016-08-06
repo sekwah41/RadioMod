@@ -12,9 +12,10 @@ import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MusicManager;
 import com.sekwah.radiomod.network.packets.RadioMessage;
-import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
 import com.sekwah.radiomod.network.packets.client.ClientPlaySongPacket;
+import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
 import com.sekwah.radiomod.network.packets.server.ServerBootupComputerPacket;
+import com.sekwah.radiomod.network.packets.server.ServerShutdownComputerPacket;
 import com.sekwah.radiomod.onlineservices.soundcloud.SoundCloud;
 
 import net.minecraft.client.Minecraft;
@@ -101,6 +102,7 @@ public class RadioMod {
         
         //Server packets starting from 100 and up (just a cosmetic thing for me ;))
         packetNetwork.registerMessage(ServerBootupComputerPacket.Handler.class, ServerBootupComputerPacket.class, 100, Side.SERVER);
+        packetNetwork.registerMessage(ServerShutdownComputerPacket.Handler.class, ServerShutdownComputerPacket.class, 101, Side.SERVER);
     }
 
 }

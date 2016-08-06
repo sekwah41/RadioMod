@@ -5,14 +5,12 @@ import java.io.IOException;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
-
-import org.lwjgl.opengl.GL11;
-
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import com.sekwah.radiomod.network.packets.server.ServerBootupComputerPacket;
+import com.sekwah.radiomod.network.packets.server.ServerShutdownComputerPacket;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -97,7 +95,6 @@ public class GuiComputer extends GuiScreen {
 	
 	public void bootupComputer() {
 		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
-		
 		RadioMod.packetNetwork.sendToServer(new ServerBootupComputerPacket(true, this.tileEntity.getPos()));
 		
 		this.setupLoadingDummies();
@@ -119,6 +116,8 @@ public class GuiComputer extends GuiScreen {
 	
 	public void shutdownComputer() {
 		this.computerState = RadioBlock.RUNSTATE_OFF;
+		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(true, this.tileEntity.getPos()));
+		
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
 		this.shutdownSequence = 10;
 	}
