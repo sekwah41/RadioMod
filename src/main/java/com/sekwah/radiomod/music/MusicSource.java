@@ -25,7 +25,7 @@ public class MusicSource {
 
     private TileEntityRadio tileEntity;
 
-    private int currentFrame;
+    //private int currentFrame;
 
     private Song currentSong;
 
@@ -72,6 +72,10 @@ public class MusicSource {
         musicPlayer.start();
     }
 
+    public int getCurrentFrame(){
+        return this.player.getFrame();
+    }
+
     public boolean getIsPlaying(){
         return player != null;
     }
@@ -100,7 +104,7 @@ public class MusicSource {
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
-                        currentFrame = event.getFrame();
+                        //currentFrame = event.getFrame();
                     }
                 });
                 player.play();
@@ -130,7 +134,7 @@ public class MusicSource {
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
-                        currentFrame = event.getFrame();
+                        //currentFrame = event.getFrame();
                     }
                 });
                 player.play();
@@ -165,7 +169,7 @@ public class MusicSource {
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
-                        currentFrame = event.getFrame();
+                       // currentFrame = event.getFrame();
                     }
                 });
                 player.play();
