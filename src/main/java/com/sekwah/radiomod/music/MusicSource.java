@@ -1,6 +1,6 @@
 package com.sekwah.radiomod.music;
 
-import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.music.player.CustomPlayer;
 import com.sekwah.radiomod.music.song.Song;
@@ -11,9 +11,7 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 /**
@@ -60,7 +58,7 @@ public class MusicSource {
             return;
         }
         this.stopMusic();
-        Thread musicPlayer = new Thread(new MusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.pathSeparator + SongPrivate.privateSongCollection.get(songID).getFileName()));
+        Thread musicPlayer = new Thread(new PrivateMusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName()));
         musicPlayer.start();
     }
 
@@ -80,6 +78,41 @@ public class MusicSource {
         return isPlaying;
     }
 
+    class PrivateMusicRunnable implements Runnable {
+
+        private final String location;
+
+        public PrivateMusicRunnable(String location){
+            this.location = location;
+        }
+
+        @Override
+        public void run() {
+
+            RadioMod.logger.info(location);
+
+            RadioMod.logger.info(FileManager.privateSongsDir.getAbsolutePath());
+
+            try {
+                InputStream resourseStream = new FileInputStream(new File(location));
+
+                Bitstream bitstream = new Bitstream(resourseStream);
+
+                player = new CustomPlayer(resourseStream);
+                player.setPlayBackListener(new PlaybackListener() {
+                    @Override
+                    public void playbackFinished(PlaybackEvent event) {
+                        currentFrame = event.getFrame();
+                        isPlaying = false;
+                    }
+                });
+                player.play();
+            } catch (JavaLayerException | FileNotFoundException e) {
+                isPlaying = false;
+                e.printStackTrace();
+            }
+        }
+    }
 
     class MusicRunnable implements Runnable {
 
@@ -96,7 +129,7 @@ public class MusicSource {
             Bitstream bitstream = new Bitstream(resourseStream);
 
             try {
-                AdvancedPlayer player = new AdvancedPlayer(resourseStream);
+                player = new CustomPlayer(resourseStream);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
@@ -104,8 +137,10 @@ public class MusicSource {
                         isPlaying = false;
                     }
                 });
+                isPlaying = true;
                 player.play();
             } catch (JavaLayerException e) {
+                isPlaying = false;
                 e.printStackTrace();
             }
         }
@@ -131,7 +166,7 @@ public class MusicSource {
             Bitstream bitstream = new Bitstream(resourseStream);
 
             try {
-                AdvancedPlayer player = new AdvancedPlayer(resourseStream);
+                player = new CustomPlayer(resourseStream);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
@@ -139,8 +174,10 @@ public class MusicSource {
                         isPlaying = false;
                     }
                 });
+                isPlaying = true;
                 player.play();
             } catch (JavaLayerException e) {
+                isPlaying = false;
                 e.printStackTrace();
             }
         }

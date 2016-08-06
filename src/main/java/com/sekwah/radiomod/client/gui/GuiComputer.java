@@ -134,9 +134,11 @@ public class GuiComputer extends GuiScreen {
 	private void playSong(int index) {
 		this.computerState = RadioBlock.RUNSTATE_PLAYING;
 		this.playedSong = index;
+		this.tileEntity.musicSource.playSongCollection(index);
 	}
 	
 	private void stopSong() {
+		this.tileEntity.musicSource.stopMusic();
 		this.computerState = RadioBlock.RUNSTATE_ON;
 	}
 
