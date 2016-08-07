@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.music;
 
+import com.sekwah.radiomod.music.song.Song;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -16,6 +18,7 @@ public class MobileManager {
 	public static final int MOBILESTATE_PLAYING = 2;
 	
 	public static MusicSource localMusicSource = new MusicSource();
+	public static int framePaused = 0;
 	
 	public static MusicSource getLocalMusicSource() 
 	{
@@ -34,5 +37,17 @@ public class MobileManager {
 	public static int getMobileState() {
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		return player.getDataManager().get(PARAMETER_LOCALSTATE);
+	}
+	
+	public static int getFramePaused() {
+		return framePaused;
+	}
+
+	public static void setFramePaused(int framePausedIn) {
+		framePaused = framePausedIn;
+	}
+	
+	public static Song getSongPlaying() {
+		return localMusicSource.getCurrentSong();
 	}
 }
