@@ -41,8 +41,6 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new EventHook());
     }
 
-    ;
-
     @Override
     public void preInit() {
         GuiComputer.startupLogo = new ResourceLocation(RadioMod.modid, "textures/gui/startupLogo.png");
