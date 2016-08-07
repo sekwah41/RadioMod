@@ -7,6 +7,7 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import com.sekwah.radiomod.client.gui.GuiComputer.Tab;
@@ -17,6 +18,7 @@ import com.sekwah.radiomod.music.MusicSource;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.SongPrivate;
+import com.sekwah.radiomod.music.song.SongSoundCloud;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -72,10 +74,20 @@ public class GuiMobile extends GuiScreen {
 	public TileEntityRadio tileEntity;
 
 	private int pauseFrame = 0;
-	private int songID = -1;
 	
 	public GuiMobile(TileEntityRadio tileEntity) {
 		this.tileEntity = tileEntity;
+		if(this.tileEntity != null && this.tileEntity.getMusicSource() != null && this.tileEntity.getMusicSource().getCurrentSong() != null) {
+			this.playedSong = this.tileEntity.getMusicSource().getCurrentSong().getID();
+			if(this.tileEntity.getMusicSource().getCurrentSong() instanceof SongBuiltIn) {
+				currentTab = 0;
+			}else if(this.tileEntity.getMusicSource().getCurrentSong() instanceof SongPrivate) {
+				currentTab = 1;
+			}else if(this.tileEntity.getMusicSource().getCurrentSong() instanceof SongSoundCloud) {
+				currentTab = 5;
+			}
+		}
+		
 		FileManager.loadPrivateSongs();
 	}
 	
@@ -106,8 +118,6 @@ public class GuiMobile extends GuiScreen {
 		tab = Math.max(Math.min(tab, this.tabs.length-1), 0);
 		
 		this.currentTab = tab;
-		this.playedSong = 0;
-		
 		this.guiSongList.fillOut(getSongCollection());
 	}
 	
@@ -160,7 +170,6 @@ public class GuiMobile extends GuiScreen {
 	
 	private void stopSong() {
 		this.pauseFrame = 0;
-		this.songID = -1;
 		this.getMusicSource().stopMusic();
 		MobileManager.setMobileState(MobileManager.MOBILESTATE_ON);
 	}
@@ -189,7 +198,7 @@ public class GuiMobile extends GuiScreen {
 			this.getMusicSource().stopMusic();
 		}
 		else{
-			this.playSong(songID, pauseFrame);
+			this.playSong(playedSong, pauseFrame);
 		}
 	}
 	
@@ -283,6 +292,7 @@ public class GuiMobile extends GuiScreen {
 					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
 					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
 				}
+				this.guiVisualizer.setLocation((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25);
 				this.guiVisualizer.draw();
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);

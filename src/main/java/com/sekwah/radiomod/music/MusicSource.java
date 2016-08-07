@@ -72,6 +72,7 @@ public class MusicSource {
         if(songID > SongPrivate.privateSongCollection.size() || songID < 0){
             return;
         }
+        this.currentSong = SongPrivate.privateSongCollection.get(songID);
         this.stopMusic();
         Thread musicPlayer = new Thread(new PrivateMusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName(), frame));
         musicPlayer.start();
@@ -98,6 +99,7 @@ public class MusicSource {
         if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
             return;
         }
+        this.currentSong = SongBuiltIn.builtInSongCollection.get(songID);
         this.stopMusic();
         Thread musicPlayer = new Thread(new MusicRunnable(SongBuiltIn.builtInSongCollection.get(songID).getFileName(), frame));
         musicPlayer.start();
@@ -231,6 +233,7 @@ public class MusicSource {
         }
     }
 
-
-
+	public Song getCurrentSong() {
+		return this.currentSong;
+	}
 }
