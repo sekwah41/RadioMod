@@ -31,14 +31,22 @@ public class TrackingData {
         ONLINE(2,"online"),
         STREAM(3,"stream");
 
-        private final int index;
+        public final int index;
 
-        private final String name;
+        public final String name;
 
-        private TrackType(int index, String name){
+        TrackType(int index, String name){
             this.index = index;
             this.name = name;
         }
     }
+
+    public TrackingData(TrackType type, String source, int currentTicks, int maxTicks){
+        this.type = type;
+        this.source = source;
+        this.currentTicks = currentTicks;
+        this.maxTicks = maxTicks;
+    }
+
 
 }

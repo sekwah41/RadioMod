@@ -1,6 +1,8 @@
 package com.sekwah.radiomod.generic;
 
+import com.sekwah.radiomod.RadioSettings;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
  * Created by on 04/08/2016.
@@ -8,6 +10,8 @@ import net.minecraftforge.common.MinecraftForge;
  * @author sekwah41
  */
 public class CommonProxy {
+
+    public RadioSettings settings;
 	
 	public void preInit() {
 		
@@ -31,5 +35,10 @@ public class CommonProxy {
 
     public void setupMusic() {
 
+    }
+
+    public void loadSettings(FMLPreInitializationEvent event) {
+        this.settings = new RadioSettings();
+        this.settings.setupConfigVariables(event);
     }
 }

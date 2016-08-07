@@ -3,6 +3,7 @@ package com.sekwah.radiomod.network.packets.server;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+import com.sekwah.radiomod.music.song.TrackingData;
 import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
 
 import io.netty.buffer.ByteBuf;
@@ -15,10 +16,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ServerPlaySongPacket implements IMessage {
 
-	public String uuid;
+    public TrackingData trackingData;
+    public String uuid;
 
-    public ServerPlaySongPacket(String uuid) {
+    public ServerPlaySongPacket(String uuid, TrackingData trackingData) {
     	this.uuid = uuid;
+        this.trackingData = trackingData;
     }
 
     @Override

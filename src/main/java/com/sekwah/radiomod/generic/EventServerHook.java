@@ -1,8 +1,11 @@
 package com.sekwah.radiomod.generic;
 
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.music.MobileManager;
 
+import com.sekwah.radiomod.network.packets.client.ClientConfigPacket;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -19,12 +22,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class EventServerHook {
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
-
+        RadioMod.instance.musicTracker.updateTracks();
     }
 
     @SubscribeEvent
     public void userLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
-
+        RadioMod.packetNetwork.sendTo(new ClientConfigPacket(RadioMod.proxy.settings.soundRadius, RadioMod.proxy.settings.soundDropoff), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent

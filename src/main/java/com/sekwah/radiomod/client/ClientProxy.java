@@ -1,6 +1,7 @@
 package com.sekwah.radiomod.client;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.RadioSettings;
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
@@ -20,6 +21,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 import java.util.Map;
@@ -30,6 +32,8 @@ import java.util.Map;
  * @author sekwah41
  */
 public class ClientProxy extends CommonProxy {
+
+    public RadioSettings settings;
 
     public boolean isClient() {
         return true;
@@ -72,6 +76,12 @@ public class ClientProxy extends CommonProxy {
         RadioMod radioMod = RadioMod.instance;
         radioMod.modFolder = new File(Minecraft.getMinecraft().mcDataDir, "mods/" + RadioMod.modid);
         radioMod.modFolder.mkdir();
+    }
+
+    @Override
+    public void loadSettings(FMLPreInitializationEvent event) {
+        this.settings = new RadioSettings();
+        this.settings.setupConfigVariables(event);
     }
 
 }

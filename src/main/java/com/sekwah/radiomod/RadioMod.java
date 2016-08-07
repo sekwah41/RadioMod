@@ -78,7 +78,7 @@ public class RadioMod {
 
         configFolder = event.getModConfigurationDirectory();
 
-        RadioSettings.setupConfigVariables(event);
+        proxy.loadSettings(event);
 
         proxy.setupMusic();
         

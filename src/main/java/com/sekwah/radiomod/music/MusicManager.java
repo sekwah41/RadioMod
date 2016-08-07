@@ -1,21 +1,17 @@
 package com.sekwah.radiomod.music;
 
 import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.music.song.TimingData;
 import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
-import javazoom.jl.player.advanced.PlaybackEvent;
-import javazoom.jl.player.advanced.PlaybackListener;
-import net.minecraft.block.BlockRailBase;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Header;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by on 04/08/2016.
@@ -43,6 +39,20 @@ public class MusicManager {
         }
     }
 
+    public TimingData getTimingData(InputStream inputStream){
+        Bitstream bitstream = new Bitstream(inputStream);
+        try {
+            Header head = bitstream.readFrame();
+            int max_frames = head.max_number_of_frames(inputStream.available());
+            inputStream.close();
+            new TimingData(head.ms_per_frame(), max_frames);
+        } catch (BitstreamException | IOException e) {
+            RadioMod.logger.info("Error getting timing data.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void updateSources() {
         float recordVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
         float masterVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER);
@@ -50,22 +60,28 @@ public class MusicManager {
         for(String uuid : radioSources.keySet()){
 
             if(sourceDistances.containsKey(uuid)){
-                float distance = sourceDistances.get(uuid);
-                float volume = (float) (1.1f - (Math.sqrt(distance) / 64f));
-                //RadioMod.logger.info(volume);
-                if(volume > 1f){
-                    volume = 1f;
+                try{
+                    float distance = sourceDistances.get(uuid);
+                    float volume = (float) (1.1f - (Math.sqrt(distance) / 64f));
+                    //RadioMod.logger.info(volume);
+                    if(volume > 1f){
+                        volume = 1f;
+                    }
+                    else if(volume < 0f){
+                        volume = 0;
+                    }
+                    /**
+                     * This value is to make it so the max volume is about the volume of the music discs
+                     */
+                    volume *= 0.4;
+                    volume *= recordVol;
+                    volume *= masterVol;
+                    radioSources.get(uuid).setVolume(volume);
                 }
-                else if(volume < 0f){
-                    volume = 0;
+                catch(NullPointerException e){
+
                 }
-                /**
-                 * This value is to make it so the max volume is about the volume of the music discs
-                 */
-                volume *= 0.4;
-                volume *= recordVol;
-                volume *= masterVol;
-                radioSources.get(uuid).setVolume(volume);
+
             }
             else{
                 MusicSource source = radioSources.get(uuid);

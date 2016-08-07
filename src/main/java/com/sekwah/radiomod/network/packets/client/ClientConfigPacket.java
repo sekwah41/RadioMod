@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.network.packets.client;
 
+import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.RadioSettings;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import com.sekwah.radiomod.music.song.TrackingData;
@@ -12,34 +14,37 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class ClientPlaySongPacket implements IMessage {
+public class ClientConfigPacket implements IMessage {
 
-    public TrackingData trackingData;
-    public String uuid;
+    private double soundRadius;
+    private double soundDropoff;
 
-    public ClientPlaySongPacket(String uuid, TrackingData trackingData) {
-        this.uuid = uuid;
-        this.trackingData = trackingData;
+    public ClientConfigPacket(double soundRadius, double soundDropoff) {
+        this.soundRadius = soundRadius;
+        this.soundDropoff = soundDropoff;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
     	NBTTagCompound tag = ByteBufUtils.readTag(buf);
-    	this.uuid = tag.getString("uuid");
+    	this.soundRadius = tag.getDouble("soundRadius");
+    	this.soundDropoff = tag.getDouble("soundDropoff");
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
     	NBTTagCompound tag = new NBTTagCompound();
-    	tag.setString("uuid", this.uuid);
+    	tag.setDouble("soundRadius", this.soundRadius);
+    	tag.setDouble("soundDropoff", this.soundDropoff);
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<ClientPlaySongPacket, IMessage> {
+    public static class Handler implements IMessageHandler<ClientConfigPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(ClientPlaySongPacket message, MessageContext ctx) {
-
+        public IMessage onMessage(ClientConfigPacket message, MessageContext ctx) {
+            RadioMod.proxy.settings.soundRadius = message.soundRadius;
+            RadioMod.proxy.settings.soundDropoff = message.soundDropoff;
             return null; // no response in this case
         }
     }

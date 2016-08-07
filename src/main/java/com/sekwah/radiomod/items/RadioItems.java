@@ -11,11 +11,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class RadioItems {
 
     public static ItemMobile MOBILE;
+    public static ItemWirelessJack JACK;
 
     public static void registerItems(){
 
         MOBILE = new ItemMobile();
         registerItem(MOBILE, "mobile_player", "ItemMobilePlayer");
+        JACK = new ItemWirelessJack();
+        registerItem(JACK, "wireless_jack", "ItemWirelessJack");
 
     }
 

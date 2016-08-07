@@ -11,11 +11,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 public class RadioSettings {
 
-    public static double soundRadius;
+    public double soundRadius;
 
-    public static double soundDropoff;
+    public double soundDropoff;
 
-    public static void setupConfigVariables(FMLPreInitializationEvent event) {
+    public void setupConfigVariables(FMLPreInitializationEvent event) {
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 
         config.load();
