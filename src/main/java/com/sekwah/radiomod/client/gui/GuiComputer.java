@@ -93,6 +93,8 @@ public class GuiComputer extends GuiScreen {
 		if(this.computerState == RadioBlock.RUNSTATE_BOOTINGUP) {
 			this.setupLoadingDummies();
 		}
+
+		//this.playStream("http://radio.moddingtrials.xyz:8000/stream", "The Modding Trials");
 	}
 	
 	public void setupLoadingDummies() {
@@ -138,7 +140,7 @@ public class GuiComputer extends GuiScreen {
 	public void shutdownComputer() {
 		this.computerState = RadioBlock.RUNSTATE_OFF;
 
-		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
+		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
 
 		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(true, this.tileEntity.getPos()));
 
@@ -162,22 +164,30 @@ public class GuiComputer extends GuiScreen {
 		this.computerState = RadioBlock.RUNSTATE_PLAYING;
 		this.playedSong = index;
 
-		RadioMod.logger.info(this.tileEntity.uuid);
+		RadioMod.logger.info(this.tileEntity.getUUID());
 
 		switch(this.currentTab) {
 			case 0:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).playBuiltInSongCollection(index, frame);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playBuiltInSongCollection(index, frame);
 			break;
 			case 1:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).playPrivateSongCollection(index, frame);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playPrivateSongCollection(index, frame);
 			break;
 		}
+	}
+
+	private void playStream(String url, String radioName) {
+		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+
+		RadioMod.logger.info(this.tileEntity.getUUID());
+
+		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playStreamUrl(url);
 	}
 
 	private void stopSong() {
 		this.pauseFrame = 0;
 		this.songID = -1;
-		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
+		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
 		this.computerState = RadioBlock.RUNSTATE_ON;
 	}
 	
@@ -200,9 +210,9 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	private void togglePlay(){
-		if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getIsPlaying()){
-			pauseFrame = RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getCurrentFrame();
-			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).stopMusic();
+		if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getIsPlaying()){
+			pauseFrame = RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getCurrentFrame();
+			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
 		}
 		else{
 			this.playSong(songID, pauseFrame);
@@ -337,7 +347,7 @@ public class GuiComputer extends GuiScreen {
 					this.mc.renderEngine.bindTexture(computerBg);
 					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
 					// TODO draw play and pause.
-					if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).getIsPlaying()){
+					if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getIsPlaying()){
 						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					}
 					else{

@@ -7,6 +7,7 @@ import javazoom.jl.decoder.SampleBuffer;
 import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -20,13 +21,24 @@ public class CustomPlayer extends AdvancedPlayer {
 
 	private int currentFrame = 1;
 
+	private Header firstFrameHeader;
+
 	public CustomPlayer(InputStream stream) throws JavaLayerException {
 		super(stream);
+		this.firstFrameHeader = this.bitstream.readFrame();
+		RadioMod.logger.info(firstFrameHeader.ms_per_frame());
+		try {
+			RadioMod.logger.info(firstFrameHeader.max_number_of_frames(stream.available()));
+		} catch (IOException e) {
+			RadioMod.logger.info("Error getting stream size");
+			e.printStackTrace();
+		}
+		this.bitstream.unreadFrame();
 	}
 
 	public CustomPlayer(InputStream stream, float volume) throws JavaLayerException
 	{
-		super(stream);
+		this(stream);
 		this.volume = volume;
 	}
 
@@ -56,6 +68,18 @@ public class CustomPlayer extends AdvancedPlayer {
 			currentFrame++;
 		}
 		play();
+	}
+
+	/**
+	 * skips over a single frame
+	 * @return false	if there are no more frames to decode, true otherwise.
+	 */
+	protected boolean skipFrame() throws JavaLayerException
+	{
+		Header h = bitstream.readFrame();
+		if (h == null) return false;
+		bitstream.closeFrame();
+		return true;
 	}
 
 	/**

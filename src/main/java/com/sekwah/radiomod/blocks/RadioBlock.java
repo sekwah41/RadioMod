@@ -115,7 +115,7 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
         if (tileEntity instanceof TileEntityRadio)
         {
             TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
-            RadioMod.instance.musicManager.radioSources.get(radioTileEntity.uuid).stopMusic();
+            RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
         }
         if (hasTileEntity(state) && !(this instanceof BlockContainer))
         {

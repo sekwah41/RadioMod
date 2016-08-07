@@ -8,7 +8,6 @@ import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
 
@@ -108,7 +107,7 @@ public class MusicSource {
 
     public void playStreamUrl(String streamUrl, int frame){
         this.stopMusic();
-        Thread musicPlayer = new Thread(new RadioRunnable(streamUrl, frame));
+        Thread musicPlayer = new Thread(new RadioRunnable(streamUrl));
         musicPlayer.start();
     }
 
@@ -197,11 +196,9 @@ public class MusicSource {
     class RadioRunnable implements Runnable {
 
         private final String streamString;
-        private final int startFrame;
 
-        public RadioRunnable(String streamString, int startFrame){
+        public RadioRunnable(String streamString){
             this.streamString = streamString;
-            this.startFrame = startFrame;
         }
 
         @Override
@@ -224,7 +221,7 @@ public class MusicSource {
                         player = null;
                     }
                 });
-                player.playFrom(startFrame);
+                player.play();
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();

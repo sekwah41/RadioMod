@@ -36,29 +36,7 @@ public class EventHook {
             }
             else{
                 //RadioMod.logger.info(event.phase);
-                for(String uuid : RadioMod.instance.musicManager.radioSources.keySet()){
-
-                    if(RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)){
-                        float recordVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
-                        float masterVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER);
-                        float distance = RadioMod.instance.musicManager.sourceDistances.get(uuid);
-                        float volume = (float) (1.1f - (Math.sqrt(distance) / 64f));
-                        //RadioMod.logger.info(volume);
-                        if(volume > 1f){
-                            volume = 1f;
-                        }
-                        else if(volume < 0f){
-                            volume = 0;
-                        }
-                        /**
-                         * This value is to make it so the max volume is about the volume of the music discs
-                         */
-                        volume *= 0.4;
-                        volume *= recordVol;
-                        volume *= masterVol;
-                        RadioMod.instance.musicManager.radioSources.get(uuid).setVolume(volume);
-                    }
-                }
+                RadioMod.instance.musicManager.updateSources();
             }
         }
     }

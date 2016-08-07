@@ -21,6 +21,8 @@ public class SongBuiltIn extends Song {
 		registerSong("Iwo Plaza", "Alive", "Iwo Plaza - Alive");
 		registerSong("Iwo Plaza", "Calling", "Iwo Plaza - Calling");
 		registerSong("Iwo Plaza", "New Horizon", "Iwo Plaza - New Horizon");
+		registerSong("Iwo Plaza", "Drowning", "Iwo Plaza - Drowning");
+		registerSong("Iwo Plaza", "Spectrum", "Iwo Plaza - Spectrum");
 	}
 	
 	public static void registerSong(String authorIn, String titleIn, String fileNameIn) {

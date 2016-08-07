@@ -33,6 +33,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void addEvents(){
+        super.addEvents();
         MinecraftForge.EVENT_BUS.register(new EventHook());
     };
 
