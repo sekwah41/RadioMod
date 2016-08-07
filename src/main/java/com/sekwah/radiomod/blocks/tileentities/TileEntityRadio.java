@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author sekwah41
  */
 public class TileEntityRadio extends TileEntity implements ITickable {
-
     private String uuid = UUID.randomUUID().toString();
 
     private int rotation = 0;

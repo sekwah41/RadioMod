@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GL11;
  * @author sekwah41
  */
 public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntityRadio> {
-
     public final ModelMp3DockRadio model = new ModelMp3DockRadio();
 
     //This method is called when minecraft renders a tile entity
