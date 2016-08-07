@@ -29,7 +29,6 @@ public class CommonProxy {
 
     }
 
-
     public void setupMusic() {
 
     }

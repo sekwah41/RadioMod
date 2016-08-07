@@ -155,7 +155,10 @@ public class MusicSource {
                     }
                 });
                 player.playFrom(startFrame);
-            } catch (JavaLayerException | FileNotFoundException e) {
+            } catch (JavaLayerException e) {
+                player = null;
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
                 player = null;
                 e.printStackTrace();
             }
