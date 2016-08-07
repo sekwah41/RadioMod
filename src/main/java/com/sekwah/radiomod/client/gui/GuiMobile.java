@@ -34,6 +34,7 @@ import net.minecraft.util.ResourceLocation;
  * @author GoblinBob
  */
 public class GuiMobile extends GuiScreen {
+	
 	protected int bgWidth = 184;
     protected int bgHeight = 256;
     protected float[] bgColor = new float[]{

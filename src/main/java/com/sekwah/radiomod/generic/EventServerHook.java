@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
  * @author sekwah41
  */
 public class EventServerHook {
+	
     @SubscribeEvent
     public void tick(TickEvent.ServerTickEvent event) {
 
