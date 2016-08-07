@@ -1,7 +1,6 @@
 package com.sekwah.radiomod.client;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
@@ -9,11 +8,9 @@ import com.sekwah.radiomod.client.gui.GuiMobile;
 import com.sekwah.radiomod.client.renderer.layers.LayerHeadphones;
 import com.sekwah.radiomod.client.renderer.tileentity.TileEntityRadioRenderer;
 import com.sekwah.radiomod.generic.CommonProxy;
-
 import com.sekwah.radiomod.items.RadioItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -34,30 +31,32 @@ import java.util.Map;
  */
 public class ClientProxy extends CommonProxy {
 
-    public boolean isClient(){
+    public boolean isClient() {
         return true;
     }
 
     @Override
-    public void addEvents(){
+    public void addEvents() {
         super.addEvents();
         MinecraftForge.EVENT_BUS.register(new EventHook());
-    };
+    }
+
+    ;
 
     @Override
     public void preInit() {
-    	GuiComputer.startupLogo = new ResourceLocation(RadioMod.modid, "textures/gui/startupLogo.png");
-    	GuiComputer.computerBg = new ResourceLocation(RadioMod.modid, "textures/gui/computer.png");
-    	GuiMobile.mobileBg = new ResourceLocation(RadioMod.modid, "textures/gui/mobile.png");
+        GuiComputer.startupLogo = new ResourceLocation(RadioMod.modid, "textures/gui/startupLogo.png");
+        GuiComputer.computerBg = new ResourceLocation(RadioMod.modid, "textures/gui/computer.png");
+        GuiMobile.mobileBg = new ResourceLocation(RadioMod.modid, "textures/gui/mobile.png");
     }
     
     @Override
     public void postInit() {
-    	Map<String, RenderPlayer> playerSkins = Minecraft.getMinecraft().getRenderManager().getSkinMap();
-    	String[] keys = playerSkins.keySet().toArray(new String[0]);
-    	for(int i = 0; i < keys.length; i++){
-    		playerSkins.get(keys[i]).addLayer(new LayerHeadphones(playerSkins.get(keys[i]).getMainModel().bipedHead));
-    	}
+        Map<String, RenderPlayer> playerSkins = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+        String[] keys = playerSkins.keySet().toArray(new String[0]);
+        for (int i = 0; i < keys.length; i++) {
+            playerSkins.get(keys[i]).addLayer(new LayerHeadphones(playerSkins.get(keys[i]).getMainModel().bipedHead));
+        }
 
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, TileEntityRadio.class);
         ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
@@ -71,9 +70,9 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void setupMusic(){
+    public void setupMusic() {
         RadioMod radioMod = RadioMod.instance;
-        radioMod.modFolder = new File(Minecraft.getMinecraft().mcDataDir,"mods/"+RadioMod.modid);
+        radioMod.modFolder = new File(Minecraft.getMinecraft().mcDataDir, "mods/" + RadioMod.modid);
         radioMod.modFolder.mkdir();
     }
 
