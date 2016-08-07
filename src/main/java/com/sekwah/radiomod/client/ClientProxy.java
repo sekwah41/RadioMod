@@ -3,10 +3,10 @@ package com.sekwah.radiomod.client;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.RadioBlocks;
-import com.sekwah.radiomod.blocks.renderers.TileEntityRadioRenderer;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.client.gui.GuiMobile;
+import com.sekwah.radiomod.client.renderer.tileentity.TileEntityRadioRenderer;
 import com.sekwah.radiomod.generic.CommonProxy;
 
 import net.minecraft.client.Minecraft;

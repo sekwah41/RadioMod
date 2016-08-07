@@ -1,10 +1,11 @@
 package com.sekwah.radiomod.blocks.tileentities;
 
+import java.util.UUID;
+
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.music.MusicSource;
 
-import com.sun.istack.internal.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -13,8 +14,6 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.UUID;
 
 /**
  * Created by on 05/08/2016.
@@ -88,7 +87,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         }
     }
 
-    @Nullable
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         return new SPacketUpdateTileEntity(this.pos, 1, this.getUpdateTag());
@@ -161,12 +159,15 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public void bootUp() {
         this.runState = RadioBlock.RUNSTATE_BOOTINGUP;
-        RadioMod.logger.info("BOOTING UPPPPP!!!!!");
         this.bootupSequence = 50;
+        
+        this.markDirty();
     }
 
     public void shutdown() {
         this.runState = RadioBlock.RUNSTATE_OFF;
+        
+        this.markDirty();
     }
 
     public void setRunState(int runStateIn) {
@@ -180,6 +181,4 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public void createMusicSource(){
         RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
     }
-
-
 }

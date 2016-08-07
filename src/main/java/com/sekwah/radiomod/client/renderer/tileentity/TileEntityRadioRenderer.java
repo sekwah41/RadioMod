@@ -1,4 +1,4 @@
-package com.sekwah.radiomod.blocks.renderers;
+package com.sekwah.radiomod.client.renderer.tileentity;
 
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
