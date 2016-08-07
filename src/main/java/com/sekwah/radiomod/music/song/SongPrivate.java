@@ -8,8 +8,8 @@ public class SongPrivate extends Song {
 
 	private String fileName;
 
-	public SongPrivate(String authorIn, String titleIn, String fileName) {
-		super(authorIn, titleIn);
+	public SongPrivate(int idIn, String authorIn, String titleIn, String fileName) {
+		super(idIn, authorIn, titleIn);
 		this.fileName = fileName;
 	}
 

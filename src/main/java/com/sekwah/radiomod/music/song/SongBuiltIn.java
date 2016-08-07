@@ -8,8 +8,8 @@ public class SongBuiltIn extends Song {
 
 	private String fileName;
 
-	public SongBuiltIn(String authorIn, String titleIn, String fileName) {
-		super(authorIn, titleIn);
+	public SongBuiltIn(int idIn, String authorIn, String titleIn, String fileName) {
+		super(idIn, authorIn, titleIn);
 		this.fileName = fileName;
 	}
 
@@ -26,6 +26,6 @@ public class SongBuiltIn extends Song {
 	}
 	
 	public static void registerSong(String authorIn, String titleIn, String fileNameIn) {
-		builtInSongCollection.add(new SongBuiltIn(authorIn, titleIn, fileNameIn));
+		builtInSongCollection.add(new SongBuiltIn(builtInSongCollection.size(), authorIn, titleIn, fileNameIn));
 	}
 }

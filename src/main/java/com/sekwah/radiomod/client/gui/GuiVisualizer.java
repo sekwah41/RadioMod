@@ -43,4 +43,9 @@ public class GuiVisualizer {
 	public int getBands() {
 		return this.bands;
 	}
+
+	public void setLocation(int xIn, int yIn) {
+		this.x = xIn;
+		this.y = yIn;
+	}
 }

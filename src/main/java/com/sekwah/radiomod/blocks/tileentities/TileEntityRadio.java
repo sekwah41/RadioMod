@@ -206,4 +206,8 @@ public class TileEntityRadio extends TileEntity implements ITickable {
             RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
         }
     }
+
+	public MusicSource getMusicSource() {
+		return RadioMod.instance.musicManager.radioSources.get(this.uuid);
+	}
 }

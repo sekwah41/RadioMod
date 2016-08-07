@@ -51,7 +51,7 @@ public class FileManager {
 			title = parts[1].trim();
 		}
 		
-		return new SongPrivate(author, title, file.getName());
+		return new SongPrivate(SongPrivate.privateSongCollection.size(), author, title, file.getName());
 	}
 	
 	public static void preInit() {

@@ -9,8 +9,8 @@ public class SongSoundCloud extends Song {
 
     public String songURL = null;
 
-    public SongSoundCloud(String authorIn, String titleIn, String songURL) {
-        super(authorIn, titleIn);
+    public SongSoundCloud(int idIn, String authorIn, String titleIn, String songURL) {
+        super(idIn, authorIn, titleIn);
         this.songURL = songURL;
     }
 }
