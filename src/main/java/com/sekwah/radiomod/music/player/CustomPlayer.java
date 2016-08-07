@@ -118,6 +118,7 @@ public class CustomPlayer extends AdvancedPlayer {
 						short newValue = (short) (samples[samp] * this.volume);
 						samples[samp] = newValue;
 					}
+					this.rawData = samples;
 					out.write(samples, 0, output.getBufferLength());
 				}
 			}
