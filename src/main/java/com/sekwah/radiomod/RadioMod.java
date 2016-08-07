@@ -72,7 +72,7 @@ public class RadioMod {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-
+    	proxy.postInit();
     }
 
     @Mod.EventHandler

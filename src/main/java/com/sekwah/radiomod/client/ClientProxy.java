@@ -6,11 +6,14 @@ import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.client.gui.GuiMobile;
+import com.sekwah.radiomod.client.renderer.layers.LayerHeadphones;
 import com.sekwah.radiomod.client.renderer.tileentity.TileEntityRadioRenderer;
 import com.sekwah.radiomod.generic.CommonProxy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -19,6 +22,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Created by on 04/08/2016.
@@ -42,6 +46,15 @@ public class ClientProxy extends CommonProxy {
     	GuiComputer.startupLogo = new ResourceLocation(RadioMod.modid, "textures/gui/startupLogo.png");
     	GuiComputer.computerBg = new ResourceLocation(RadioMod.modid, "textures/gui/computer.png");
     	GuiMobile.mobileBg = new ResourceLocation(RadioMod.modid, "textures/gui/mobile.png");
+    }
+    
+    @Override
+    public void postInit() {
+    	Map<String, RenderPlayer> playerSkins = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+    	String[] keys = playerSkins.keySet().toArray(new String[0]);
+    	for(int i = 0; i < keys.length; i++){
+    		playerSkins.get(keys[i]).addLayer(new LayerHeadphones(playerSkins.get(keys[i]).getMainModel().bipedHead));
+    	}
     }
 
     @Override

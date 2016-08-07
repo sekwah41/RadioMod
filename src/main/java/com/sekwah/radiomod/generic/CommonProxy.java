@@ -13,6 +13,10 @@ public class CommonProxy {
 		
 	}
 	
+	public void postInit() {
+		
+	}
+	
     public boolean isClient(){
         return false;
     }
