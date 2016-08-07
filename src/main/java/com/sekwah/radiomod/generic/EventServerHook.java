@@ -10,6 +10,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -26,8 +27,11 @@ public class EventServerHook {
     }
 
     @SubscribeEvent
-    public void userLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
-        RadioMod.packetNetwork.sendTo(new ClientConfigPacket(RadioMod.proxy.settings.soundRadius, RadioMod.proxy.settings.soundDropoff), (EntityPlayerMP) event.player);
+    public void userLoggedIn(EntityJoinWorldEvent event){
+        if(event.getEntity() instanceof EntityPlayerMP){
+            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+            RadioMod.packetNetwork.sendTo(new ClientConfigPacket(RadioMod.proxy.settings.soundRadius, RadioMod.proxy.settings.soundDropoff), player);
+        }
     }
 
     @SubscribeEvent

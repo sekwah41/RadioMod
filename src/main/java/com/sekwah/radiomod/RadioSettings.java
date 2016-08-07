@@ -21,11 +21,11 @@ public class RadioSettings {
         config.load();
 
         Property configSoundRadius = config.get(Configuration.CATEGORY_GENERAL, "soundRadius", 10);
-        soundRadius = configSoundRadius.getDouble(0);
+        soundRadius = configSoundRadius.getDouble(10);
         configSoundRadius.setComment("This sets the radius for the full volume");
 
         Property configDropOffRadius = config.get(Configuration.CATEGORY_GENERAL, "soundDropoff", 54);
-        soundDropoff = configDropOffRadius.getDouble(0);
+        soundDropoff = configDropOffRadius.getDouble(54);
         configSoundRadius.setComment("This sets the radius for the drop off after the full radius.");
 
         config.save();
