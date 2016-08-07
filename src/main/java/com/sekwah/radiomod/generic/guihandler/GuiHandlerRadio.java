@@ -34,7 +34,7 @@ public class GuiHandlerRadio implements IGuiHandler {
 			case GUIID_COMPUTER:
 				return new GuiComputer(tileEntity);
 			case GUIID_MOBILE:
-				return new GuiMobile(tileEntity != null ? tileEntity.getRunState() : -1);
+				return new GuiMobile(tileEntity);
 		}
 		
 		return null;

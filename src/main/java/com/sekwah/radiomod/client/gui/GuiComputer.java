@@ -118,7 +118,7 @@ public class GuiComputer extends GuiScreen {
 
 	public void bootupComputer() {
 		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
-		RadioMod.packetNetwork.sendToServer(new ServerBootupComputerPacket(true, this.tileEntity.getPos()));
+		RadioMod.packetNetwork.sendToServer(new ServerBootupComputerPacket(false, this.tileEntity.getPos()));
 
 		this.setupLoadingDummies();
 
@@ -142,7 +142,7 @@ public class GuiComputer extends GuiScreen {
 
 		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
 
-		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(true, this.tileEntity.getPos()));
+		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(false, this.tileEntity.getPos()));
 
 		if(this.startupFinishSoundRecord != null){
 			Minecraft.getMinecraft().getSoundHandler().stopSound(this.startupFinishSoundRecord);

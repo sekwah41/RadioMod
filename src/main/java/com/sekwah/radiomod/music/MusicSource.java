@@ -48,6 +48,7 @@ public class MusicSource {
     private CustomPlayer player = null;
 
     public MusicSource(){
+    	this.volume = 0.4f;
     }
 
     /**

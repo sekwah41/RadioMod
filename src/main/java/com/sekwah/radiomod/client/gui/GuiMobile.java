@@ -1,13 +1,21 @@
 package com.sekwah.radiomod.client.gui;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+
 import org.lwjgl.opengl.GL11;
 
+import com.sekwah.radiomod.client.gui.GuiComputer.Tab;
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
+import com.sekwah.radiomod.music.MobileManager;
+import com.sekwah.radiomod.music.MusicSource;
 import com.sekwah.radiomod.music.song.Song;
+import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.SongPrivate;
 import com.sekwah.radiomod.util.Draw;
 
@@ -35,7 +43,6 @@ public class GuiMobile extends GuiScreen {
 	public GuiVisualizer guiVisualizer;
 	public GuiListMobileSongs guiSongList;
 	
-	private int computerState;
 	private int playedSong;
 	private float startupSequence;
 	private float bringUpSequence;
@@ -52,16 +59,24 @@ public class GuiMobile extends GuiScreen {
 	/*
 	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2)
 	 */
-	public int currentScreen = 0;
+	public Tab[] tabs = new Tab[]{
+		new Tab("Chef's Specials"),
+		new Tab("Private Collection"),
+		new Tab("Playlists"),
+		new Tab("Bookmarked"),
+		new Tab("Radio Stations"),
+		new Tab("SoundCloud"),
+	};
+	public int currentTab = 0;
+
+	public TileEntityRadio tileEntity;
+
+	private int pauseFrame = 0;
+	private int songID = -1;
 	
-	public GuiMobile(int computerStateIn) {
-		this.computerState = computerStateIn;
-		
+	public GuiMobile(TileEntityRadio tileEntity) {
+		this.tileEntity = tileEntity;
 		FileManager.loadPrivateSongs();
-		
-		//RadioMod.instance.musicManager.playAssetsSound("IRMOST-GlitchHop");
-		//RadioMod.instance.musicManager.playStreamUrl("http://stream.dancewave.online:8080/dance.mp3");
-		//RadioMod.instance.musicManager.playStreamUrl("https://api.soundcloud.com/tracks/215534268/stream?client_id=23c5983facf3240a2f14515f05f34873");
 	}
 	
 	public void initGui() {
@@ -70,36 +85,53 @@ public class GuiMobile extends GuiScreen {
 		
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25, (int)90, (int)50);
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
+		this.openTab(0);
+		
+		if(MobileManager.getMobileState() == MobileManager.MOBILESTATE_BOOTINGUP) {
+			this.setupLoadingDummies();
+		}
+	}
+	
+	public void setupLoadingDummies() {
+		this.loadingDummies = new LoadingDummy[]{
+			new LoadingDummy("Loading assets...", 4),
+			new LoadingDummy("Setting up the color scheme...", 4),
+			new LoadingDummy("Prepearing snazzy interface item...", 3),
+			new LoadingDummy("User validation...", 2),
+			new LoadingDummy("Connecting to the great music database...", 5)
+		};
+	}
+	
+	public void openTab(int tab) {
+		tab = Math.max(Math.min(tab, this.tabs.length-1), 0);
+		
+		this.currentTab = tab;
+		this.playedSong = 0;
+		
+		this.guiSongList.fillOut(getSongCollection());
 	}
 	
 	public void bootupComputer() {
-		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
+		MobileManager.setMobileState(MobileManager.MOBILESTATE_BOOTINGUP);
 		
+		this.initGui();
+
 		this.startupSequence = 0;
 		this.loadingProgress = 0;
 		this.currentStartupTime = 0;
 		this.startupLogoFadeout = 0;
-		
-		this.loadingDummies = new LoadingDummy[]{
-			new LoadingDummy("Loading assets...", 4),
-			new LoadingDummy("Setting up the color scheme...", 4),
-			new LoadingDummy("Drawing snazzy interface items...", 3),
-			new LoadingDummy("User validation...", 2),
-			new LoadingDummy("Gathering gr8 beats...", 5)
-		};
 		
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_startup_click, 1.0F));
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_release, 1.0F));
 	}
 	
 	public void finishBootup() {
-		this.computerState = RadioBlock.RUNSTATE_ON;
+		MobileManager.setMobileState(MobileManager.MOBILESTATE_ON);
 		this.desktopFadein = 20;
-		this.initGui();
 	}
 	
 	public void shutdownComputer() {
-		this.computerState = RadioBlock.RUNSTATE_OFF;
+		MobileManager.setMobileState(MobileManager.MOBILESTATE_OFF);
 		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RadioSounds.radio_powerbutton_off, 1.0F));
 		this.shutdownSequence = 10;
 	}
@@ -109,14 +141,58 @@ public class GuiMobile extends GuiScreen {
 	}
 	
 	private void playSong(int index) {
-		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.playSong(index, 0);
+	}
+	
+	private void playSong(int index, int frame) {
+		MobileManager.setMobileState(MobileManager.MOBILESTATE_PLAYING);
 		this.playedSong = index;
+		
+		switch(this.currentTab) {
+			case 0:
+				this.getMusicSource().playBuiltInSongCollection(index, frame);
+			break;
+			case 1:
+				this.getMusicSource().playPrivateSongCollection(index, frame);
+			break;
+		}
 	}
 	
 	private void stopSong() {
-		this.computerState = RadioBlock.RUNSTATE_ON;
+		this.pauseFrame = 0;
+		this.songID = -1;
+		this.getMusicSource().stopMusic();
+		MobileManager.setMobileState(MobileManager.MOBILESTATE_ON);
+	}
+	
+	private void previousSong() {
+		if(getSongCollection() == null) return;
+		
+		this.stopSong();
+		int nextSong = this.playedSong-1;
+		if(nextSong < 0) nextSong = getSongCollection().size()-1;
+		this.playSong(nextSong);
+	}
+	
+	private void nextSong() {
+		if(getSongCollection() == null) return;
+		
+		this.stopSong();
+		int nextSong = this.playedSong+1;
+		if(nextSong >= getSongCollection().size()) nextSong = 0;
+		this.playSong(nextSong);
 	}
 
+	private void togglePlay(){
+		if(this.getMusicSource().getIsPlaying()){
+			pauseFrame = this.getMusicSource().getCurrentFrame();
+			this.getMusicSource().stopMusic();
+		}
+		else{
+			this.playSong(songID, pauseFrame);
+		}
+	}
+	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -124,14 +200,18 @@ public class GuiMobile extends GuiScreen {
 		this.drawDefaultBackground();
 		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, 1);
 		
-		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_OFF:
-				if(this.bringUpSequence < 1){
-					this.bringUpSequence+=partialTicks*0.1f;
-					if(this.bringUpSequence > 1){
-						this.bootupComputer();
-						this.bringUpSequence = 1;
-					}
+		if(this.bringUpSequence < 1){
+			this.bringUpSequence+=partialTicks*0.1f;
+			if(this.bringUpSequence > 1){
+				this.initGui();
+				this.bringUpSequence = 1;
+			}
+		}
+		
+		switch(MobileManager.getMobileState()) {
+			case MobileManager.MOBILESTATE_OFF:
+				if(this.bringUpSequence == 1){
+					this.bootupComputer();
 				}
 				
 				if(this.shutdownSequence > 0) this.shutdownSequence-=partialTicks;
@@ -143,7 +223,7 @@ public class GuiMobile extends GuiScreen {
 				if(hSeq > 1) hSeq = 1;
 				Draw.drawRect(this.getScreenX()+this.getScreenWidth()/2*hSeq, this.getScreenY()+(this.getScreenHeight()-2)/2*vSeq, this.getScreenWidth()*(1-hSeq), (this.getScreenHeight()-2)*(1-vSeq)+2, 1, 1, 1, 1);
 			break;
-			case RadioBlock.RUNSTATE_BOOTINGUP:
+			case MobileManager.MOBILESTATE_BOOTINGUP:
 				this.currentStartupTime+=partialTicks;
 				if(this.getStartupLogoProgress() >= 1){
 					startupLogoFadeout+=partialTicks;
@@ -170,37 +250,48 @@ public class GuiMobile extends GuiScreen {
 					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 				}
 			break;
-			case RadioBlock.RUNSTATE_ON:
+			case MobileManager.MOBILESTATE_ON:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
-				
-				if(this.currentScreen == 0) {
+
+				if(this.currentTab == 0) {
+					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
+				}else if(this.currentTab == 1) {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
 				}
-				
+
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-				String screenTitle = this.currentScreen == 0 ? "Songs" : this.currentScreen == 1 ? "My Playlists" : "Bookmarked";
+				String screenTitle = this.tabs[this.currentTab].displayLabel;
 				this.drawCenteredString(this.fontRendererObj, screenTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
 				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
 				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
+				
+				this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
+				if(!(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				if(this.currentTab > 0) Draw.drawTexture(this.getScreenX()+2, this.getScreenY(), 4*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				
+				if(!(mouseX >= this.getScreenX()+this.getScreenWidth()-16-1 && mouseX <= this.getScreenX()+this.getScreenWidth() && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
+				if(this.currentTab < this.tabs.length-1) Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-16-2, this.getScreenY(), 3*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			break;
-			case RadioBlock.RUNSTATE_PLAYING:
+			case MobileManager.MOBILESTATE_PLAYING:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
-				
+
 				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
 					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
 					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
 				}
 				this.guiVisualizer.draw();
-				
+
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 				if(getCurrentPlayedSong() != null) {
 					String songTitle = this.getCurrentPlayedSong().getFullDisplayTitle();
 					int titleLength = songTitle.length();
 					int titleWidth = this.fontRendererObj.getStringWidth(songTitle);
-					
-					if(titleWidth > 120) {
+
+					if(titleWidth > 150) {
 						float offset = 0;
 						songTitle += "          ";
 						titleLength = songTitle.length();
@@ -215,22 +306,22 @@ public class GuiMobile extends GuiScreen {
 							}
 						}
 						float newLength = this.fontRendererObj.getStringWidth(songTitle);
-						
+
 						for(int i = songTitle.length()-1; i >= 0; i--) {
-							if(newLength > 120) {
+							if(newLength > 170) {
 								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
 								songTitle = songTitle.substring(0, songTitle.length()-1);
 							}else{
 								break;
 							}
 						}
-						
-						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-65 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenY()+5), 0xffffff);
-						
-						Draw.drawXGradient(this.getScreenCenterX()-65-1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
-						Draw.drawXGradient(this.getScreenCenterX()+65-40+1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-						Draw.drawRect(this.getScreenCenterX()+65, this.getScreenY(), 10, 10, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-						
+
+						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-85 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenY()+5), 0xffffff);
+
+						Draw.drawXGradient(this.getScreenCenterX()-85-1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
+						Draw.drawXGradient(this.getScreenCenterX()+85-40+1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+						Draw.drawRect(this.getScreenCenterX()+85, this.getScreenY(), 20, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+
 						this.songTitleScroll+=0.5f;
 						while(this.songTitleScroll >= titleWidth) {
 							this.songTitleScroll -= titleWidth;
@@ -238,15 +329,22 @@ public class GuiMobile extends GuiScreen {
 					}else{
 						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
 					}
-					
+
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
-					Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					// TODO draw play and pause.
+					if(this.getMusicSource().getIsPlaying()){
+						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					}
+					else{
+						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					}
+					//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
 				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
 				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
-			
+
 				this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 				if(!(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16)) GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
 				Draw.drawTexture(this.getScreenX()+2, this.getScreenY(), 4*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
@@ -291,16 +389,43 @@ public class GuiMobile extends GuiScreen {
 			this.deviceButtons[2] = true;
 		}
 		
-		switch(this.computerState) {
+		switch(MobileManager.getMobileState()) {
 			case RadioBlock.RUNSTATE_ON:
-				if(this.currentScreen == 0) {
+				if(this.currentTab == 0) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
+				}else if(this.currentTab == 1) {
+					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
+				}
+				
+				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
+					openTab(this.currentTab-1);
+				}
+				
+				if(mouseX >= this.getScreenX()+this.getScreenWidth()-16-1 && mouseX <= this.getScreenX()+this.getScreenWidth() && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
+					openTab(this.currentTab+1);
 				}
 			break;
 			case RadioBlock.RUNSTATE_PLAYING:
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
 					this.stopSong();
 				}
+				
+				if(mouseX >= this.getScreenCenterX()-20-8 && mouseX <= this.getScreenCenterX()-20-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					previousSong();
+				}
+				if(mouseX >= this.getScreenCenterX()+20-8 && mouseX <= this.getScreenCenterX()+20-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					nextSong();
+				}
+	
+				if(mouseX >= this.getScreenCenterX()-8 && mouseX <= this.getScreenCenterX()-8+16 &&
+				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16){
+					togglePlay();
+				}
+				//Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+				//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+				//Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 			break;
 		}
 	}
@@ -313,9 +438,9 @@ public class GuiMobile extends GuiScreen {
 			this.deviceButtons[i] = false;
 		}
 		
-		switch(this.computerState) {
+		switch(MobileManager.getMobileState()) {
 			case RadioBlock.RUNSTATE_ON:
-				if(this.currentScreen == 0) {
+				if(this.currentTab == 0) {
 					this.guiSongList.mouseReleased(mouseX, mouseY, state);
 				}
 			break;
@@ -342,8 +467,8 @@ public class GuiMobile extends GuiScreen {
 	public void updateScreen() {
 		super.updateScreen();
 		
-		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_BOOTINGUP:
+		switch(MobileManager.getMobileState()) {
+			case MobileManager.MOBILESTATE_BOOTINGUP:
 				if(areDummiesLoading()){
 					LoadingDummy currentDummy = this.loadingDummies[this.loadingProgress];
 					if(!currentDummy.isLoaded()){
@@ -361,7 +486,7 @@ public class GuiMobile extends GuiScreen {
 					}
 				}
 			break;
-			case RadioBlock.RUNSTATE_ON:
+			case MobileManager.MOBILESTATE_ON:
 			break;
 		}
 	}
@@ -419,11 +544,43 @@ public class GuiMobile extends GuiScreen {
 	}
 	
 	public Song getCurrentPlayedSong() {
-		return SongPrivate.privateSongCollection.size() > 0 ? SongPrivate.privateSongCollection.get(this.playedSong) : null;
+		switch(this.currentTab) {
+			case 0:
+				return SongBuiltIn.builtInSongCollection.get(this.playedSong);
+			case 1:
+				return SongPrivate.privateSongCollection.get(this.playedSong);
+		}
+		return null;
+	}
+	
+	public List<? extends Song> getSongCollection() {
+		switch(this.currentTab) {
+			case 0:
+				return SongBuiltIn.builtInSongCollection;
+			case 1:
+				return SongPrivate.privateSongCollection;
+		}
+		return null;
 	}
 	
 	public float getYOffset() {
 		float mag = 10;
 		return (float) (Math.pow((1-this.bringUpSequence)*mag, 2)/(mag*mag))*height/2;
+	}
+	
+	public int getMobileState() {
+		return MobileManager.mobileState;
+	}
+	
+	public MusicSource getMusicSource() {
+		return this.tileEntity != null ? RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()) : MobileManager.getLocalMusicSource();
+	}
+	
+	public class Tab {
+		public String displayLabel;
+		
+		public Tab(String displayLabelIn) {
+			this.displayLabel = displayLabelIn;
+		}
 	}
 }
