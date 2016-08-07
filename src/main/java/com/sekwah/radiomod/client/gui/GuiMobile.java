@@ -579,7 +579,7 @@ public class GuiMobile extends GuiScreen {
 	}
 	
 	public int getMobileState() {
-		return MobileManager.mobileState;
+		return MobileManager.getMobileState();
 	}
 	
 	public MusicSource getMusicSource() {
