@@ -162,6 +162,8 @@ public class GuiComputer extends GuiScreen {
 		this.computerState = RadioBlock.RUNSTATE_PLAYING;
 		this.playedSong = index;
 
+		RadioMod.logger.info(this.tileEntity.uuid);
+
 		switch(this.currentTab) {
 			case 0:
 				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.uuid).playBuiltInSongCollection(index, frame);

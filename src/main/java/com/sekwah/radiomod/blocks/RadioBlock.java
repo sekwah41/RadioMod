@@ -106,13 +106,21 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
      */
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
+        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+    }
+
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+    {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityRadio)
         {
             TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
-            radioTileEntity.generateUUID();
+            RadioMod.instance.musicManager.radioSources.get(radioTileEntity.uuid).stopMusic();
         }
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+        if (hasTileEntity(state) && !(this instanceof BlockContainer))
+        {
+            worldIn.removeTileEntity(pos);
+        }
     }
 
     /**

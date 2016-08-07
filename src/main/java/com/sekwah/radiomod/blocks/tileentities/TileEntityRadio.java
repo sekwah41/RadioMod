@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public class TileEntityRadio extends TileEntity implements ITickable {
 
-    public String uuid = "";
+    public String uuid = UUID.randomUUID().toString();
 
     private int rotation = 0;
     private int runState = RadioBlock.RUNSTATE_OFF;
@@ -49,6 +49,8 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public void update() {
         //RadioMod.logger.info("Update");
 
+        //RadioMod.logger.info(this.uuid);
+
         if(!this.isSetup){
             this.isSetup = true;
             this.createMusicSource();
@@ -70,7 +72,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     @SideOnly(Side.CLIENT)
     private void updateDistance() {
-        RadioMod.logger.info("Test");
+        //RadioMod.logger.info("Test");
         EntityPlayer playerSP = FMLClientHandler.instance().getClient().thePlayer;
         if(playerSP != null){
             float distance = (float) this.getDistanceSq(playerSP.posX, playerSP.posY, playerSP.posZ);
@@ -106,7 +108,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         if(this.uuid.equals("")){
             this.uuid = UUID.randomUUID().toString();
         }
-        RadioMod.logger.info(this.runState);
+        //RadioMod.logger.info(this.runState);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -121,6 +123,11 @@ public class TileEntityRadio extends TileEntity implements ITickable {
          */
 
         return compound;
+    }
+
+    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
+    {
+        this.readFromNBT(pkt.getNbtCompound());
     }
 
     public int getRunState() {
@@ -172,11 +179,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public void createMusicSource(){
         RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
-    }
-
-    public void generateUUID() {
-        this.uuid = UUID.randomUUID().toString();
-        this.markDirty();
     }
 
 
