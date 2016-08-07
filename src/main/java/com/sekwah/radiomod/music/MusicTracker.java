@@ -20,15 +20,23 @@ public class MusicTracker {
             TrackingData data = entry.getValue();
             data.currentTicks++;
             if(data.maxTicks < data.currentTicks){
+                this.trackingMap.remove(uuid);
                 // TODO get playlist if there is one.
             }
         }
     }
 
-    public void playSong(String uuid, TrackingData data){
+    public void stopSong(String uuid){
         if(trackingMap.containsKey(uuid)){
-            trackingMap.get(uuid);
+            // TODO add code to send stop packet.
+            trackingMap.remove(uuid);
         }
+    }
+
+    public void playSource(String uuid, TrackingData data){
+        this.stopSong(uuid);
+        // TODO send packet to users
+        this.trackingMap.put(uuid, data);
     }
 
     /*public void sendPlayPacket(){

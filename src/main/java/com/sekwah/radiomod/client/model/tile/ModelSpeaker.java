@@ -2,6 +2,7 @@ package com.sekwah.radiomod.client.model.tile;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 
 public class ModelSpeaker extends ModelBase
@@ -26,18 +27,33 @@ public class ModelSpeaker extends ModelBase
         SpeakerBox.setRotationPoint( 0F, 12F, 0F );
     }
 
-   public void render(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7)
-   {
+   public void render(double x, double y, double z, float rotation)
+    {
+        GlStateManager.pushMatrix();
+
+        GlStateManager.translate((float) x, (float) y, (float) z);
+
+        //GlStateManager.translate((float) x + 0.5F, (float) y + 0.245f, (float) z + 0.61F);
+        GlStateManager.rotate(180, 1F, 0F, 0F);
+        GlStateManager.translate(0.5F, -0.245f, -0.5F);
+
+        GlStateManager.rotate(rotation, 0F, 1F, 0F);
+        //GlStateManager.translate(0f,0f,-0.145f);
+        GlStateManager.scale(0.16f,0.16f,0.16f);
+
+
+        float par1 = 0.0625F;
         RootNode.rotateAngleX = 0F;
         RootNode.rotateAngleY = 0F;
         RootNode.rotateAngleZ = 0F;
-        RootNode.renderWithRotation(par7);
+        RootNode.renderWithRotation(par1);
 
         SpeakerBox.rotateAngleX = 0F;
         SpeakerBox.rotateAngleY = 0F;
         SpeakerBox.rotateAngleZ = 0F;
-        SpeakerBox.renderWithRotation(par7);
+        SpeakerBox.renderWithRotation(par1);
 
+        GlStateManager.popMatrix();
     }
 
 }
