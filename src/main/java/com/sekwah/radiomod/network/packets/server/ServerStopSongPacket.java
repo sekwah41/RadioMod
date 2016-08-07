@@ -24,34 +24,19 @@ public class ServerStopSongPacket implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
     	NBTTagCompound tag = ByteBufUtils.readTag(buf);
-    	//this.sendToAll = tag.getBoolean("sendToAll");
-    	//this.xCoord = tag.getInteger("xCoord");
-    	//this.yCoord = tag.getInteger("yCoord");
-    	//this.zCoord = tag.getInteger("zCoord");
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
     	NBTTagCompound tag = new NBTTagCompound();
-    	//tag.setBoolean("sendToAll", this.sendToAll);
-    	//tag.setInteger("xCoord", this.xCoord);
-    	//tag.setInteger("yCoord", this.yCoord);
-    	//tag.setInteger("zCoord", this.zCoord);
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<ServerShutdownComputerPacket, IMessage> {
+    public static class Handler implements IMessageHandler<ServerStopSongPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(ServerShutdownComputerPacket message, MessageContext ctx) {
-        	TileEntityRadio tileEntity = (TileEntityRadio) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.xCoord, message.yCoord, message.zCoord));
-        	if(tileEntity != null) {
-        		tileEntity.shutdown();
+        public IMessage onMessage(ServerStopSongPacket message, MessageContext ctx) {
 
-        		if(message.sendToAll) {
-            		RadioMod.packetNetwork.sendToAll(new ClientUpdateComputerPacket(tileEntity.getPos(), RadioBlock.RUNSTATE_OFF));
-            	}
-        	}
 
             return null; // no response in this case
         }

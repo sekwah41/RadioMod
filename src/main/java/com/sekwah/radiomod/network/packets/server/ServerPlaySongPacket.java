@@ -15,52 +15,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ServerPlaySongPacket implements IMessage {
 
-	public boolean sendToAll;
+	public String uuid;
 
-    int xCoord;
-    int yCoord;
-    int zCoord;
-
-    public ServerPlaySongPacket() { }
-
-    public ServerPlaySongPacket(boolean sendToAll, BlockPos pos) {
-    	this.sendToAll = sendToAll;
-        this.xCoord = pos.getX();
-        this.yCoord = pos.getY();
-        this.zCoord = pos.getZ();
+    public ServerPlaySongPacket(String uuid) {
+    	this.uuid = uuid;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
     	NBTTagCompound tag = ByteBufUtils.readTag(buf);
-    	this.sendToAll = tag.getBoolean("sendToAll");
-    	this.xCoord = tag.getInteger("xCoord");
-    	this.yCoord = tag.getInteger("yCoord");
-    	this.zCoord = tag.getInteger("zCoord");
+    	this.uuid = tag.getString("uuid");
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
     	NBTTagCompound tag = new NBTTagCompound();
-    	tag.setBoolean("sendToAll", this.sendToAll);
-    	tag.setInteger("xCoord", this.xCoord);
-    	tag.setInteger("yCoord", this.yCoord);
-    	tag.setInteger("zCoord", this.zCoord);
+    	tag.setString("uuid", this.uuid);
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<ServerShutdownComputerPacket, IMessage> {
+    public static class Handler implements IMessageHandler<ServerPlaySongPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(ServerShutdownComputerPacket message, MessageContext ctx) {
-        	TileEntityRadio tileEntity = (TileEntityRadio) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.xCoord, message.yCoord, message.zCoord));
-        	if(tileEntity != null) {
-        		tileEntity.shutdown();
+        public IMessage onMessage(ServerPlaySongPacket message, MessageContext ctx) {
 
-        		if(message.sendToAll) {
-            		RadioMod.packetNetwork.sendToAll(new ClientUpdateComputerPacket(tileEntity.getPos(), RadioBlock.RUNSTATE_OFF));
-            	}
-        	}
 
             return null; // no response in this case
         }

@@ -4,8 +4,6 @@ import java.io.File;
 
 import com.sekwah.radiomod.items.RadioItems;
 import com.sekwah.radiomod.music.MusicTracker;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,14 +14,10 @@ import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MusicManager;
 import com.sekwah.radiomod.music.song.SongBuiltIn;
-import com.sekwah.radiomod.network.packets.RadioMessage;
-import com.sekwah.radiomod.network.packets.client.ClientPlaySongPacket;
-import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
-import com.sekwah.radiomod.network.packets.server.ServerBootupComputerPacket;
-import com.sekwah.radiomod.network.packets.server.ServerShutdownComputerPacket;
+import com.sekwah.radiomod.network.packets.client.*;
+import com.sekwah.radiomod.network.packets.server.*;
 import com.sekwah.radiomod.onlineservices.soundcloud.SoundCloud;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -42,9 +36,9 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version, acceptedMinecraftVersions="[1.10.2]")
 public class RadioMod {
 
-	@Instance
-	public static RadioMod instance;
-	
+    @Instance
+    public static RadioMod instance;
+
     public static final String modid = "radiomod";
     public static final String version = "0.0.1";
     public static final Logger logger = LogManager.getLogger("Radio Mod");
@@ -113,13 +107,15 @@ public class RadioMod {
          */
         packetNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("IRM");
         packetNetwork.registerMessage(ClientPlaySongPacket.Handler.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
-        packetNetwork.registerMessage(ClientUpdateComputerPacket.Handler.class, ClientUpdateComputerPacket.class, 1, Side.CLIENT);
+        packetNetwork.registerMessage(ClientStopSongPacket.Handler.class, ClientStopSongPacket.class, 1, Side.CLIENT);
+        packetNetwork.registerMessage(ClientUpdateComputerPacket.Handler.class, ClientUpdateComputerPacket.class, 2, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 1, Side.CLIENT);
         
         //Server packets starting from 100 and up (just a cosmetic thing for me ;))
         packetNetwork.registerMessage(ServerBootupComputerPacket.Handler.class, ServerBootupComputerPacket.class, 100, Side.SERVER);
-        packetNetwork.registerMessage(ServerShutdownComputerPacket.Handler.class, ServerShutdownComputerPacket.class, 101, Side.SERVER);
+        packetNetwork.registerMessage(ServerPlaySongPacket.Handler.class, ServerPlaySongPacket.class, 101, Side.SERVER);
+        packetNetwork.registerMessage(ServerStopSongPacket.Handler.class, ServerStopSongPacket.class, 102, Side.SERVER);
     }
 
 }

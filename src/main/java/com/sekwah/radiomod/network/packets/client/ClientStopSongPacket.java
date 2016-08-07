@@ -32,16 +32,11 @@ public class ClientStopSongPacket implements IMessage {
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<ClientUpdateComputerPacket, IMessage> {
+    public static class Handler implements IMessageHandler<ClientStopSongPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(ClientUpdateComputerPacket message, MessageContext ctx) {
-        	TileEntityRadio tileEntity = (TileEntityRadio) Minecraft.getMinecraft().theWorld.getTileEntity(new BlockPos(message.xCoord, message.yCoord, message.zCoord));
-        	if(tileEntity != null) {
-        		tileEntity.setRunState(message.runState);
-        	}else{
-        		System.out.println("ERROR DUUUUUUUDE!!!!!");
-        	}
+        public IMessage onMessage(ClientStopSongPacket message, MessageContext ctx) {
+
             return null; // no response in this case
         }
     }

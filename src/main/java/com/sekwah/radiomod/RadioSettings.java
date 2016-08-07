@@ -20,9 +20,13 @@ public class RadioSettings {
 
         config.load();
 
-        Property configExperimentalFirstPersonMode = config.get(Configuration.CATEGORY_GENERAL, "soundRadius", 0);
-        soundRadius = configExperimentalFirstPersonMode.getDouble(0);
-        configExperimentalFirstPersonMode.setComment("This sets the first person mode. 0 = Enabled, 1 = Disabled, 2 = Jutsu Toggle(on when casting justsus)");
+        Property configSoundRadius = config.get(Configuration.CATEGORY_GENERAL, "soundRadius", 10);
+        soundRadius = configSoundRadius.getDouble(0);
+        configSoundRadius.setComment("This sets the radius for the full volume");
+
+        Property configDropOffRadius = config.get(Configuration.CATEGORY_GENERAL, "soundDropoff", 54);
+        soundDropoff = configDropOffRadius.getDouble(0);
+        configSoundRadius.setComment("This sets the radius for the drop off after the full radius.");
 
         config.save();
     }
