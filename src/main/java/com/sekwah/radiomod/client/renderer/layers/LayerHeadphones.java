@@ -32,7 +32,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class LayerHeadphones implements LayerRenderer<EntityLivingBase>
 {
-	
 	public static ResourceLocation texture = new ResourceLocation(RadioMod.modid, "textures/layers/headphones.png");
 	
     private final ModelHeadphones modelHeadphones;

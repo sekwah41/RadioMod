@@ -12,7 +12,6 @@ import com.sekwah.radiomod.util.Draw;
  * @author GoblinBob
  */
 public class GuiVisualizer {
-	
 	public float[] buffer;
 	private int minFreq = 0;
 	private int maxFreq = 20000;

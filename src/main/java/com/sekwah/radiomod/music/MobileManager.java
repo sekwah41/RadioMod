@@ -7,6 +7,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 
 public class MobileManager {
+	
 	public static final DataParameter<Integer> PARAMETER_LOCALSTATE = EntityDataManager.<Integer>createKey(EntityPlayer.class, DataSerializers.VARINT);
 	
 	public static final int MOBILESTATE_OFF = -1;
