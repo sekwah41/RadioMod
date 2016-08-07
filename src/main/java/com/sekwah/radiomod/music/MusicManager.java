@@ -62,7 +62,10 @@ public class MusicManager {
             if(sourceDistances.containsKey(uuid)){
                 try{
                     float distance = sourceDistances.get(uuid);
-                    float volume = (float) (1.1f - (Math.sqrt(distance) / 64f));
+                    float volume = 1f;
+                    if(distance > RadioMod.proxy.settings.soundRadius){
+                        volume = (float) (1f - (Math.sqrt(distance) / RadioMod.proxy.settings.soundDropoff));;
+                    }
                     //RadioMod.logger.info(volume);
                     if(volume > 1f){
                         volume = 1f;
