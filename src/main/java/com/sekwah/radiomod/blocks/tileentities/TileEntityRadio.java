@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class TileEntityRadio extends TileEntity implements ITickable {
 
-    public String uuid = UUID.randomUUID().toString();
+    private String uuid = UUID.randomUUID().toString();
 
     private int rotation = 0;
     private int runState = RadioBlock.RUNSTATE_OFF;
@@ -40,20 +40,17 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int musicTick = 0;
 
     public TileEntityRadio(){
-
+        this.createMusicSource();
         //RadioMod.instance.musicManager. = new MusicSource();
     }
 
     @Override
     public void update() {
-        //RadioMod.logger.info("Update");
+
+
+        //RadioMod.logger.info(RadioMod.instance.musicManager.radioSources.get(this.uuid));
 
         //RadioMod.logger.info(this.uuid);
-
-        if(!this.isSetup){
-            this.isSetup = true;
-            this.createMusicSource();
-        }
 
         if(RadioMod.proxy.isClient()){
             this.updateDistance();
@@ -102,10 +99,11 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         super.readFromNBT(compound);
         this.rotation = compound.getByte("Rot");
         this.runState = compound.getInteger("RunState");
-        this.uuid = compound.getString("RadioID");
+        String tempuuid = compound.getString("RadioID");
         if(this.uuid.equals("")){
-            this.uuid = UUID.randomUUID().toString();
+            tempuuid = UUID.randomUUID().toString();
         }
+        this.setUUID(tempuuid);
         //RadioMod.logger.info(this.runState);
     }
 
@@ -128,6 +126,30 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         this.readFromNBT(pkt.getNbtCompound());
     }
 
+    public void setUUID(String uuid){
+        if(RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)){
+            return;
+        }
+        MusicSource source = RadioMod.instance.musicManager.radioSources.get(this.uuid);
+        if(RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)){
+            float dist = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
+            RadioMod.instance.musicManager.sourceDistances.remove(this.uuid);
+            RadioMod.instance.musicManager.sourceDistances.put(uuid, dist);
+        }
+        if(RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)){
+
+        }
+        RadioMod.instance.musicManager.radioSources.remove(this.uuid);
+        RadioMod.instance.musicManager.radioSources.put(uuid, source);
+        RadioMod.logger.info("UUID for radio set as: " + uuid);
+        this.createMusicSource();
+        this.uuid = uuid;
+    }
+
+    public String getUUID(){
+        return this.uuid;
+    }
+
     public int getRunState() {
         return this.runState;
     }
@@ -144,12 +166,13 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public void onChunkUnload()
     {
         RadioMod.logger.info("Unload");
-        RadioMod.instance.musicManager.radioSources.get(this.uuid).stopMusic();
+        //RadioMod.instance.musicManager.radioSources.get(this.uuid).stopMusic();
     }
 
     public void onLoad()
     {
-        RadioMod.logger.info("Spawned");
+        this.createMusicSource();
+        //RadioMod.logger.info("Spawned");
     }
 
     public void setRotation(int rotation)
@@ -179,6 +202,9 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     }
 
     public void createMusicSource(){
-        RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
+        if(!RadioMod.instance.musicManager.radioSources.containsKey(this.uuid)){
+            RadioMod.logger.info("Radio source created");
+            RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.sekwah.radiomod;
 import java.io.File;
 
 import com.sekwah.radiomod.items.RadioItems;
+import com.sekwah.radiomod.music.MusicTracker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,6 +57,8 @@ public class RadioMod {
     
     public MusicManager musicManager;
 
+    public MusicTracker musicTracker;
+
     public SoundCloud soundCloud;
 
     @Mod.EventHandler
@@ -81,17 +84,21 @@ public class RadioMod {
 
         proxy.setupMusic();
         
-        this.soundCloud = new SoundCloud("23c5983facf3240a2f14515f05f34873");
+        //this.soundCloud = new SoundCloud("23c5983facf3240a2f14515f05f34873");
 
         proxy.preInit();
 
         RadioBlocks.registerBlocks();
         RadioItems.registerItems();
         RadioSounds.registerSounds();
+
         SongBuiltIn.registerBuiltInSongs();
+
         FileManager.preInit();
 
         this.musicManager = new MusicManager();
+
+        this.musicTracker = new MusicTracker();
 
         proxy.registerBlockRenderers();
     }
