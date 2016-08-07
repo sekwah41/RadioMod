@@ -30,6 +30,7 @@ public class EventServerHook {
     public void userLoggedIn(EntityJoinWorldEvent event){
         if(event.getEntity() instanceof EntityPlayerMP){
             EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+            RadioMod.logger.info(player);
             RadioMod.packetNetwork.sendTo(new ClientConfigPacket(RadioMod.proxy.settings.soundRadius, RadioMod.proxy.settings.soundDropoff), player);
         }
     }
