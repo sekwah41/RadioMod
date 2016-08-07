@@ -123,6 +123,10 @@ public class MusicSource {
         return player != null;
     }
 
+    public CustomPlayer getPlayer(){
+        return player;
+    }
+
     class PrivateMusicRunnable implements Runnable {
 
         private final String location;
