@@ -28,6 +28,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int rotation = 0;
     private int runState = RadioBlock.RUNSTATE_OFF;
     private int bootupSequence = 0;
+    private int framePaused = 0;
 
     private boolean isSetup = false;
 
@@ -72,10 +73,14 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         if(playerSP != null){
             float distance = (float) this.getDistanceSq(playerSP.posX, playerSP.posY, playerSP.posZ);
             if(RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)){
-                float curDistance = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
-                if(curDistance > distance){
-                    RadioMod.instance.musicManager.sourceDistances.put(this.uuid, distance);
-                }
+            	try {
+	                float curDistance = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
+	                if(curDistance > distance){
+	                    RadioMod.instance.musicManager.sourceDistances.put(this.uuid, distance);
+	                }
+            	}catch(NullPointerException e) {
+            		throw(e);
+            	}
             }
             else{
                 RadioMod.instance.musicManager.sourceDistances.put(this.uuid,distance);
@@ -91,10 +96,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public NBTTagCompound getUpdateTag()
     {
         NBTTagCompound nbttagcompound = this.writeToNBT(new NBTTagCompound());
-
-
-        //nbttagcompound.setString("");
-
         return nbttagcompound;
     }
 
@@ -103,11 +104,11 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         this.rotation = compound.getByte("Rot");
         this.runState = compound.getInteger("RunState");
         String tempuuid = compound.getString("RadioID");
+        this.framePaused = compound.getInteger("FramePaused");
         if(this.uuid.equals("")){
             tempuuid = UUID.randomUUID().toString();
         }
         this.setUUID(tempuuid);
-        //RadioMod.logger.info(this.runState);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -116,6 +117,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         compound.setByte("Rot", (byte)(this.rotation & 255));
         compound.setInteger("RunState", this.runState);
         compound.setString("RadioID", this.uuid);
+        compound.setInteger("FramePaused", this.framePaused);
         /**
          * Check chest for largs nbt writing {@link net.minecraft.tileentity.TileEntityChest}
          * Need to start using links more. They are pretty useful :D
@@ -135,9 +137,13 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         }
         MusicSource source = RadioMod.instance.musicManager.radioSources.get(this.uuid);
         if(RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)){
-            float dist = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
-            RadioMod.instance.musicManager.sourceDistances.remove(this.uuid);
-            RadioMod.instance.musicManager.sourceDistances.put(uuid, dist);
+        	try {
+	            float dist = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
+	            RadioMod.instance.musicManager.sourceDistances.remove(this.uuid);
+	            RadioMod.instance.musicManager.sourceDistances.put(uuid, dist);
+        	}catch(NullPointerException e) {
+        		throw(e);
+        	}
         }
         if(RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)){
 
@@ -213,5 +219,14 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
 	public MusicSource getMusicSource() {
 		return RadioMod.instance.musicManager.radioSources.get(this.uuid);
+	}
+	
+	public int getFramePaused() {
+		return this.framePaused;
+	}
+	
+	public void setFramePaused(int framePausedIn) {
+		this.framePaused = framePausedIn;
+		this.markDirty();
 	}
 }
