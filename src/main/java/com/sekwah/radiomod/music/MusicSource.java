@@ -35,6 +35,7 @@ public class MusicSource {
     private int pauseFrame = 0;
 
     private States songState = States.STOPPED;
+    private float volume;
 
     public enum States {
         PAUSED,
@@ -81,12 +82,19 @@ public class MusicSource {
         musicPlayer.start();
     }
 
+    public void setVolume(float volume) {
+        if(getIsPlaying()){
+            this.player.setVolume(volume);
+        }
+        this.volume = volume;
+    }
+
     public void playBuiltInSongCollection(int songID){
         this.playBuiltInSongCollection(songID, 0);
     }
-    
+
     public void playBuiltInSongCollection(int songID, int frame){
-    	if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
+        if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
             return;
         }
         this.stopMusic();
@@ -135,7 +143,7 @@ public class MusicSource {
 
                 Bitstream bitstream = new Bitstream(resourseStream);
 
-                player = new CustomPlayer(resourseStream);
+                player = new CustomPlayer(resourseStream, volume);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
@@ -170,7 +178,7 @@ public class MusicSource {
             Bitstream bitstream = new Bitstream(resourseStream);
 
             try {
-                player = new CustomPlayer(resourseStream);
+                player = new CustomPlayer(resourseStream, volume);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
@@ -208,12 +216,12 @@ public class MusicSource {
             Bitstream bitstream = new Bitstream(resourseStream);
 
             try {
-                player = new CustomPlayer(resourseStream);
+                player = new CustomPlayer(resourseStream, volume);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
-                       // currentFrame = event.getFrame();
-                       player = null;
+                        // currentFrame = event.getFrame();
+                        player = null;
                     }
                 });
                 player.playFrom(startFrame);

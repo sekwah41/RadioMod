@@ -51,7 +51,6 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
      * Returns a new instance of a block's tile entity class. Called on placing the block.
      */
     public TileEntity createNewTileEntity(World par1World, int meta) {
-        RadioMod.logger.info("Test");
         return new TileEntityRadio();
     }
 
@@ -91,8 +90,8 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-    	playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
-    	
+        playerIn.openGui(RadioMod.instance, GuiHandlerRadio.GUIID_COMPUTER, worldIn, (int)pos.getX(), (int)pos.getY(), (int)pos.getZ());
+
         return true;
     }
 
@@ -107,6 +106,12 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
      */
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityRadio)
+        {
+            TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
+            radioTileEntity.generateUUID();
+        }
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
     }
 

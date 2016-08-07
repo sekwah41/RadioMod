@@ -10,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,13 +31,15 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int runState = RadioBlock.RUNSTATE_OFF;
     private int bootupSequence = 0;
 
+    private boolean isSetup = false;
+
     /**
      * Server side tracking data for
      */
     private boolean runningMusic = false;
 
     private int musicTick = 0;
-    
+
     public TileEntityRadio(){
 
         //RadioMod.instance.musicManager. = new MusicSource();
@@ -47,18 +48,42 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     @Override
     public void update() {
         //RadioMod.logger.info("Update");
-        if(this.uuid.equals("")){
-            this.uuid = UUID.randomUUID().toString();
+
+        if(!this.isSetup){
+            this.isSetup = true;
+            this.createMusicSource();
         }
 
-    	switch(this.getRunState()) {
-    		case RadioBlock.RUNSTATE_BOOTINGUP:
-    			if(this.bootupSequence > 0)this.bootupSequence--;
-    			else this.setRunState(RadioBlock.RUNSTATE_ON);
+        if(RadioMod.proxy.isClient()){
+            this.updateDistance();
+        }
+
+        switch(this.getRunState()) {
+            case RadioBlock.RUNSTATE_BOOTINGUP:
+                if(this.bootupSequence > 0)this.bootupSequence--;
+                else this.setRunState(RadioBlock.RUNSTATE_ON);
             case RadioBlock.RUNSTATE_PLAYING:
 
-    		break;
-    	}
+                break;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void updateDistance() {
+        RadioMod.logger.info("Test");
+        EntityPlayer playerSP = FMLClientHandler.instance().getClient().thePlayer;
+        if(playerSP != null){
+            float distance = (float) this.getDistanceSq(playerSP.posX, playerSP.posY, playerSP.posZ);
+            if(RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)){
+                float curDistance = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
+                if(curDistance > distance){
+                    RadioMod.instance.musicManager.sourceDistances.put(this.uuid, distance);
+                }
+            }
+            else{
+                RadioMod.instance.musicManager.sourceDistances.put(this.uuid,distance);
+            }
+        }
     }
 
     @Nullable
@@ -78,6 +103,9 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         this.rotation = compound.getByte("Rot");
         this.runState = compound.getInteger("RunState");
         this.uuid = compound.getString("RadioID");
+        if(this.uuid.equals("")){
+            this.uuid = UUID.randomUUID().toString();
+        }
         RadioMod.logger.info(this.runState);
     }
 
@@ -96,7 +124,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     }
 
     public int getRunState() {
-    	return this.runState;
+        return this.runState;
     }
 
     @SideOnly(Side.CLIENT)
@@ -110,29 +138,46 @@ public class TileEntityRadio extends TileEntity implements ITickable {
      */
     public void onChunkUnload()
     {
+        RadioMod.logger.info("Unload");
+        RadioMod.instance.musicManager.radioSources.get(this.uuid).stopMusic();
+    }
 
+    public void onLoad()
+    {
+        RadioMod.logger.info("Spawned");
     }
 
     public void setRotation(int rotation)
     {
         this.rotation = rotation;
     }
-    
+
     public void bootUp() {
-    	this.runState = RadioBlock.RUNSTATE_BOOTINGUP;
-    	System.out.println("BOOTING UPPPPP!!!!!");
-    	this.bootupSequence = 50;
+        this.runState = RadioBlock.RUNSTATE_BOOTINGUP;
+        RadioMod.logger.info("BOOTING UPPPPP!!!!!");
+        this.bootupSequence = 50;
     }
-    
+
     public void shutdown() {
-		this.runState = RadioBlock.RUNSTATE_OFF;
-	}
-    
+        this.runState = RadioBlock.RUNSTATE_OFF;
+    }
+
     public void setRunState(int runStateIn) {
-    	if(runStateIn == RadioBlock.RUNSTATE_BOOTINGUP && this.runState != RadioBlock.RUNSTATE_BOOTINGUP){
-    		this.bootUp();
-    	}
-    	this.runState = runStateIn;
+        if(runStateIn == RadioBlock.RUNSTATE_BOOTINGUP && this.runState != RadioBlock.RUNSTATE_BOOTINGUP){
+            this.bootUp();
+        }
+        this.runState = runStateIn;
         this.markDirty();
     }
+
+    public void createMusicSource(){
+        RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
+    }
+
+    public void generateUUID() {
+        this.uuid = UUID.randomUUID().toString();
+        this.markDirty();
+    }
+
+
 }

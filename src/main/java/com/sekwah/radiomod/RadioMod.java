@@ -61,6 +61,8 @@ public class RadioMod {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
 
+        proxy.addEvents();
+
     	NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandlerRadio());
 
     }

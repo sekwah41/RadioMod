@@ -24,9 +24,14 @@ public class CustomPlayer extends AdvancedPlayer {
 		super(stream);
 	}
 
-	public CustomPlayer(InputStream stream, AudioDevice device) throws JavaLayerException
+	public CustomPlayer(InputStream stream, float volume) throws JavaLayerException
 	{
-		super(stream, device);
+		super(stream);
+		this.volume = volume;
+	}
+
+	public void setVolume(float volume){
+		this.volume = volume;
 	}
 
 	public AudioDevice getAudio(){
@@ -95,7 +100,7 @@ public class CustomPlayer extends AdvancedPlayer {
 			throw new JavaLayerException("Exception decoding audio frame", ex);
 		}
 		currentFrame++;
-		RadioMod.logger.info(currentFrame);
+		//RadioMod.logger.info(currentFrame);
 		return true;
 	}
 
