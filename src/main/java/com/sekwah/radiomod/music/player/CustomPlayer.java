@@ -17,11 +17,16 @@ import java.io.InputStream;
  */
 public class CustomPlayer extends AdvancedPlayer {
 
-	private float volume = 1.0f;
+	private float volume = 0.4f;
 
 	private int currentFrame = 1;
 
 	private Header firstFrameHeader;
+
+	/**
+	 * Raw data for the frame
+	 */
+	private short[] rawData;
 
 	public CustomPlayer(InputStream stream) throws JavaLayerException {
 		super(stream);
@@ -126,6 +131,10 @@ public class CustomPlayer extends AdvancedPlayer {
 		currentFrame++;
 		//RadioMod.logger.info(currentFrame);
 		return true;
+	}
+
+	public short[] getRawData(){
+		return rawData;
 	}
 
 	public AudioDevice getAudioDevice(){

@@ -1,25 +1,59 @@
 package com.sekwah.radiomod.network.packets.server;
 
-import com.sekwah.radiomod.network.packets.RadioMessage;
-import com.sekwah.radiomod.network.packets.ServerPacketHandler;
+import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-/**
- * Created by on 05/08/2016.
- *
- * @author sekwah41
- */
-public class ServerStopSongPacket extends RadioMessage implements IMessageHandler<ServerPlaySongPacket, IMessage> {
+public class ServerStopSongPacket implements IMessage {
 
-    public ServerStopSongPacket(byte[] payload) {
-        this.packet = payload;
-        this.packetLength = payload.length;
+	public String uuid;
+
+    public ServerStopSongPacket(String uuid) {
+        this.uuid = uuid;
     }
 
-    public IMessage onMessage(ServerPlaySongPacket message, MessageContext ctx) {
-        ServerPacketHandler.handleSongStartPacket(message.packet);
-        return null;
+    @Override
+    public void fromBytes(ByteBuf buf) {
+    	NBTTagCompound tag = ByteBufUtils.readTag(buf);
+    	//this.sendToAll = tag.getBoolean("sendToAll");
+    	//this.xCoord = tag.getInteger("xCoord");
+    	//this.yCoord = tag.getInteger("yCoord");
+    	//this.zCoord = tag.getInteger("zCoord");
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+    	NBTTagCompound tag = new NBTTagCompound();
+    	//tag.setBoolean("sendToAll", this.sendToAll);
+    	//tag.setInteger("xCoord", this.xCoord);
+    	//tag.setInteger("yCoord", this.yCoord);
+    	//tag.setInteger("zCoord", this.zCoord);
+        ByteBufUtils.writeTag(buf, tag);
+    }
+
+    public static class Handler implements IMessageHandler<ServerShutdownComputerPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(ServerShutdownComputerPacket message, MessageContext ctx) {
+        	TileEntityRadio tileEntity = (TileEntityRadio) ctx.getServerHandler().playerEntity.worldObj.getTileEntity(new BlockPos(message.xCoord, message.yCoord, message.zCoord));
+        	if(tileEntity != null) {
+        		tileEntity.shutdown();
+
+        		if(message.sendToAll) {
+            		RadioMod.packetNetwork.sendToAll(new ClientUpdateComputerPacket(tileEntity.getPos(), RadioBlock.RUNSTATE_OFF));
+            	}
+        	}
+
+            return null; // no response in this case
+        }
     }
 }

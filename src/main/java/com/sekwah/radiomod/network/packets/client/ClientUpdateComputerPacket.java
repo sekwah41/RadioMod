@@ -1,5 +1,6 @@
 package com.sekwah.radiomod.network.packets.client;
 
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import io.netty.buffer.ByteBuf;
@@ -54,7 +55,7 @@ public class ClientUpdateComputerPacket implements IMessage {
         	if(tileEntity != null) {
         		tileEntity.setRunState(message.runState);
         	}else{
-        		System.out.println("ERROR DUUUUUUUDE!!!!!");
+                RadioMod.logger.info("ERROR DUUUUUUUDE!!!!!");
         	}
             return null; // no response in this case
         }

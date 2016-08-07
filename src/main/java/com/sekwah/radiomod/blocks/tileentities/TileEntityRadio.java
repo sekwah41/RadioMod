@@ -91,6 +91,10 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public NBTTagCompound getUpdateTag()
     {
         NBTTagCompound nbttagcompound = this.writeToNBT(new NBTTagCompound());
+
+
+        //nbttagcompound.setString("");
+
         return nbttagcompound;
     }
 

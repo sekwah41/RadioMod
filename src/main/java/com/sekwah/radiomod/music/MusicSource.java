@@ -34,7 +34,8 @@ public class MusicSource {
     private int pauseFrame = 0;
 
     private States songState = States.STOPPED;
-    private float volume;
+
+    private float volume = 0.4f;
 
     public enum States {
         PAUSED,

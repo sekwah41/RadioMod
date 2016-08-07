@@ -4,6 +4,8 @@ import java.io.File;
 
 import com.sekwah.radiomod.items.RadioItems;
 import com.sekwah.radiomod.music.MusicTracker;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,6 +84,8 @@ public class RadioMod {
 
         configFolder = event.getModConfigurationDirectory();
 
+        RadioSettings.setupConfigVariables(event);
+
         proxy.setupMusic();
         
         //this.soundCloud = new SoundCloud("23c5983facf3240a2f14515f05f34873");
@@ -108,7 +112,7 @@ public class RadioMod {
          * Internet Radio Mod
          */
         packetNetwork = NetworkRegistry.INSTANCE.newSimpleChannel("IRM");
-        packetNetwork.registerMessage(ClientPlaySongPacket.class, RadioMessage.class, 0, Side.CLIENT);
+        packetNetwork.registerMessage(ClientPlaySongPacket.Handler.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
         packetNetwork.registerMessage(ClientUpdateComputerPacket.Handler.class, ClientUpdateComputerPacket.class, 1, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 0, Side.CLIENT);
         //packetNetwork.registerMessage(ClientPlaySongPacket.class, ClientPlaySongPacket.class, 1, Side.CLIENT);
