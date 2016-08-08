@@ -1,0 +1,8 @@
+itemGroup.radiomod=Radio Mod
+
+tile.radio_block.name=Док-станция
+tile.speaker_block.name=Динамик
+tile.visualizer_block.name=Визуализатор
+
+item.mobile_player.name=Мобильный плеер
+item.wireless_jack.name=Беспроводной Jack
