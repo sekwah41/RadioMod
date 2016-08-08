@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class TileEntityRadio extends TileEntity implements ITickable {
     private String uuid = UUID.randomUUID().toString();
 
-    private int rotation = 0;
     private int runState = BlockRadio.RUNSTATE_OFF;
     private int framePaused = 0;
 
@@ -91,7 +90,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.rotation = compound.getByte("Rot");
         this.runState = compound.getInteger("RunState");
         String tempuuid = compound.getString("RadioID");
         this.framePaused = compound.getInteger("FramePaused");
@@ -104,7 +102,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setByte("Rot", (byte)(this.rotation & 255));
         compound.setInteger("RunState", this.runState);
         compound.setString("RadioID", this.uuid);
         compound.setInteger("FramePaused", this.framePaused);
@@ -152,13 +149,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     public int getRunState() {
         return this.runState;
     }
-
-    @SideOnly(Side.CLIENT)
-    public int getRotation()
-    {
-        return this.rotation;
-    }
-
+    
     /**
      * Called when the chunk this TileEntity is on is Unloaded.
      */
@@ -172,11 +163,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     {
         RadioMod.instance.musicManager.createMusicSource(this.uuid);
         //RadioMod.logger.info("Spawned");
-    }
-
-    public void setRotation(int rotation)
-    {
-        this.rotation = rotation;
     }
 
     public void bootUp() {
