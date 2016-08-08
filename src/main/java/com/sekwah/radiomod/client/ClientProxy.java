@@ -1,19 +1,24 @@
 package com.sekwah.radiomod.client;
 
+import java.io.File;
+import java.util.Map;
+
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.RadioSettings;
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+import com.sekwah.radiomod.blocks.tileentities.TileEntitySpeaker;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.client.gui.GuiMobile;
 import com.sekwah.radiomod.client.renderer.layers.LayerHeadphones;
 import com.sekwah.radiomod.client.renderer.tileentity.TileEntityRadioRenderer;
+import com.sekwah.radiomod.client.renderer.tileentity.TileEntitySpeakerRenderer;
 import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.items.RadioItems;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -22,9 +27,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-
-import java.io.File;
-import java.util.Map;
 
 /**
  * Created by on 04/08/2016.
@@ -70,6 +72,9 @@ public class ClientProxy extends CommonProxy {
     public void registerBlockRenderers(){
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadio.class, new TileEntityRadioRenderer());
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":radio_block", "inventory"));
+        
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpeaker.class, new TileEntitySpeakerRenderer());
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.SPEAKERBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":speaker_block", "inventory"));
     }
 
     @Override

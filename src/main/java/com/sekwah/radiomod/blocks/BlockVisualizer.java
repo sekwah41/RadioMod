@@ -1,5 +1,8 @@
 package com.sekwah.radiomod.blocks;
 
+import com.sekwah.radiomod.blocks.tileentities.TileEntityVisualizer;
+import com.sekwah.radiomod.items.CreativeTabRadio;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -11,14 +14,15 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class VisualizerBlock extends BlockContainer implements ITileEntityProvider {
+public class BlockVisualizer extends BlockContainer implements ITileEntityProvider {
 
-    protected VisualizerBlock(Material materialIn) {
-        super(materialIn);
+    protected BlockVisualizer() {
+        super(Material.IRON);
+        this.setCreativeTab(CreativeTabRadio.creativeTabRadio);
     }
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return null;
+        return new TileEntityVisualizer();
     }
 }

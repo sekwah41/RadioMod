@@ -1,6 +1,9 @@
 package com.sekwah.radiomod.blocks;
 
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
+import com.sekwah.radiomod.blocks.tileentities.TileEntitySpeaker;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityVisualizer;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
@@ -17,16 +20,22 @@ public class RadioBlocks {
     // Radio block
     public static BlockRadio RADIOBLOCK;
     public static BlockSpeaker SPEAKERBLOCK;
+    public static BlockSpeaker VISUALIZERBLOCK;
 
     public static void registerBlocks() {
-
         RADIOBLOCK = new BlockRadio();
         registerTileBlock(RADIOBLOCK, "radio_block", TileEntityRadio.class);
-
+        
+        SPEAKERBLOCK = new BlockSpeaker();
+        registerTileBlock(SPEAKERBLOCK, "speaker_block", TileEntitySpeaker.class);
+        
+        VISUALIZERBLOCK = new BlockSpeaker();
+        registerTileBlock(VISUALIZERBLOCK, "visualizer_block", TileEntityVisualizer.class);
     }
 
     public static void registerBlock(Block block, String name){
         block.setRegistryName(name);
+        block.setUnlocalizedName(name);
         GameRegistry.register(block);
         GameRegistry.register(new ItemBlock(block), block.getRegistryName());
     }

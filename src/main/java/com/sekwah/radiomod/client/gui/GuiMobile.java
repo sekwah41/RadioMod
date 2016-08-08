@@ -6,15 +6,17 @@ import java.util.List;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
-
-import com.sekwah.radiomod.music.song.*;
-import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
-import com.sekwah.radiomod.network.packets.server.ServerStopSongPacket;
-
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MobileManager;
 import com.sekwah.radiomod.music.MusicSource;
+import com.sekwah.radiomod.music.song.Song;
+import com.sekwah.radiomod.music.song.SongBuiltIn;
+import com.sekwah.radiomod.music.song.SongPrivate;
+import com.sekwah.radiomod.music.song.SongSoundCloud;
+import com.sekwah.radiomod.music.song.TrackingData;
+import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
+import com.sekwah.radiomod.network.packets.server.ServerStopSongPacket;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -109,6 +111,7 @@ public class GuiMobile extends GuiScreen {
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.getScreenHeight()-18, (int) ((int) this.getScreenY()+18-this.getYOffset()), (int) (this.getScreenY()+this.getScreenHeight()-this.getYOffset()));
 		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+18), (int) (this.getScreenWidth()-20), 20);
         this.guiTextField.setText("Song URL");
+        this.guiTextField.setMaxStringLength(100000000);
 		this.openTab(0);
 		
 		if(this.getRunState() == MobileManager.MOBILESTATE_BOOTINGUP) {

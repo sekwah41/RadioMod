@@ -12,7 +12,9 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntitySpeaker extends TileEntityAddon {
+public class TileEntityVisualizer extends TileEntity implements ITickable {
+	private String ownerUUID = null;
+	
 	private int rotation = 0;
 	
 	@Override
@@ -45,13 +47,24 @@ public class TileEntitySpeaker extends TileEntityAddon {
 	
 	public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        this.ownerUUID = compound.getString("OwnerUUID");
         this.rotation = compound.getByte("Rot");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+        compound.setString("OwnerUUID", this.ownerUUID);
         compound.setByte("Rot", (byte)(this.rotation & 255));
         return compound;
+    }
+    
+    public void setOwner(String ownerUUIDIn) {
+    	this.ownerUUID = ownerUUIDIn;
+    	this.markDirty();
+    }
+    
+    public String getOwnerUUID(){
+        return this.ownerUUID;
     }
 }

@@ -1,3 +1,8 @@
+itemGroup.radiomod=Radio Mod
+
 tile.radio_block.name=Docking station
+tile.speaker_block.name=Speaker
+tile.visualizer_block.name=Visualizer
 
 item.mobile_player.name=Mobile Player
+item.wireless_jack.name=Wireless Jack

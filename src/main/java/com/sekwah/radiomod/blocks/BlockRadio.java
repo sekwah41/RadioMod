@@ -3,6 +3,7 @@ package com.sekwah.radiomod.blocks;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
+import com.sekwah.radiomod.items.CreativeTabRadio;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
@@ -45,6 +46,7 @@ public class BlockRadio extends BlockContainer implements ITileEntityProvider {
     public BlockRadio() {
         super(Material.ROCK);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setCreativeTab(CreativeTabRadio.creativeTabRadio);
     }
 
     /**
