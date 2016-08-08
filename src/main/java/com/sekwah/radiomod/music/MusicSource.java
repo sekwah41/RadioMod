@@ -69,13 +69,13 @@ public class MusicSource {
         return true;
     }
 
-    public void startFromTrackData(TrackingData trackingData) {
+    public void startFromTrackData(TrackingData trackingData, boolean fromTicks) {
         switch (trackingData.type){
             case TrackingData.BUILTIN:
-                this.playBuiltInSongCollection(Integer.parseInt(trackingData.source), trackingData.currentTick, true);
+                this.playBuiltInSongCollection(Integer.parseInt(trackingData.source), trackingData.currentTick, fromTicks);
                 break;
             case TrackingData.ONLINE:
-                this.playStreamUrl(trackingData.source,trackingData.currentTick, true);
+                this.playStreamUrl(trackingData.source,trackingData.currentTick, fromTicks);
                 break;
             case TrackingData.STREAM:
                 this.playStreamUrl(trackingData.source);
@@ -231,116 +231,6 @@ public class MusicSource {
             }
         }
     }
-
-    /*class PrivateMusicRunnable implements Runnable {
-
-        private final String location;
-
-        private final int frames;
-
-        public PrivateMusicRunnable(String location, int startFrame){
-            this.location = location;
-            this.frames = startFrame;
-        }
-
-        @Override
-        public void run() {
-
-            RadioMod.logger.info(location);
-
-            RadioMod.logger.info(FileManager.privateSongsDir.getAbsolutePath());
-
-            try {
-                InputStream resourseStream = new FileInputStream(new File(location));
-
-                player = new CustomPlayer(resourseStream, volume);
-                player.setPlayBackListener(new PlaybackListener() {
-                    @Override
-                    public void playbackFinished(PlaybackEvent event) {
-                        //currentFrame = event.getFrame();
-                        player = null;
-                    }
-                });
-                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
-            } catch (JavaLayerException e) {
-                player = null;
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                player = null;
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class MusicRunnable implements Runnable {
-
-        private final String songName;
-        private final int frames;
-
-        public MusicRunnable(String songName, int frame){
-            this.songName = songName;
-            this.frames = frame;
-        }
-
-
-
-        @Override
-        public void run() {
-            InputStream resourseStream = this.getClass().getResourceAsStream("/assets/radiomod/sounds/songs/" + songName + ".mp3");
-
-            try {
-                player = new CustomPlayer(resourseStream, volume);
-                player.setPlayBackListener(new PlaybackListener() {
-                    @Override
-                    public void playbackFinished(PlaybackEvent event) {
-                        //currentFrame = event.getFrame();
-                        player = null;
-                    }
-                });
-                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
-            } catch (JavaLayerException e) {
-                player = null;
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class RadioRunnable implements Runnable {
-
-        private final String streamString;
-        private final int frames;
-
-        public RadioRunnable(String streamString, int frames){
-            this.streamString = streamString;
-            this.frames = frames;
-        }
-
-        @Override
-        public void run() {
-            InputStream resourseStream = null;
-            try {
-                resourseStream = new URL(streamString).openConnection().getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                player = new CustomPlayer(resourseStream, volume);
-
-                player.setPlayBackListener(new PlaybackListener() {
-                    @Override
-                    public void playbackFinished(PlaybackEvent event) {
-                        // currentFrame = event.getFrame();
-                        player = null;
-                    }
-                });
-                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
-            } catch (JavaLayerException e) {
-                player = null;
-                e.printStackTrace();
-            }
-        }
-    }*/
 
     public Song getCurrentSong() {
         return this.currentSong;

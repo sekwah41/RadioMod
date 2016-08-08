@@ -25,6 +25,9 @@ public class EventHook {
         RadioMod.instance.musicManager.stopAllPlayers();
         RadioMod.instance.musicManager.radioSources.clear();
         RadioMod.instance.musicManager.sourceDistances.clear();
+        synchronized (RadioMod.instance.musicTracker.sync){
+            RadioMod.instance.musicTracker.trackingMap.clear();
+        }
     }
 
     @SubscribeEvent

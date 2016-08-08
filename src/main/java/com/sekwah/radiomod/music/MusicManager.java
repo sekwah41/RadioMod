@@ -35,7 +35,9 @@ public class MusicManager {
 
     public void stopAllPlayers() {
         for(MusicSource source: this.radioSources.values()){
-            source.stopMusic();
+            if(source != null){
+                source.stopMusic();
+            }
         }
     }
 
@@ -97,7 +99,7 @@ public class MusicManager {
     }
 
     public void createMusicSource(String uuid) {
-        if(!RadioMod.instance.musicManager.radioSources.containsKey(uuid)){
+        if(!RadioMod.instance.musicManager.radioSources.containsKey(uuid) || RadioMod.instance.musicManager.radioSources.get(uuid) == null){
             RadioMod.logger.info("Radio source created");
             RadioMod.instance.musicManager.radioSources.put(uuid, new MusicSource());
         }

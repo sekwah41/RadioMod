@@ -24,15 +24,21 @@ public class MusicTracker {
 
     public Map<String,TrackingData> trackingMap = new HashMap<String,TrackingData>();
 
+    public Object sync = new Object();
+
     public void updateTracks(){
-        for(Map.Entry<String, TrackingData> entry: this.trackingMap.entrySet()){
-            String uuid = entry.getKey();
-            TrackingData data = entry.getValue();
-            if(data.type != TrackingData.STREAM){
-                RadioMod.logger.info(data.currentTick++);
-                if(data.maxTicks < data.currentTick){
-                    this.trackingMap.remove(uuid);
-                    // TODO get playlist if there is one.
+        synchronized (sync){
+            for(Map.Entry<String, TrackingData> entry: this.trackingMap.entrySet()){
+                String uuid = entry.getKey();
+                TrackingData data = entry.getValue();
+                if(data.type != TrackingData.STREAM){
+                    //RadioMod.logger.info(uuid);
+                    data.currentTick++;
+                    //RadioMod.logger.info(data.currentTick);
+                    if(data.maxTicks < data.currentTick){
+                        this.trackingMap.remove(uuid);
+                        // TODO get playlist if there is one.
+                    }
                 }
             }
         }
@@ -48,13 +54,17 @@ public class MusicTracker {
 
     public void playSource(String uuid, TrackingData data){
         TimingData timingData;
+
+        int tempTick = data.currentTick;
+
         switch (data.type){
             case TrackingData.BUILTIN:
                 timingData = this.getTimingDataBuiltIn(SongBuiltIn.builtInSongCollection.get(Integer.parseInt(data.source)).getFileName());
                 if(timingData == null){
                     return;
                 }
-                data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                data.currentTick = (int) (((data.currentTick * timingData.ms_per_frame) / 1000f) * 20f);
+                data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000f) * 20f);
                 break;
             case TrackingData.ONLINE:
                 try {
@@ -62,7 +72,8 @@ public class MusicTracker {
                     if(timingData == null){
                         return;
                     }
-                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                    data.currentTick = (int) (((data.currentTick  * timingData.ms_per_frame) / 1000f) * 20f);
+                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000f) * 20f);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -74,7 +85,8 @@ public class MusicTracker {
                     if(timingData == null){
                         return;
                     }
-                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                    data.currentTick = (int) (((data.currentTick * timingData.ms_per_frame) / 1000f) * 20f);
+                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000f) * 20f);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;
@@ -85,6 +97,8 @@ public class MusicTracker {
         this.stopSong(uuid);
         // TODO send packet to users
         this.trackingMap.put(uuid, data);
+
+        data.currentTick = tempTick;
 
         RadioMod.packetNetwork.sendToAll(new ClientPlaySongBroadcastPacket(uuid,data));
     }

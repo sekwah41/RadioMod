@@ -117,9 +117,17 @@ public class BlockRadio extends BlockContainer implements ITileEntityProvider {
         if (tileEntity instanceof TileEntityRadio)
         {
             TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
-            if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
-            	RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+            if(worldIn.isRemote){
+                if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
+                    RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+                }
             }
+            else{
+                if(RadioMod.instance.musicTracker.trackingMap.containsKey(radioTileEntity.getUUID())) {
+                    RadioMod.instance.musicTracker.trackingMap.remove(radioTileEntity.getUUID());
+                }
+            }
+
         }
         if (hasTileEntity(state) && !(this instanceof BlockContainer))
         {

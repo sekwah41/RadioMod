@@ -91,6 +91,8 @@ public class GuiMobile extends GuiScreen {
 		}else{
 			currentSong = MobileManager.getSongPlaying();
 		}
+
+		RadioMod.logger.info(tileEntity.getUUID());
 		
 		if(currentSong != null){
 			if(currentSong instanceof SongBuiltIn) {
@@ -229,7 +231,7 @@ public class GuiMobile extends GuiScreen {
 	}
 
 	private void togglePlay(){
-		if(this.getMusicSource().getIsPlaying()){
+		if(this.getMusicSource() != null && this.getMusicSource().getIsPlaying()){
 			this.setFramePaused(this.getMusicSource().getCurrentFrame());
 			if(this.isInHand()){
 				this.getMusicSource().stopMusic();
@@ -437,7 +439,7 @@ public class GuiMobile extends GuiScreen {
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
 					// TODO draw play and pause.
-					if(this.getMusicSource().getIsPlaying()){
+					if(this.getMusicSource() != null && this.getMusicSource().getIsPlaying()){
 						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					}
 					else{

@@ -10,14 +10,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class ClientPlaySongBroadcastPacket implements IMessage {
+public class ClientLoadPlayerPacket implements IMessage {
 
     public TrackingData trackingData;
     public String uuid;
 
-    public ClientPlaySongBroadcastPacket(){}
+    public ClientLoadPlayerPacket(){}
 
-    public ClientPlaySongBroadcastPacket(String uuid, TrackingData trackingData) {
+    public ClientLoadPlayerPacket(String uuid, TrackingData trackingData) {
         this.uuid = uuid;
         this.trackingData = trackingData;
     }
@@ -39,14 +39,18 @@ public class ClientPlaySongBroadcastPacket implements IMessage {
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public static class Handler implements IMessageHandler<ClientPlaySongBroadcastPacket, IMessage> {
+    public static class Handler implements IMessageHandler<ClientLoadPlayerPacket, IMessage> {
 
         @Override
-        public IMessage onMessage(ClientPlaySongBroadcastPacket message, MessageContext ctx) {
-            if(RadioMod.instance.musicManager.sourceDistances.containsKey(message.uuid)){
-                RadioMod.instance.musicManager.createMusicSource(message.uuid);
-                RadioMod.instance.musicManager.radioSources.get(message.uuid).startFromTrackData(message.trackingData, false);
+        public IMessage onMessage(ClientLoadPlayerPacket message, MessageContext ctx) {
+            RadioMod.logger.info("Data recieved");
+            RadioMod.instance.musicManager.createMusicSource(message.uuid);
+
+            MusicSource musicManager = RadioMod.instance.musicManager.radioSources.get(message.uuid);
+            if(musicManager != null && !musicManager.getIsPlaying()){
+                musicManager.startFromTrackData(message.trackingData, true);
             }
+
             return null; // no response in this case
         }
     }
