@@ -1,7 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "radiomod:items/mp3player_item"
+        "layer0": "radiomod:items/mobile_player"
     },
     "display": {
         "thirdperson": {

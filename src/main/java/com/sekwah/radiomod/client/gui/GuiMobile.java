@@ -9,6 +9,8 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import com.sekwah.radiomod.music.song.*;
 import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
+import com.sekwah.radiomod.network.packets.server.ServerStopSongPacket;
+
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
@@ -174,19 +176,33 @@ public class GuiMobile extends GuiScreen {
 		
 		switch(this.currentTab) {
 			case 0:
-				RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
-						new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
-				this.getMusicSource().playBuiltInSongCollection(index, frame);
+				if(this.isInHand()){
+					this.getMusicSource().playBuiltInSongCollection(index, frame);
+				}else{
+					RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+							new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
+				}
 			break;
 			case 1:
-				this.getMusicSource().playPrivateSongCollection(index, frame);
+				if(this.isInHand()){
+					this.getMusicSource().playPrivateSongCollection(index, frame);
+				}else{
+					RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+							new TrackingData(TrackingData.PRIVATE, String.valueOf(index), frame)));
+				}
 			break;
 		}
 	}
-	
+
 	private void stopSong() {
 		this.setFramePaused(0);
-		this.getMusicSource().stopMusic();
+		
+		if(this.isInHand()){
+			this.getMusicSource().stopMusic();
+		}else{
+			RadioMod.packetNetwork.sendToServer(new ServerStopSongPacket(this.tileEntity.getUUID()));
+		}
+		
 		this.setRunState(MobileManager.MOBILESTATE_ON);
 	}
 	
@@ -211,7 +227,11 @@ public class GuiMobile extends GuiScreen {
 	private void togglePlay(){
 		if(this.getMusicSource().getIsPlaying()){
 			this.setFramePaused(this.getMusicSource().getCurrentFrame());
-			this.getMusicSource().stopMusic();
+			if(this.isInHand()){
+				this.getMusicSource().stopMusic();
+			}else{
+				RadioMod.packetNetwork.sendToServer(new ServerStopSongPacket(this.tileEntity.getUUID()));
+			}
 		}
 		else{
 			this.playSong(playedSong, this.getFramePaused());
@@ -639,6 +659,10 @@ public class GuiMobile extends GuiScreen {
 	
 	public MusicSource getMusicSource() {
 		return this.tileEntity != null ? RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()) : MobileManager.getLocalMusicSource();
+	}
+	
+	private boolean isInHand() {
+		return this.tileEntity == null;
 	}
 	
 	public int getFramePaused() {

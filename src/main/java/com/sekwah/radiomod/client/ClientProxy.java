@@ -62,7 +62,7 @@ public class ClientProxy extends CommonProxy {
 
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, TileEntityRadio.class);
         ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-        itemModelMesher.register(RadioItems.MOBILE, 0, new ModelResourceLocation("radiomod:ItemMobilePlayer", "inventory"));
+        itemModelMesher.register(RadioItems.MOBILE, 0, new ModelResourceLocation("radiomod:mobile_player", "inventory"));
     }
 
     @Override
