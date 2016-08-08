@@ -176,7 +176,7 @@ public class GuiMobile extends GuiScreen {
 		switch(this.currentTab) {
 			case 0:
 				if(this.isInHand()){
-					this.getMusicSource().playBuiltInSongCollection(index, frame);
+					this.getMusicSource().playBuiltInSongCollection(index, frame, false);
 				}else{
 					RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
 							new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
@@ -184,7 +184,7 @@ public class GuiMobile extends GuiScreen {
 			break;
 			case 1:
 				if(this.isInHand()){
-					this.getMusicSource().playPrivateSongCollection(index, frame);
+					this.getMusicSource().playPrivateSongCollection(index, frame, false);
 				}else{
 					RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
 							new TrackingData(TrackingData.PRIVATE, String.valueOf(index), frame)));
