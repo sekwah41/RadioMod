@@ -329,14 +329,25 @@ public class GuiMobile extends GuiScreen {
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
 					
+					
+					Draw.drawRect(this.getScreenX(), this.getScreenY()+38, this.getScreenWidth(), this.getScreenHeight()-38, (1-this.bgColor[0])*0.1f, (1-this.bgColor[1])*0.1f, (1-this.bgColor[2])*0.1f, 1);
+					
 					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
 						if(this.getMusicSource().getPlayer().getRawData() != null){
+							
 							int dataLength = this.getMusicSource().getPlayer().getRawData().length;
 							this.guiVisualizerFullSize.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
 							this.guiVisualizerFullSize.populate(this.getMusicSource());
 						}
 						this.guiVisualizerFullSize.setLocation((int)this.getScreenX(), (int) (this.getScreenY()+this.getScreenHeight()-100));
 						this.guiVisualizerFullSize.calculateBands();
+						float average = 0;
+						for(int i = 0; i < this.guiVisualizerFullSize.bandSmoothValues.length; i++) {
+							average+=this.guiVisualizerFullSize.bandSmoothValues[i];
+						}
+						average/=this.guiVisualizerFullSize.bandSmoothValues.length;
+						Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-100*average, this.getScreenWidth(), 100*average, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 0, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 1.0f*average);
+						
 						this.guiVisualizerFullSize.draw();
 					}
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
