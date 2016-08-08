@@ -17,6 +17,9 @@ public class ServerStopSongPacket implements IMessage {
 
 	public String uuid;
 
+	public ServerStopSongPacket() {
+    }
+	
     public ServerStopSongPacket(String uuid) {
         this.uuid = uuid;
     }

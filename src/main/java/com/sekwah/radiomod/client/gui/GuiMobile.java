@@ -9,7 +9,6 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import com.sekwah.radiomod.music.song.*;
 import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
-import com.sun.media.jfxmedia.track.Track;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
@@ -175,8 +174,8 @@ public class GuiMobile extends GuiScreen {
 		
 		switch(this.currentTab) {
 			case 0:
-				//RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
-						//new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
+				RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+						new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
 				this.getMusicSource().playBuiltInSongCollection(index, frame);
 			break;
 			case 1:
