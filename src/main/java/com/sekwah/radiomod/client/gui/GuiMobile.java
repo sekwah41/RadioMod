@@ -85,12 +85,15 @@ public class GuiMobile extends GuiScreen {
 	
 	public GuiMobile(TileEntityRadio tileEntity) {
 		this.tileEntity = tileEntity;
+		MusicSource musicSource;
 		Song currentSong = null;
 		if(this.tileEntity != null && this.tileEntity.getMusicSource() != null && this.tileEntity.getMusicSource().getCurrentSong() != null) {
-			currentSong = this.tileEntity.getMusicSource().getCurrentSong();
+			musicSource = this.tileEntity.getMusicSource();
 		}else{
-			currentSong = MobileManager.getSongPlaying();
+			musicSource = MobileManager.getLocalMusicSource();
 		}
+		
+		currentSong = musicSource.getCurrentSong();
 		
 		if(currentSong != null){
 			if(currentSong instanceof SongBuiltIn) {
@@ -101,6 +104,10 @@ public class GuiMobile extends GuiScreen {
 				currentTab = 5;
 			}
 			this.playedSong = currentSong.getID();
+		}
+		
+		if(musicSource.isPlayingRadioStream()) {
+			currentTab = TAB_RADIO;
 		}
 		
 		FileManager.loadPrivateSongs();
@@ -117,8 +124,13 @@ public class GuiMobile extends GuiScreen {
         this.guiTextField.setText("Song URL");
         this.guiTextField.setMaxStringLength(100000000);
         Keyboard.enableRepeatEvents(true);
-		this.openTab(0);
-		
+        
+        this.guiSongList.fillOut(getSongCollection());
+        
+        if(this.currentTab == TAB_RADIO) {
+        	this.guiTextField.setText(this.getMusicSource().getRadioStationURL());
+        }
+        
 		if(this.getRunState() == MobileManager.MOBILESTATE_BOOTINGUP) {
 			this.setupLoadingDummies();
 		}
@@ -195,6 +207,16 @@ public class GuiMobile extends GuiScreen {
 							new TrackingData(TrackingData.PRIVATE, String.valueOf(index), frame)));
 				}
 			break;
+			case TAB_RADIO:
+				if(this.isInHand()){
+					this.getMusicSource().stopMusic();
+					this.getMusicSource().playStreamUrl(this.guiTextField.getText(), frame, false);
+				}else{
+					RadioMod.packetNetwork.sendToServer(new ServerStopSongPacket(this.tileEntity.getUUID()));
+					RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+							new TrackingData(TrackingData.STREAM, this.guiTextField.getText(), frame)));
+				}
+			break;
 		}
 	}
 
@@ -239,19 +261,6 @@ public class GuiMobile extends GuiScreen {
 		}
 		else{
 			this.playSong(playedSong, this.getFramePaused());
-		}
-	}
-	
-	public void submitSongURL() {
-		String url = this.guiTextField.getText();
-		
-		if(this.isInHand()){
-			this.getMusicSource().stopMusic();
-			this.getMusicSource().playStreamUrl(url);
-		}else{
-			RadioMod.packetNetwork.sendToServer(new ServerStopSongPacket(this.tileEntity.getUUID()));
-			RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
-					new TrackingData(TrackingData.STREAM, url, 0)));
 		}
 	}
 	
@@ -328,28 +337,6 @@ public class GuiMobile extends GuiScreen {
 					//Drawing the confirmation button
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
-					
-					
-					Draw.drawRect(this.getScreenX(), this.getScreenY()+38, this.getScreenWidth(), this.getScreenHeight()-38, (1-this.bgColor[0])*0.1f, (1-this.bgColor[1])*0.1f, (1-this.bgColor[2])*0.1f, 1);
-					
-					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
-						if(this.getMusicSource().getPlayer().getRawData() != null){
-							
-							int dataLength = this.getMusicSource().getPlayer().getRawData().length;
-							this.guiVisualizerFullSize.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
-							this.guiVisualizerFullSize.populate(this.getMusicSource());
-						}
-						this.guiVisualizerFullSize.setLocation((int)this.getScreenX(), (int) (this.getScreenY()+this.getScreenHeight()-100));
-						this.guiVisualizerFullSize.calculateBands();
-						float average = 0;
-						for(int i = 0; i < this.guiVisualizerFullSize.bandSmoothValues.length; i++) {
-							average+=this.guiVisualizerFullSize.bandSmoothValues[i];
-						}
-						average/=this.guiVisualizerFullSize.bandSmoothValues.length;
-						Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-100*average, this.getScreenWidth(), 100*average, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 0, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 1.0f*average);
-						
-						this.guiVisualizerFullSize.draw();
-					}
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
 					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
 					this.guiTextField.drawTextBox();
@@ -378,15 +365,38 @@ public class GuiMobile extends GuiScreen {
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 				
-				if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
-					if(this.getMusicSource().getPlayer().getRawData() != null){
-						int dataLength = this.getMusicSource().getPlayer().getRawData().length;
-						this.guiVisualizer.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
-						this.guiVisualizer.populate(this.getMusicSource());
+				if(this.currentTab == TAB_RADIO){
+					Draw.drawRect(this.getScreenX(), this.getScreenY()+18, this.getScreenWidth(), this.getScreenHeight()-18, (1-this.bgColor[0])*0.1f, (1-this.bgColor[1])*0.1f, (1-this.bgColor[2])*0.1f, 1);
+					
+					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
+						if(this.getMusicSource().getPlayer().getRawData() != null){
+							
+							int dataLength = this.getMusicSource().getPlayer().getRawData().length;
+							this.guiVisualizerFullSize.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
+							this.guiVisualizerFullSize.populate(this.getMusicSource());
+						}
+						this.guiVisualizerFullSize.setLocation((int)this.getScreenX(), (int) (this.getScreenY()+this.getScreenHeight()-100));
+						this.guiVisualizerFullSize.calculateBands();
+						float average = 0;
+						for(int i = 0; i < this.guiVisualizerFullSize.bandSmoothValues.length; i++) {
+							average+=this.guiVisualizerFullSize.bandSmoothValues[i];
+						}
+						average/=this.guiVisualizerFullSize.bandSmoothValues.length;
+						Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-100*average, this.getScreenWidth(), 100*average, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 0, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 1.0f*average);
+						
+						this.guiVisualizerFullSize.draw();
 					}
-					this.guiVisualizer.setLocation((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25);
-					this.guiVisualizer.calculateBands();
-					this.guiVisualizer.draw();
+				}else{
+					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
+						if(this.getMusicSource().getPlayer().getRawData() != null){
+							int dataLength = this.getMusicSource().getPlayer().getRawData().length;
+							this.guiVisualizer.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
+							this.guiVisualizer.populate(this.getMusicSource());
+						}
+						this.guiVisualizer.setLocation((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25);
+						this.guiVisualizer.calculateBands();
+						this.guiVisualizer.draw();
+					}
 				}
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
@@ -433,18 +443,19 @@ public class GuiMobile extends GuiScreen {
 					}else{
 						this.drawCenteredString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX(), (int)(this.getScreenY()+5), 0xffffff);
 					}
-
-					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
-					Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
-					// TODO draw play and pause.
-					if(this.getMusicSource() != null && this.getMusicSource().getIsPlaying()){
-						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+					
+					if(showControls()){
+						this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
+						Draw.drawTexture(this.getScreenCenterX()-20-8, this.getScreenCenterY()+40, 3*16F/256, 1-16F/256, -16F/256, 16F/256, 16, 16);
+						
+						if(this.getMusicSource() != null && this.getMusicSource().getIsPlaying()){
+							Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 1*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
+						}
+						else{
+							Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
+						}
+						Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 					}
-					else{
-						Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
-					}
-					//Draw.drawTexture(this.getScreenCenterX()-8, this.getScreenCenterY()+40, 0, 1-16F/256, 16F/256, 16F/256, 16, 16);
-					Draw.drawTexture(this.getScreenCenterX()+20-8, this.getScreenCenterY()+40, 2*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				}
 				Draw.drawXGradient(this.getScreenX(), this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 0.1f, 1, 1, 1, 1);
 				Draw.drawXGradient(this.getScreenX()+this.getScreenWidth()/2, this.getScreenY()+16, this.getScreenWidth()/2, 2, 1, 1, 1, 1, 1, 1, 1, 0.1f);
@@ -514,7 +525,7 @@ public class GuiMobile extends GuiScreen {
 			   mouseY >= this.getScreenY()+18 && mouseY <= this.getScreenY()+18+20) {
 				this.confirmButtonDown = true;
 				
-				this.submitSongURL();
+				this.playSong(0);
 			}
 		}
 		
@@ -543,15 +554,15 @@ public class GuiMobile extends GuiScreen {
 					this.stopSong();
 				}
 				
-				if((mouseX >= this.getScreenCenterX()-20-8 && mouseX <= this.getScreenCenterX()-20-8+16 &&
+				if((showControls() && mouseX >= this.getScreenCenterX()-20-8 && mouseX <= this.getScreenCenterX()-20-8+16 &&
 				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16) || this.deviceButtons[0]){
 					previousSong();
 				}
-				if((mouseX >= this.getScreenCenterX()+20-8 && mouseX <= this.getScreenCenterX()+20-8+16 &&
+				if((showControls() && mouseX >= this.getScreenCenterX()+20-8 && mouseX <= this.getScreenCenterX()+20-8+16 &&
 				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16) || this.deviceButtons[2]){
 					nextSong();
 				}
-				if((mouseX >= this.getScreenCenterX()-8 && mouseX <= this.getScreenCenterX()-8+16 &&
+				if((showControls() && mouseX >= this.getScreenCenterX()-8 && mouseX <= this.getScreenCenterX()-8+16 &&
 				   mouseY >= this.getScreenCenterY()+40 && mouseY <= this.getScreenCenterY()+40+16) || this.deviceButtons[1]){
 					togglePlay();
 				}
@@ -684,6 +695,8 @@ public class GuiMobile extends GuiScreen {
 				return SongBuiltIn.builtInSongCollection.get(this.playedSong);
 			case 1:
 				return SongPrivate.privateSongCollection.get(this.playedSong);
+			case TAB_RADIO:
+				return new Song(0, null, "Radio Station");
 		}
 		return null;
 	}
@@ -725,6 +738,10 @@ public class GuiMobile extends GuiScreen {
 	
 	public int getFramePaused() {
 		return this.tileEntity != null ? this.tileEntity.getFramePaused() : MobileManager.getFramePaused();
+	}
+	
+	public boolean showControls() {
+		return this.currentTab != TAB_RADIO;
 	}
 	
 	public void setFramePaused(int framePaused) {

@@ -49,8 +49,10 @@ public class MusicSource {
      * Used for playing the current song
      */
     private CustomPlayer player = null;
+    private boolean playingRadioStream = false;
     private List<double[]> frequencyData = new ArrayList<double[]>();
     private int lastFrameFrequencyAnalizedOn = 0;
+	private String radioStationURL;
 
     public MusicSource(){
         this.volume = 0.4f;
@@ -66,6 +68,7 @@ public class MusicSource {
         }
         songState = States.PAUSED;
         this.lastFrameFrequencyAnalizedOn = -1;
+        this.setPlayingRadioStream(false);
         return true;
     }
 
@@ -136,10 +139,14 @@ public class MusicSource {
         Thread musicPlayer = null;
         try {
             musicPlayer = new Thread(new MusicRunnable(new URL(streamUrl).openConnection().getInputStream(), frame, ticks));
+            musicPlayer.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        musicPlayer.start();
+        
+        this.radioStationURL = streamUrl;
+        
+        this.setPlayingRadioStream(true);
     }
 
     public int getCurrentFrame(){
@@ -235,4 +242,17 @@ public class MusicSource {
     public Song getCurrentSong() {
         return this.currentSong;
     }
+
+	public boolean isPlayingRadioStream() {
+		return playingRadioStream;
+	}
+
+	public void setPlayingRadioStream(boolean playingRadioStream) {
+		System.out.println("Setting play readio stream to " + playingRadioStream);
+		this.playingRadioStream = playingRadioStream;
+	}
+
+	public String getRadioStationURL() {
+		return this.radioStationURL;
+	}
 }

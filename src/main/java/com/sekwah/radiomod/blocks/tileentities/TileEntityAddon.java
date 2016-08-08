@@ -22,13 +22,17 @@ public class TileEntityAddon extends TileEntity implements ITickable {
 
 	public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.ownerUUID = compound.getString("OwnerUUID");
+        if(compound.hasKey("OwnerUUID")){
+        	this.ownerUUID = compound.getString("OwnerUUID");
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString("OwnerUUID", this.ownerUUID);
+        if(this.ownerUUID != null){
+        	compound.setString("OwnerUUID", this.ownerUUID);
+        }
         return compound;
     }
     
