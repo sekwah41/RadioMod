@@ -18,6 +18,7 @@ public class TileEntityAddon extends TileEntity implements ITickable {
 
     @Override
     public void update() {
+
     }
 
     public void readFromNBT(NBTTagCompound compound) {
