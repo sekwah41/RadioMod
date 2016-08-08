@@ -52,7 +52,7 @@ public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEnt
         this.bindTexture(TEXTURE);
 
         GlStateManager.enableRescaleNormal();
-        this.MODEL.render(x,y,z,0.0f);
+        this.MODEL.render(x,y,z,rotation);
         GlStateManager.disableRescaleNormal();
     }
 }

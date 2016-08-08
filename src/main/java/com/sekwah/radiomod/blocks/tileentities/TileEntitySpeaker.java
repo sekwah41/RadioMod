@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntitySpeaker extends TileEntityAddon {
-	private int rotation = 0;
-	
 	@Override
     public void update() {
 		if(RadioMod.proxy.isClient()){
@@ -45,13 +43,11 @@ public class TileEntitySpeaker extends TileEntityAddon {
 	
 	public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.rotation = compound.getByte("Rot");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setByte("Rot", (byte)(this.rotation & 255));
         return compound;
     }
 }

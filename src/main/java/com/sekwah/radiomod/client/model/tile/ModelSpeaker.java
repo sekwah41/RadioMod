@@ -38,8 +38,8 @@ public class ModelSpeaker extends ModelBase
         GlStateManager.translate(0.5F, -0.245f, -0.5F);
 
         GlStateManager.rotate(rotation, 0F, 1F, 0F);
-        //GlStateManager.translate(0f,0f,-0.145f);
-        GlStateManager.scale(0.16f,0.16f,0.16f);
+        GlStateManager.translate(0f,-1.24f,0f);
+        GlStateManager.scale(1,1,1);
 
 
         float par1 = 0.0625F;
