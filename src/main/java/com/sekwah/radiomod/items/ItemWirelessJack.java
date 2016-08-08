@@ -88,8 +88,6 @@ public class ItemWirelessJack extends Item {
         else if(tileEntity instanceof TileEntityRadio){
             TileEntityRadio radioEntity = (TileEntityRadio) tileEntity;
             if(playerIn.isSneaking()){
-                RadioMod.logger.info("test");
-
                 RadioMod.logger.info(radioEntity.getUUID());
                 if(radioEntity.getUUID() != null && !radioEntity.getUUID().equals("")){
                     nbt.setString("UUID", radioEntity.getUUID());

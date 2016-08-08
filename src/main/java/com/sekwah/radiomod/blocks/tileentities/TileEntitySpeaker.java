@@ -63,7 +63,9 @@ public class TileEntitySpeaker extends TileEntityAddon {
     public void onChunkUnload()
     {
         //RadioMod.logger.info("Unload");
-        RadioMod.instance.musicManager.radioSources.get(this.getOwnerUUID()).stopMusic();
+        synchronized (RadioMod.instance.musicManager.sync) {
+            RadioMod.instance.musicManager.radioSources.get(this.getOwnerUUID()).stopMusic();
+        }
     }
 
     public void onLoad()

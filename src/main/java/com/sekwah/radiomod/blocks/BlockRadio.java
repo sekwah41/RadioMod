@@ -4,7 +4,6 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.items.CreativeTabRadio;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
@@ -118,13 +117,17 @@ public class BlockRadio extends BlockContainer implements ITileEntityProvider {
         {
             TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
             if(worldIn.isRemote){
-                if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
-                    RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+                synchronized (RadioMod.instance.musicManager.sync){
+                    if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
+                        RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+                    }
                 }
             }
             else{
-                if(RadioMod.instance.musicTracker.trackingMap.containsKey(radioTileEntity.getUUID())) {
-                    RadioMod.instance.musicTracker.trackingMap.remove(radioTileEntity.getUUID());
+                synchronized (RadioMod.instance.musicManager.sync) {
+                    if (RadioMod.instance.musicTracker.trackingMap.containsKey(radioTileEntity.getUUID())) {
+                        RadioMod.instance.musicTracker.trackingMap.remove(radioTileEntity.getUUID());
+                    }
                 }
             }
 

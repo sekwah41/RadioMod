@@ -44,13 +44,14 @@ public class ClientLoadPlayerPacket implements IMessage {
         @Override
         public IMessage onMessage(ClientLoadPlayerPacket message, MessageContext ctx) {
             System.out.println("Data recieved");
-            RadioMod.instance.musicManager.createMusicSource(message.uuid);
+            synchronized (RadioMod.instance.musicManager.sync){
+                RadioMod.instance.musicManager.createMusicSource(message.uuid);
 
-            MusicSource musicManager = RadioMod.instance.musicManager.radioSources.get(message.uuid);
-            if(musicManager != null && !musicManager.getIsPlaying()){
-                musicManager.startFromTrackData(message.trackingData, true);
+                MusicSource musicManager = RadioMod.instance.musicManager.radioSources.get(message.uuid);
+                if(musicManager != null && !musicManager.getIsPlaying()){
+                    musicManager.startFromTrackData(message.trackingData, true);
+                }
             }
-
             return null; // no response in this case
         }
     }

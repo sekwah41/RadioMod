@@ -43,9 +43,12 @@ public class ClientPlaySongBroadcastPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ClientPlaySongBroadcastPacket message, MessageContext ctx) {
-            if(RadioMod.instance.musicManager.sourceDistances.containsKey(message.uuid)){
-                RadioMod.instance.musicManager.createMusicSource(message.uuid);
-                RadioMod.instance.musicManager.radioSources.get(message.uuid).startFromTrackData(message.trackingData, false);
+            synchronized (RadioMod.instance.musicManager.sync) {
+                System.out.println("Play song:" + message.trackingData.source);
+                if (RadioMod.instance.musicManager.sourceDistances.containsKey(message.uuid)) {
+                    RadioMod.instance.musicManager.createMusicSource(message.uuid);
+                    RadioMod.instance.musicManager.radioSources.get(message.uuid).startFromTrackData(message.trackingData, false);
+                }
             }
             return null; // no response in this case
         }
