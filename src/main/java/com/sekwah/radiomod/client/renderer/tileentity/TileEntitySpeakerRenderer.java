@@ -53,7 +53,7 @@ public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEnt
         }
         
         boolean hasOwner = (par1TileEntity != null && par1TileEntity.getOwnerUUID() != null && !par1TileEntity.getOwnerUUID().equals(""));
-        
+
         /*if(hasOwner && RadioMod.instance.musicManager.radioSources.get(par1TileEntity.getOwnerUUID()) != null) {
         	MusicSource source = RadioMod.instance.musicManager.radioSources.get(par1TileEntity.getOwnerUUID());
         	int sampleRate = source.getSampleRatePow2();
@@ -68,7 +68,7 @@ public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEnt
 	            this.MODEL.bassAmp = average*0.1f;
         	}
         }*/
-        
+
         this.bindTexture(hasOwner ? TEXTURE_ON : TEXTURE);
 
         GlStateManager.enableRescaleNormal();

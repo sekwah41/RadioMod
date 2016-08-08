@@ -113,6 +113,7 @@ public class RadioMod {
         packetNetwork.registerMessage(ClientUpdateComputerPacket.Handler.class, ClientUpdateComputerPacket.class, 2, Side.CLIENT);
         packetNetwork.registerMessage(ClientConfigPacket.Handler.class, ClientConfigPacket.class, 3, Side.CLIENT);
         packetNetwork.registerMessage(ClientLoadPlayerPacket.Handler.class, ClientLoadPlayerPacket.class, 4, Side.CLIENT);
+        packetNetwork.registerMessage(ClientUpdateAddonUUIDPacket.Handler.class, ClientUpdateAddonUUIDPacket.class, 5, Side.CLIENT);
 
         //Server packets starting from 100 and up (just a cosmetic thing for me ;))
         packetNetwork.registerMessage(ServerBootupComputerPacket.Handler.class, ServerBootupComputerPacket.class, 100, Side.SERVER);

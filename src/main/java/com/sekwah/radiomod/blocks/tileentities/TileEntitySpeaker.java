@@ -19,7 +19,6 @@ public class TileEntitySpeaker extends TileEntityAddon {
 	@Override
     public void update() {
 		if(RadioMod.proxy.isClient()){
-            RadioMod.logger.info(this.getOwnerUUID());
             this.updateDistance();
         }
     }
