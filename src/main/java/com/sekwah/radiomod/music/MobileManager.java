@@ -2,6 +2,7 @@ package com.sekwah.radiomod.music;
 
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.music.song.Song;
+import com.sekwah.radiomod.network.packets.server.ServerUpdatePlayerLocalRunstate;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,6 +32,7 @@ public class MobileManager {
 	
 	public static void setMobileState(int state) {
 		RadioMod.proxy.setPlayerLocalRunstate(state);
+		RadioMod.packetNetwork.sendToServer(new ServerUpdatePlayerLocalRunstate(state));
 	}
 	
 	public static int getMobileState() {
