@@ -6,6 +6,9 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntitySpeaker;
 import com.sekwah.radiomod.client.model.tile.ModelMp3DockRadio;
 import com.sekwah.radiomod.client.model.tile.ModelSpeaker;
+import com.sekwah.radiomod.music.MusicManager;
+import com.sekwah.radiomod.music.MusicSource;
+import com.sekwah.radiomod.music.MusicTracker;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -49,7 +52,24 @@ public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEnt
                 rotation = 90.0F;
         }
         
-        this.bindTexture((par1TileEntity != null && par1TileEntity.getOwnerUUID() != null) ? TEXTURE_ON : TEXTURE);
+        boolean hasOwner = (par1TileEntity != null && par1TileEntity.getOwnerUUID() != null && !par1TileEntity.getOwnerUUID().equals(""));
+        
+        /*if(hasOwner && RadioMod.instance.musicManager.radioSources.get(par1TileEntity.getOwnerUUID()) != null) {
+        	MusicSource source = RadioMod.instance.musicManager.radioSources.get(par1TileEntity.getOwnerUUID());
+        	int sampleRate = source.getSampleRatePow2();
+
+        	if(source.getPlayer() != null && source.getIsPlaying() && sampleRate != 0){
+	        	float average = 0;
+	            double[] freqData = source.getFrequencyData(0);
+	            for(int i = 0; i < 100; i++) {
+	            	average += freqData[i];
+	            }
+	            average /= 100;
+	            this.MODEL.bassAmp = average*0.1f;
+        	}
+        }*/
+        
+        this.bindTexture(hasOwner ? TEXTURE_ON : TEXTURE);
 
         GlStateManager.enableRescaleNormal();
         this.MODEL.render(x,y,z,rotation);

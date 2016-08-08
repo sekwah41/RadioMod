@@ -163,9 +163,11 @@ public class MusicSource {
 
     public double[] getFrequencyData(int index) {
         if(this.player != null && this.player.getFrame() > this.lastFrameFrequencyAnalizedOn) {
-            this.calculateFrequencyData();
+            //this.calculateFrequencyData();
             this.lastFrameFrequencyAnalizedOn = this.player.getFrame();
         }
+        
+        this.calculateFrequencyData();
 
         return this.frequencyData.get(index);
     }
@@ -188,7 +190,7 @@ public class MusicSource {
     }
 
     public int getSampleRate() {
-        return this.player.getRawData() != null ? this.player.getRawData().length : 0;
+        return (this.player != null && this.player.getRawData() != null) ? this.player.getRawData().length : 0;
     }
 
     public int getSampleRatePow2() {

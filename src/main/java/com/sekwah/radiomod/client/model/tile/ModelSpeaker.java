@@ -61,7 +61,7 @@ public class ModelSpeaker extends ModelBase
         SpeakerBox.rotateAngleZ = 0F;
         SpeakerBox.renderWithRotation(par1);
         
-        GlStateManager.color(1, 1, 1, Math.min(this.bassAmp, 1));
+        /*GlStateManager.color(1, 1, 1, Math.min(this.bassAmp, 1));
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -75,7 +75,7 @@ public class ModelSpeaker extends ModelBase
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();
+        GlStateManager.popMatrix();*/
     }
 
 }
