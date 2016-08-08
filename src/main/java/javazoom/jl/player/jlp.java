@@ -116,7 +116,7 @@ public class jlp
 		System.out.println("Usage: jlp [-url] <filename>");
 		System.out.println("");
 		System.out.println(" e.g. : java javazoom.jl.player.jlp localfile.mp3");
-		System.out.println("        java javazoom.jl.player.jlp -url http://www.generic.com/remotefile.mp3");
+		System.out.println("        java javazoom.jl.player.jlp -url http://www.server.com/remotefile.mp3");
 		System.out.println("        java javazoom.jl.player.jlp -url http://www.shoutcastserver.com:8000");
 	}
 

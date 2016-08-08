@@ -15,7 +15,7 @@ import java.io.InputStream;
  *
  * @author sekwah41
  */
-public class CustomPlayer extends AdvancedPlayer {
+public class CustomPlayer extends SAdvancedPlayer {
 	private float volume = 0.4f;
 
 	private int currentFrame = 1;
@@ -30,12 +30,6 @@ public class CustomPlayer extends AdvancedPlayer {
 	public CustomPlayer(InputStream stream) throws JavaLayerException {
 		super(stream);
 		this.firstFrameHeader = this.bitstream.readFrame();
-		/*try {
-			RadioMod.logger.info(firstFrameHeader.max_number_of_frames(stream.available()));
-		} catch (IOException e) {
-			RadioMod.logger.info("Error getting stream size");
-			e.printStackTrace();
-		}*/
 		this.bitstream.unreadFrame();
 	}
 

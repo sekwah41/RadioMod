@@ -1,23 +1,4 @@
-/*
- * 11/19/04		1.0 moved to LGPL. 
- *-----------------------------------------------------------------------
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License as published
- *   by the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Library General Public License for more details.
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the Free Software
- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *----------------------------------------------------------------------
- */
-
-package javazoom.jl.player.advanced;
+package com.sekwah.radiomod.music.player;
 
 import java.io.InputStream;
 
@@ -29,37 +10,41 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.decoder.SampleBuffer;
 import javazoom.jl.player.AudioDevice;
 import javazoom.jl.player.FactoryRegistry;
+import javazoom.jl.player.advanced.AdvancedPlayer;
+import javazoom.jl.player.advanced.PlaybackEvent;
+import javazoom.jl.player.advanced.PlaybackListener;
 
 /**
  * a hybrid of javazoom.jl.player.Player tweeked to include <code>play(startFrame, endFrame)</code>
  * hopefully this will be included in the api
  */
-public class AdvancedPlayer
+public class SAdvancedPlayer extends AdvancedPlayer
 {
 	/** The MPEG audio bitstream.*/
-	private Bitstream bitstream;
+	protected Bitstream bitstream;
 	/** The MPEG audio decoder. */
-	private Decoder decoder;
+	protected Decoder decoder;
 	/** The AudioDevice the audio samples are written to. */
-	private AudioDevice audio;
+	protected AudioDevice audio;
 	/** Has the player been closed? */
-	private boolean closed = false;
+	protected boolean closed = false;
 	/** Has the player played back all frames from the stream? */
-	private boolean complete = false;
-	private int lastPosition = 0;
+	protected boolean complete = false;
+	protected int lastPosition = 0;
 	/** Listener for the playback process */
-	private PlaybackListener listener;
+	protected PlaybackListener listener;
 
 	/**
 	 * Creates a new <code>Player</code> instance.
 	 */
-	public AdvancedPlayer(InputStream stream) throws JavaLayerException
+	public SAdvancedPlayer(InputStream stream) throws JavaLayerException
 	{
 		this(stream, null);
 	}
 
-	public AdvancedPlayer(InputStream stream, AudioDevice device) throws JavaLayerException
+	public SAdvancedPlayer(InputStream stream, AudioDevice device) throws JavaLayerException
 	{
+        super(stream, device);
 		bitstream = new Bitstream(stream);
 
 		if (device!=null) audio = device;
@@ -202,7 +187,7 @@ public class AdvancedPlayer
 	/**
 	 * Constructs a <code>PlaybackEvent</code>
 	 */
-	private PlaybackEvent createEvent(int id)
+	protected PlaybackEvent createEvent(int id)
 	{
 		return createEvent(audio, id);
 	}
@@ -210,7 +195,7 @@ public class AdvancedPlayer
 	/**
 	 * Constructs a <code>PlaybackEvent</code>
 	 */
-	private PlaybackEvent createEvent(AudioDevice dev, int id)
+	protected PlaybackEvent createEvent(AudioDevice dev, int id)
 	{
 		return new PlaybackEvent(this, id, dev.getPosition());
 	}

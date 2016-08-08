@@ -1631,8 +1631,8 @@ private void compute_pcm_samples(Obuffer buffer)
 	 * Converts a 1D array into a number of smaller arrays. This is used
 	 * to achieve offset + constant indexing into an array. Each sub-array
 	 * represents a block of values of the original array. 
-	 * @param array			The array to split up into block.
-	 * @param blockSize		The size of the block to split the array
+	 * @param array			The array to split up into blocks.
+	 * @param blockSize		The size of the blocks to split the array
 	 *						into. This must be an exact divisor of
 	 *						the length of the array, or some data
 	 *						will be lost from the main array.
