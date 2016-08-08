@@ -42,9 +42,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public TileEntityRadio(){
         RadioMod.instance.musicManager.createMusicSource(this.uuid);
-        if(RadioMod.proxy.isClient()){
-            this.uuid = UUID.randomUUID().toString();
-        }
+        this.uuid = UUID.randomUUID().toString();
     }
 
     @Override

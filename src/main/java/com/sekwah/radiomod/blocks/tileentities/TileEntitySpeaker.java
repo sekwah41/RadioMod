@@ -49,7 +49,7 @@ public class TileEntitySpeaker extends TileEntityAddon {
         super.readFromNBT(compound);
         this.setupRadio();
         if(RadioMod.proxy.isClient()){
-            RadioMod.packetNetwork.sendToServer(new ServerLoadPlayerPacket(ownerUUID));
+            RadioMod.packetNetwork.sendToServer(new ServerLoadPlayerPacket(this.ownerUUID));
         }
     }
 
@@ -70,6 +70,15 @@ public class TileEntitySpeaker extends TileEntityAddon {
     {
         RadioMod.instance.musicManager.createMusicSource(this.getOwnerUUID());
         //RadioMod.logger.info("Spawned");
+    }
+
+    public void setOwner(String ownerUUIDIn) {
+        this.ownerUUID = ownerUUIDIn;
+        this.markDirty();
+        this.setupRadio();
+        if(RadioMod.proxy.isClient()){
+            RadioMod.packetNetwork.sendToServer(new ServerLoadPlayerPacket(this.ownerUUID));
+        }
     }
 
     public void setupRadio(){

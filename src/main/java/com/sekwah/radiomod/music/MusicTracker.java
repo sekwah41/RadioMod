@@ -124,7 +124,10 @@ public class MusicTracker {
             int max_frames = head.max_number_of_frames(inputStream.available());
             inputStream.close();
             return new TimingData(head.ms_per_frame(), max_frames);
-        } catch (BitstreamException | IOException e) {
+        } catch (BitstreamException e) {
+            RadioMod.logger.info("Error getting timing data.");
+            e.printStackTrace();
+        } catch (IOException e) {
             RadioMod.logger.info("Error getting timing data.");
             e.printStackTrace();
         }

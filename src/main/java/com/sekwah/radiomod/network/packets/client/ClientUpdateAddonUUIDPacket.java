@@ -43,7 +43,7 @@ public class ClientUpdateAddonUUIDPacket implements IMessage {
     	tag.setInteger("xCoord", this.xCoord);
     	tag.setInteger("yCoord", this.yCoord);
     	tag.setInteger("zCoord", this.zCoord);
-    	tag.setString("RunState", this.ownerUUID);
+    	tag.setString("OwnerUUID", this.ownerUUID);
         ByteBufUtils.writeTag(buf, tag);
     }
 
