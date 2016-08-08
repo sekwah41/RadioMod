@@ -8,6 +8,7 @@ import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntitySpeaker;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,6 +74,8 @@ public class ItemWirelessJack extends Item {
                     playerIn.addChatMessage(new TextComponentString("Set UUID: " + nbt.getString("UUID")));
                     speakerAddon.setOwner(nbt.getString("UUID"));
                     speakerAddon.markDirty();
+                    IBlockState state = worldIn.getBlockState(pos);
+                    worldIn.markAndNotifyBlock(pos, null, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 1);
                 }
                 else{
 
