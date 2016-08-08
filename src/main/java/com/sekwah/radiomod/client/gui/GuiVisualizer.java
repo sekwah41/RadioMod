@@ -49,7 +49,7 @@ public class GuiVisualizer {
 			bandSmoothValues[i] += (bandValues[i]-bandSmoothValues[i])*0.5f;
 			
 			float bandWidth = ((float)this.width)/this.bands;
-			Draw.drawRect(this.x+i*bandWidth, this.y+this.height-bandSmoothValues[i]*this.height, bandWidth-2, bandSmoothValues[i]*this.height, 1, 1, 1, 1);
+			Draw.drawRect(this.x+i*bandWidth, this.y+this.height-bandSmoothValues[i]*this.height, bandWidth-2, bandSmoothValues[i]*this.height+1, 1, 1, 1, 1);
 		}
 	}
 

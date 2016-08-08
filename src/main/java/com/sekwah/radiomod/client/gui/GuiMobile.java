@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -44,6 +45,7 @@ public class GuiMobile extends GuiScreen {
 	public static ResourceLocation mobileBg;
 	public GuiVisualizer guiVisualizer;
 	public GuiListMobileSongs guiSongList;
+	private GuiTextField guiTextField;
 	
 	private int playedSong;
 	private float startupSequence;
@@ -57,10 +59,12 @@ public class GuiMobile extends GuiScreen {
 	
 	public float songTitleScroll = 0;
 	public boolean[] deviceButtons = new boolean[3];
+	public boolean confirmButtonDown = false;
 	
 	/*
 	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2)
 	 */
+	public int currentTab = 0;
 	public Tab[] tabs = new Tab[]{
 		new Tab("Chef's Specials"),
 		new Tab("Private Collection"),
@@ -69,7 +73,12 @@ public class GuiMobile extends GuiScreen {
 		new Tab("Radio Stations"),
 		new Tab("SoundCloud"),
 	};
-	public int currentTab = 0;
+	public static final int TAB_BUILTIN = 0;
+	public static final int TAB_PRIVATE = 1;
+	public static final int TAB_PLAYLISTS = 2;
+	public static final int TAB_BOOKMARKED = 3;
+	public static final int TAB_RADIO = 4;
+	public static final int TAB_SOUNDCLOUD = 5;
 
 	public TileEntityRadio tileEntity;
 	
@@ -102,6 +111,8 @@ public class GuiMobile extends GuiScreen {
 		
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25, (int)120, (int)50);
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.getScreenHeight()-18, (int) ((int) this.getScreenY()+18-this.getYOffset()), (int) (this.getScreenY()+this.getScreenHeight()-this.getYOffset()));
+		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+18), (int) (this.getScreenWidth()-20), 20);
+        this.guiTextField.setText("Song URL");
 		this.openTab(0);
 		
 		if(this.getRunState() == MobileManager.MOBILESTATE_BOOTINGUP) {
@@ -268,10 +279,16 @@ public class GuiMobile extends GuiScreen {
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 
-				if(this.currentTab == 0) {
+				if(this.currentTab == TAB_BUILTIN) {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
-				}else if(this.currentTab == 1) {
+				}else if(this.currentTab == TAB_PRIVATE) {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
+				}else if(this.currentTab == TAB_SOUNDCLOUD) {
+					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
+					this.guiTextField.drawTextBox();
+					
+					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
+					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
 				}
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
@@ -388,6 +405,17 @@ public class GuiMobile extends GuiScreen {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
+		
+		switch(this.getRunState()){
+			case MobileManager.MOBILESTATE_ON:
+				if(this.currentTab == TAB_SOUNDCLOUD){
+					if (this.guiTextField.isFocused())
+			        {
+			            this.guiTextField.textboxKeyTyped(typedChar, keyCode);
+			        }
+				}
+			break;
+		}
 	}
 
 	@Override
@@ -409,14 +437,21 @@ public class GuiMobile extends GuiScreen {
 			   mouseY >= this.getScreenY()+173 && mouseY <= this.getScreenY()+173+38) {
 				this.deviceButtons[2] = true;
 			}
+			
+			if(mouseX >= this.getScreenX()+this.getScreenWidth()-20 && mouseX <= this.getScreenX()+this.getScreenWidth() &&
+			   mouseY >= this.getScreenY()+18 && mouseY <= this.getScreenY()+18+20) {
+				this.confirmButtonDown = true;
+			}
 		}
 		
 		switch(this.getRunState()) {
 			case RadioBlock.RUNSTATE_ON:
-				if(this.currentTab == 0) {
+				if(this.currentTab == TAB_BUILTIN) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
-				}else if(this.currentTab == 1) {
+				}else if(this.currentTab == TAB_PRIVATE) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
+				}else if(this.currentTab == TAB_SOUNDCLOUD) {
+					this.guiTextField.mouseClicked(mouseX, mouseY, mouseButton);
 				}
 				
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
@@ -455,6 +490,7 @@ public class GuiMobile extends GuiScreen {
 		for(int i = 0; i < this.deviceButtons.length; i++) {
 			this.deviceButtons[i] = false;
 		}
+		this.confirmButtonDown = false;
 		
 		switch(this.getRunState()) {
 			case RadioBlock.RUNSTATE_ON:
@@ -505,6 +541,9 @@ public class GuiMobile extends GuiScreen {
 				}
 			break;
 			case MobileManager.MOBILESTATE_ON:
+				if(this.currentTab == TAB_SOUNDCLOUD) {
+					this.guiTextField.updateCursorCounter();
+				}
 			break;
 		}
 	}

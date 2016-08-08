@@ -27,7 +27,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     private int rotation = 0;
     private int runState = RadioBlock.RUNSTATE_OFF;
-    private int bootupSequence = 0;
     private int framePaused = 0;
 
     private boolean isSetup = false;
@@ -46,23 +45,15 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-
-
-        //RadioMod.logger.info(RadioMod.instance.musicManager.radioSources.get(this.uuid));
-
-        //RadioMod.logger.info(this.uuid);
-
         if(RadioMod.proxy.isClient()){
             this.updateDistance();
         }
 
         switch(this.getRunState()) {
             case RadioBlock.RUNSTATE_BOOTINGUP:
-                if(this.bootupSequence > 0)this.bootupSequence--;
-                else this.setRunState(RadioBlock.RUNSTATE_ON);
+            break;
             case RadioBlock.RUNSTATE_PLAYING:
-
-                break;
+            break;
         }
     }
 
@@ -191,7 +182,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public void bootUp() {
         this.runState = RadioBlock.RUNSTATE_BOOTINGUP;
-        this.bootupSequence = 50;
         
         this.markDirty();
     }
