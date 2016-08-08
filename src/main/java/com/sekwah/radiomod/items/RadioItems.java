@@ -16,9 +16,9 @@ public class RadioItems {
     public static void registerItems(){
 
         MOBILE = new ItemMobile();
-        registerItem(MOBILE, "mobile_player", "ItemMobilePlayer");
+        registerItem(MOBILE, "mobile_player", "mobile_player");
         JACK = new ItemWirelessJack();
-        registerItem(JACK, "wireless_jack", "ItemWirelessJack");
+        registerItem(JACK, "wireless_jack", "wireless_jack");
 
     }
 

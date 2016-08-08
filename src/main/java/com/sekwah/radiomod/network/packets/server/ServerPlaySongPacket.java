@@ -28,12 +28,16 @@ public class ServerPlaySongPacket implements IMessage {
     public void fromBytes(ByteBuf buf) {
     	NBTTagCompound tag = ByteBufUtils.readTag(buf);
     	this.uuid = tag.getString("uuid");
+        this.trackingData = new TrackingData(tag.getInteger("Type"), tag.getString("Source"), tag.getInteger("CurrentTick"));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
     	NBTTagCompound tag = new NBTTagCompound();
     	tag.setString("uuid", this.uuid);
+        tag.setInteger("Type", this.trackingData.type);
+        tag.setString("Source", this.trackingData.source);
+        tag.setInteger("CurrentTick", this.trackingData.currentTick);
         ByteBufUtils.writeTag(buf, tag);
     }
 
@@ -42,6 +46,7 @@ public class ServerPlaySongPacket implements IMessage {
         @Override
         public IMessage onMessage(ServerPlaySongPacket message, MessageContext ctx) {
 
+            RadioMod.instance.musicTracker.playSource(message.uuid, message.trackingData);
 
             return null; // no response in this case
         }

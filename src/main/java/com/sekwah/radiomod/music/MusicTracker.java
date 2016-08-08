@@ -1,7 +1,15 @@
 package com.sekwah.radiomod.music;
 
+import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.music.song.SongBuiltIn;
+import com.sekwah.radiomod.music.song.TimingData;
 import com.sekwah.radiomod.music.song.TrackingData;
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Header;
 
+import java.io.*;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,10 +26,12 @@ public class MusicTracker {
         for(Map.Entry<String, TrackingData> entry: this.trackingMap.entrySet()){
             String uuid = entry.getKey();
             TrackingData data = entry.getValue();
-            data.currentTicks++;
-            if(data.maxTicks < data.currentTicks){
-                this.trackingMap.remove(uuid);
-                // TODO get playlist if there is one.
+            if(data.type != TrackingData.STREAM){
+                data.currentTick++;
+                if(data.maxTicks < data.currentTick){
+                    this.trackingMap.remove(uuid);
+                    // TODO get playlist if there is one.
+                }
             }
         }
     }
@@ -34,9 +44,68 @@ public class MusicTracker {
     }
 
     public void playSource(String uuid, TrackingData data){
+        TimingData timingData;
+        switch (data.type){
+            case TrackingData.BUILTIN:
+                timingData = this.getTimingData(SongBuiltIn.builtInSongCollection.get(Integer.parseInt(data.source)).getFileName());
+                if(timingData == null){
+                    return;
+                }
+                data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                break;
+            case TrackingData.ONLINE:
+                try {
+                    timingData = this.getTimingData(new URL(data.source).openConnection().getInputStream());
+                    if(timingData == null){
+                        return;
+                    }
+                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                break;
+            case TrackingData.STREAM:
+                try {
+                    timingData = this.getTimingData(new URL(data.source).openConnection().getInputStream());
+                    if(timingData == null){
+                        return;
+                    }
+                    data.maxTicks = (int) (((timingData.frames * timingData.ms_per_frame) / 1000) * 20);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                break;
+        }
+
         this.stopSong(uuid);
         // TODO send packet to users
         this.trackingMap.put(uuid, data);
+    }
+
+    public TimingData getTimingData(String file){
+        try {
+            return getTimingData(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            RadioMod.logger.info("Could not read music data.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public TimingData getTimingData(InputStream inputStream){
+        Bitstream bitstream = new Bitstream(inputStream);
+        try {
+            Header head = bitstream.readFrame();
+            int max_frames = head.max_number_of_frames(inputStream.available());
+            inputStream.close();
+            new TimingData(head.ms_per_frame(), max_frames);
+        } catch (BitstreamException | IOException e) {
+            RadioMod.logger.info("Error getting timing data.");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*public void sendPlayPacket(){

@@ -70,7 +70,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 	                    RadioMod.instance.musicManager.sourceDistances.put(this.uuid, distance);
 	                }
             	}catch(NullPointerException e) {
-            		throw(e);
+            		RadioMod.logger.info("Error with uuid");
             	}
             }
             else{

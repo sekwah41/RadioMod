@@ -7,6 +7,9 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.RadioBlock;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
+import com.sekwah.radiomod.music.song.*;
+import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
+import com.sun.media.jfxmedia.track.Track;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
@@ -15,10 +18,6 @@ import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MobileManager;
 import com.sekwah.radiomod.music.MusicSource;
-import com.sekwah.radiomod.music.song.Song;
-import com.sekwah.radiomod.music.song.SongBuiltIn;
-import com.sekwah.radiomod.music.song.SongPrivate;
-import com.sekwah.radiomod.music.song.SongSoundCloud;
 import com.sekwah.radiomod.util.Draw;
 
 import net.minecraft.client.Minecraft;
@@ -36,17 +35,17 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GuiMobile extends GuiScreen {
 	protected int bgWidth = 184;
-    protected int bgHeight = 256;
-    protected float[] bgColor = new float[]{
-    	0.5f,
-    	0.3f,
-    	0.0f
-    };
+	protected int bgHeight = 256;
+	protected float[] bgColor = new float[]{
+			0.5f,
+			0.3f,
+			0.0f
+	};
 	public static ResourceLocation mobileBg;
 	public GuiVisualizer guiVisualizer;
 	public GuiListMobileSongs guiSongList;
 	private GuiTextField guiTextField;
-	
+
 	private int playedSong;
 	private float startupSequence;
 	private float bringUpSequence;
@@ -60,18 +59,18 @@ public class GuiMobile extends GuiScreen {
 	public float songTitleScroll = 0;
 	public boolean[] deviceButtons = new boolean[3];
 	public boolean confirmButtonDown = false;
-	
+
 	/*
 	 * Specifies the current used screen, for example: Song List (0), My playlists (1), Bookmarked playlists (2)
 	 */
 	public int currentTab = 0;
 	public Tab[] tabs = new Tab[]{
-		new Tab("Chef's Specials"),
-		new Tab("Private Collection"),
-		new Tab("Playlists"),
-		new Tab("Bookmarked"),
-		new Tab("Radio Stations"),
-		new Tab("SoundCloud"),
+			new Tab("Chef's Specials"),
+			new Tab("Private Collection"),
+			new Tab("Playlists"),
+			new Tab("Bookmarked"),
+			new Tab("Radio Stations"),
+			new Tab("SoundCloud"),
 	};
 	public static final int TAB_BUILTIN = 0;
 	public static final int TAB_PRIVATE = 1;
@@ -176,6 +175,8 @@ public class GuiMobile extends GuiScreen {
 		
 		switch(this.currentTab) {
 			case 0:
+				//RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+						//new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
 				this.getMusicSource().playBuiltInSongCollection(index, frame);
 			break;
 			case 1:
@@ -286,7 +287,7 @@ public class GuiMobile extends GuiScreen {
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
 					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
 					this.guiTextField.drawTextBox();
-					
+
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
 				}
@@ -405,7 +406,7 @@ public class GuiMobile extends GuiScreen {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
-		
+
 		switch(this.getRunState()){
 			case MobileManager.MOBILESTATE_ON:
 				if(this.currentTab == TAB_SOUNDCLOUD){
@@ -437,7 +438,7 @@ public class GuiMobile extends GuiScreen {
 			   mouseY >= this.getScreenY()+173 && mouseY <= this.getScreenY()+173+38) {
 				this.deviceButtons[2] = true;
 			}
-			
+
 			if(mouseX >= this.getScreenX()+this.getScreenWidth()-20 && mouseX <= this.getScreenX()+this.getScreenWidth() &&
 			   mouseY >= this.getScreenY()+18 && mouseY <= this.getScreenY()+18+20) {
 				this.confirmButtonDown = true;
@@ -491,7 +492,7 @@ public class GuiMobile extends GuiScreen {
 			this.deviceButtons[i] = false;
 		}
 		this.confirmButtonDown = false;
-		
+
 		switch(this.getRunState()) {
 			case RadioBlock.RUNSTATE_ON:
 				if(this.currentTab == 0) {

@@ -16,6 +16,7 @@ public class RadioBlocks {
 
     // Radio block
     public static RadioBlock RADIOBLOCK;
+    public static SpeakerBlock SPEAKERBLOCK;
 
     public static void registerBlocks() {
 

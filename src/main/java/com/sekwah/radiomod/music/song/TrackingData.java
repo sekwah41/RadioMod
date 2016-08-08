@@ -1,7 +1,5 @@
 package com.sekwah.radiomod.music.song;
 
-import javax.sound.midi.Track;
-
 /**
  * Created by on 07/08/2016.
  *
@@ -9,7 +7,18 @@ import javax.sound.midi.Track;
  */
 public class TrackingData {
 
-    public TrackType type;
+    /**
+     * builtin - just song name
+     * private - song name for the private folder
+     * online - url for song
+     * stream - url for song
+     */
+    public int type;
+
+    public static final int BUILTIN = 1;
+    public static final int PRIVATE = 2;
+    public static final int ONLINE = 3;
+    public static final int STREAM = 4;
 
     /**
      * Builtin - just song name
@@ -20,32 +29,16 @@ public class TrackingData {
     public String source;
 
     // Convert the max time to max ticks.
+    //public int maxFrames;
+
+    public int currentTick;
+
     public int maxTicks;
 
-    public int currentTicks;
-
-
-    public enum TrackType{
-        BUILTIN(0,"builtin"),
-        PRIVATE(1,"private"),
-        ONLINE(2,"online"),
-        STREAM(3,"stream");
-
-        public final int index;
-
-        public final String name;
-
-        TrackType(int index, String name){
-            this.index = index;
-            this.name = name;
-        }
-    }
-
-    public TrackingData(TrackType type, String source, int currentTicks, int maxTicks){
+    public TrackingData(int type, String source, int currentTicks){
         this.type = type;
         this.source = source;
-        this.currentTicks = currentTicks;
-        this.maxTicks = maxTicks;
+        this.currentTick = currentTicks;
     }
 
 

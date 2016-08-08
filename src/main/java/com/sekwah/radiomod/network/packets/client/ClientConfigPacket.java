@@ -19,6 +19,8 @@ public class ClientConfigPacket implements IMessage {
     private double soundRadius;
     private double soundDropoff;
 
+    public ClientConfigPacket(){}
+
     public ClientConfigPacket(double soundRadius, double soundDropoff) {
         this.soundRadius = soundRadius;
         this.soundDropoff = soundDropoff;

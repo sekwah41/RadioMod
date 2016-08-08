@@ -80,6 +80,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void loadSettings(FMLPreInitializationEvent event) {
+        super.loadSettings(event);
         this.settings = new RadioSettings();
         this.settings.setupConfigVariables(event);
     }
