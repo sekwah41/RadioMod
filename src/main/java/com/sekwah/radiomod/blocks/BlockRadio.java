@@ -30,7 +30,7 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class RadioBlock extends BlockContainer implements ITileEntityProvider {
+public class BlockRadio extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -42,7 +42,7 @@ public class RadioBlock extends BlockContainer implements ITileEntityProvider {
     public static final int RUNSTATE_ON = 1;
     public static final int RUNSTATE_PLAYING = 2;
 
-    public RadioBlock() {
+    public BlockRadio() {
         super(Material.ROCK);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }

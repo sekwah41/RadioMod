@@ -15,12 +15,12 @@ public class RadioBlocks {
 
 
     // Radio block
-    public static RadioBlock RADIOBLOCK;
-    public static SpeakerBlock SPEAKERBLOCK;
+    public static BlockRadio RADIOBLOCK;
+    public static BlockSpeaker SPEAKERBLOCK;
 
     public static void registerBlocks() {
 
-        RADIOBLOCK = new RadioBlock();
+        RADIOBLOCK = new BlockRadio();
         registerTileBlock(RADIOBLOCK, "radio_block", TileEntityRadio.class);
 
     }

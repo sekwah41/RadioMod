@@ -27,7 +27,7 @@ public class MusicTracker {
             String uuid = entry.getKey();
             TrackingData data = entry.getValue();
             if(data.type != TrackingData.STREAM){
-                data.currentTick++;
+                RadioMod.logger.info(data.currentTick++);
                 if(data.maxTicks < data.currentTick){
                     this.trackingMap.remove(uuid);
                     // TODO get playlist if there is one.
@@ -47,7 +47,7 @@ public class MusicTracker {
         TimingData timingData;
         switch (data.type){
             case TrackingData.BUILTIN:
-                timingData = this.getTimingData(SongBuiltIn.builtInSongCollection.get(Integer.parseInt(data.source)).getFileName());
+                timingData = this.getTimingDataBuiltIn(SongBuiltIn.builtInSongCollection.get(Integer.parseInt(data.source)).getFileName());
                 if(timingData == null){
                     return;
                 }
@@ -94,13 +94,17 @@ public class MusicTracker {
         return null;
     }
 
+    public TimingData getTimingDataBuiltIn(String file){
+        return getTimingData(this.getClass().getResourceAsStream("/assets/radiomod/sounds/songs/" + file + ".mp3"));
+    }
+
     public TimingData getTimingData(InputStream inputStream){
         Bitstream bitstream = new Bitstream(inputStream);
         try {
             Header head = bitstream.readFrame();
             int max_frames = head.max_number_of_frames(inputStream.available());
             inputStream.close();
-            new TimingData(head.ms_per_frame(), max_frames);
+            return new TimingData(head.ms_per_frame(), max_frames);
         } catch (BitstreamException | IOException e) {
             RadioMod.logger.info("Error getting timing data.");
             e.printStackTrace();

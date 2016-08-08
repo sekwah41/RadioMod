@@ -1,7 +1,7 @@
 package com.sekwah.radiomod.client.renderer.tileentity;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import com.sekwah.radiomod.client.model.tile.ModelMp3DockRadio;
@@ -49,13 +49,13 @@ public class TileEntityRadioRenderer extends TileEntitySpecialRenderer<TileEntit
         if (par1TileEntity != null) {
             int dir = par1TileEntity.getBlockMetadata();
             switch (par1TileEntity.getRunState()) {
-                case RadioBlock.RUNSTATE_OFF:
+                case BlockRadio.RUNSTATE_OFF:
                     this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
-                case RadioBlock.RUNSTATE_BOOTINGUP:
+                case BlockRadio.RUNSTATE_BOOTINGUP:
                     this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
-                case RadioBlock.RUNSTATE_ON:
+                case BlockRadio.RUNSTATE_ON:
                     this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
-                case RadioBlock.RUNSTATE_PLAYING:
+                case BlockRadio.RUNSTATE_PLAYING:
                     this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
                 default:
                     this.bindTexture(new ResourceLocation(RadioMod.modid + ":textures/blocks/mp3dockradio.png"));
