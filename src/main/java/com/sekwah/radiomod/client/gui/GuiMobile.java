@@ -3,6 +3,8 @@ package com.sekwah.radiomod.client.gui;
 import java.io.IOException;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
+
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
@@ -42,6 +44,7 @@ public class GuiMobile extends GuiScreen {
 	};
 	public static ResourceLocation mobileBg;
 	public GuiVisualizer guiVisualizer;
+	public GuiVisualizer guiVisualizerFullSize;
 	public GuiListMobileSongs guiSongList;
 	private GuiTextField guiTextField;
 
@@ -108,10 +111,12 @@ public class GuiMobile extends GuiScreen {
 		this.buttonList.clear();
 		
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25, (int)120, (int)50);
+		this.guiVisualizerFullSize = new GuiVisualizer((int)this.getScreenX(), (int) ((int)this.getScreenY()+this.getScreenHeight()-100), (int)this.getScreenWidth(), (int)100);
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.getScreenHeight()-18, (int) ((int) this.getScreenY()+18-this.getYOffset()), (int) (this.getScreenY()+this.getScreenHeight()-this.getYOffset()));
-		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+18), (int) (this.getScreenWidth()-20), 20);
+		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+18), (int) (this.getScreenWidth()-20), 19);
         this.guiTextField.setText("Song URL");
         this.guiTextField.setMaxStringLength(100000000);
+        Keyboard.enableRepeatEvents(true);
 		this.openTab(0);
 		
 		if(this.getRunState() == MobileManager.MOBILESTATE_BOOTINGUP) {
@@ -237,6 +242,19 @@ public class GuiMobile extends GuiScreen {
 		}
 	}
 	
+	public void submitSongURL() {
+		String url = this.guiTextField.getText();
+		
+		if(this.isInHand()){
+			this.getMusicSource().stopMusic();
+			this.getMusicSource().playStreamUrl(url);
+		}else{
+			RadioMod.packetNetwork.sendToServer(new ServerStopSongPacket(this.tileEntity.getUUID()));
+			RadioMod.packetNetwork.sendToServer(new ServerPlaySongPacket(this.tileEntity.getUUID(),
+					new TrackingData(TrackingData.STREAM, url, 0)));
+		}
+	}
+	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -302,10 +320,30 @@ public class GuiMobile extends GuiScreen {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
 				}else if(this.currentTab == TAB_PRIVATE) {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
+				}else if(this.currentTab == TAB_RADIO) {
+					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
+					this.guiTextField.drawTextBox();
+					GlStateManager.color(1.0f, 1.0f, 1.0f);
+					
+					//Drawing the confirmation button
+					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
+					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
+					
+					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
+						if(this.getMusicSource().getPlayer().getRawData() != null){
+							int dataLength = this.getMusicSource().getPlayer().getRawData().length;
+							this.guiVisualizerFullSize.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
+							this.guiVisualizerFullSize.populate(this.getMusicSource());
+						}
+						this.guiVisualizerFullSize.setLocation((int)this.getScreenX(), (int) (this.getScreenY()+this.getScreenHeight()-100));
+						this.guiVisualizerFullSize.calculateBands();
+						this.guiVisualizerFullSize.draw();
+					}
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
 					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
 					this.guiTextField.drawTextBox();
-
+					
+					//Drawing the confirmation button
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
 					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
 				}
@@ -329,7 +367,6 @@ public class GuiMobile extends GuiScreen {
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 				
-				//TODO Make proper visualizer
 				if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
 					if(this.getMusicSource().getPlayer().getRawData() != null){
 						int dataLength = this.getMusicSource().getPlayer().getRawData().length;
@@ -427,7 +464,12 @@ public class GuiMobile extends GuiScreen {
 
 		switch(this.getRunState()){
 			case MobileManager.MOBILESTATE_ON:
-				if(this.currentTab == TAB_SOUNDCLOUD){
+				if(this.currentTab == TAB_RADIO) {
+					if (this.guiTextField.isFocused())
+			        {
+			            this.guiTextField.textboxKeyTyped(typedChar, keyCode);
+			        }
+				}else if(this.currentTab == TAB_SOUNDCLOUD){
 					if (this.guiTextField.isFocused())
 			        {
 			            this.guiTextField.textboxKeyTyped(typedChar, keyCode);
@@ -460,6 +502,8 @@ public class GuiMobile extends GuiScreen {
 			if(mouseX >= this.getScreenX()+this.getScreenWidth()-20 && mouseX <= this.getScreenX()+this.getScreenWidth() &&
 			   mouseY >= this.getScreenY()+18 && mouseY <= this.getScreenY()+18+20) {
 				this.confirmButtonDown = true;
+				
+				this.submitSongURL();
 			}
 		}
 		
@@ -469,6 +513,8 @@ public class GuiMobile extends GuiScreen {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
 				}else if(this.currentTab == TAB_PRIVATE) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
+				}else if(this.currentTab == TAB_RADIO) {
+					this.guiTextField.mouseClicked(mouseX, mouseY, mouseButton);
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
 					this.guiTextField.mouseClicked(mouseX, mouseY, mouseButton);
 				}
@@ -561,6 +607,8 @@ public class GuiMobile extends GuiScreen {
 			break;
 			case MobileManager.MOBILESTATE_ON:
 				if(this.currentTab == TAB_SOUNDCLOUD) {
+					this.guiTextField.updateCursorCounter();
+				}else if(this.currentTab == TAB_RADIO) {
 					this.guiTextField.updateCursorCounter();
 				}
 			break;
