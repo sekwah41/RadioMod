@@ -24,7 +24,7 @@ version = "0.0.1"
 group= "com.sekwah.radiomod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "radiomod"
 
-sourceCompatibility = targetCompatibility = "1.8"
+//sourceCompatibility = targetCompatibility = "1.8"
 
 minecraft {
     version = "1.10.2-12.18.1.2045"
