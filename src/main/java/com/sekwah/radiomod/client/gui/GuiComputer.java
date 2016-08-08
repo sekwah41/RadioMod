@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
@@ -90,7 +90,7 @@ public class GuiComputer extends GuiScreen {
 		this.guiSongList = new GuiListSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
 		this.openTab(0);
 		
-		if(this.computerState == RadioBlock.RUNSTATE_BOOTINGUP) {
+		if(this.computerState == BlockRadio.RUNSTATE_BOOTINGUP) {
 			this.setupLoadingDummies();
 		}
 
@@ -117,7 +117,7 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	public void bootupComputer() {
-		this.computerState = RadioBlock.RUNSTATE_BOOTINGUP;
+		this.computerState = BlockRadio.RUNSTATE_BOOTINGUP;
 		RadioMod.packetNetwork.sendToServer(new ServerBootupComputerPacket(false, this.tileEntity.getPos()));
 
 		this.setupLoadingDummies();
@@ -133,12 +133,12 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	public void finishBootup() {
-		this.computerState = RadioBlock.RUNSTATE_ON;
+		this.computerState = BlockRadio.RUNSTATE_ON;
 		this.desktopFadein = 20;
 	}
 	
 	public void shutdownComputer() {
-		this.computerState = RadioBlock.RUNSTATE_OFF;
+		this.computerState = BlockRadio.RUNSTATE_OFF;
 
 		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
 
@@ -161,7 +161,7 @@ public class GuiComputer extends GuiScreen {
 
 	private void playSong(int index, int frame) {
 		this.songID = index;
-		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.computerState = BlockRadio.RUNSTATE_PLAYING;
 		this.playedSong = index;
 
 		RadioMod.logger.info(this.tileEntity.getUUID());
@@ -177,7 +177,7 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	private void playStream(String url, String radioName) {
-		this.computerState = RadioBlock.RUNSTATE_PLAYING;
+		this.computerState = BlockRadio.RUNSTATE_PLAYING;
 
 		RadioMod.logger.info(this.tileEntity.getUUID());
 
@@ -188,7 +188,7 @@ public class GuiComputer extends GuiScreen {
 		this.pauseFrame = 0;
 		this.songID = -1;
 		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
-		this.computerState = RadioBlock.RUNSTATE_ON;
+		this.computerState = BlockRadio.RUNSTATE_ON;
 	}
 	
 	private void previousSong() {
@@ -227,7 +227,7 @@ public class GuiComputer extends GuiScreen {
 		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, 1);
 
 		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_OFF:
+			case BlockRadio.RUNSTATE_OFF:
 				if(this.shutdownSequence > 0) this.shutdownSequence-=partialTicks;
 				float vSeq = (10-this.shutdownSequence)/5.0f;
 				float hSeq = (5-this.shutdownSequence)/5.0f;
@@ -237,7 +237,7 @@ public class GuiComputer extends GuiScreen {
 				if(hSeq > 1) hSeq = 1;
 				Draw.drawRect(this.getScreenX()+this.getScreenWidth()/2*hSeq, this.getScreenY()+(this.getScreenHeight()-2)/2*vSeq, this.getScreenWidth()*(1-hSeq), (this.getScreenHeight()-2)*(1-vSeq)+2, 1, 1, 1, 1);
 			break;
-			case RadioBlock.RUNSTATE_BOOTINGUP:
+			case BlockRadio.RUNSTATE_BOOTINGUP:
 				this.currentStartupTime+=partialTicks;
 				if(this.getStartupLogoProgress() >= 1){
 					startupLogoFadeout+=partialTicks;
@@ -264,7 +264,7 @@ public class GuiComputer extends GuiScreen {
 					Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
 				}
 			break;
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 
@@ -289,7 +289,7 @@ public class GuiComputer extends GuiScreen {
 				if(this.currentTab < this.tabs.length-1) Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-16-2, this.getScreenY(), 3*16F/256, 1-16F/256, 16F/256, 16F/256, 16, 16);
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			break;
-			case RadioBlock.RUNSTATE_PLAYING:
+			case BlockRadio.RUNSTATE_PLAYING:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 
@@ -378,7 +378,7 @@ public class GuiComputer extends GuiScreen {
 			Draw.drawTexture(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+167, 0, 192F/256, 16F/256, 16F/256, 16, 16);
 		}
 
-		if(this.computerState != RadioBlock.RUNSTATE_OFF) {
+		if(this.computerState != BlockRadio.RUNSTATE_OFF) {
 			if(this.greenLightWhiteFlash){
 				Draw.drawRect(this.width/2-this.bgWidth/2+205, this.height/2-this.bgHeight/2+161, 16, 5, 1, 1, 1, 1);
 				this.greenLightWhiteFlash = false;
@@ -404,7 +404,7 @@ public class GuiComputer extends GuiScreen {
 		}
 
 		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 				if(this.currentTab == 0) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
 				}else if(this.currentTab == 1) {
@@ -419,7 +419,7 @@ public class GuiComputer extends GuiScreen {
 					openTab(this.currentTab+1);
 				}
 			break;
-			case RadioBlock.RUNSTATE_PLAYING:
+			case BlockRadio.RUNSTATE_PLAYING:
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
 					this.stopSong();
 				}
@@ -450,7 +450,7 @@ public class GuiComputer extends GuiScreen {
 		super.mouseReleased(mouseX, mouseY, state);
 
 		if(this.powerButtonClicked) {
-			if(this.computerState == RadioBlock.RUNSTATE_OFF){
+			if(this.computerState == BlockRadio.RUNSTATE_OFF){
 				this.bootupComputer();
 			}else{
 				this.shutdownComputer();
@@ -460,7 +460,7 @@ public class GuiComputer extends GuiScreen {
 		this.powerButtonClicked = false;
 
 		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 				if(this.currentTab == 0) {
 					this.guiSongList.mouseReleased(mouseX, mouseY, state);
 				}
@@ -489,7 +489,7 @@ public class GuiComputer extends GuiScreen {
 		super.updateScreen();
 
 		switch(this.computerState) {
-			case RadioBlock.RUNSTATE_BOOTINGUP:
+			case BlockRadio.RUNSTATE_BOOTINGUP:
 				if(areDummiesLoading()){
 					LoadingDummy currentDummy = this.loadingDummies[this.loadingProgress];
 					if(!currentDummy.isLoaded()){
@@ -509,7 +509,7 @@ public class GuiComputer extends GuiScreen {
 					}
 				}
 			break;
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 			break;
 		}
 	}

@@ -11,9 +11,9 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class SpeakerBlock extends BlockContainer implements ITileEntityProvider {
+public class BlockSpeaker extends BlockContainer implements ITileEntityProvider {
 
-    protected SpeakerBlock(Material materialIn) {
+    protected BlockSpeaker(Material materialIn) {
         super(materialIn);
     }
 

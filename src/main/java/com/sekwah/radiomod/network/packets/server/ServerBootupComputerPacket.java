@@ -1,7 +1,7 @@
 package com.sekwah.radiomod.network.packets.server;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.network.packets.client.ClientUpdateComputerPacket;
 
@@ -58,7 +58,7 @@ public class ServerBootupComputerPacket implements IMessage {
         		tileEntity.bootUp();
         		
         		if(message.sendToAll) {
-            		RadioMod.packetNetwork.sendToAll(new ClientUpdateComputerPacket(tileEntity.getPos(), RadioBlock.RUNSTATE_BOOTINGUP));
+            		RadioMod.packetNetwork.sendToAll(new ClientUpdateComputerPacket(tileEntity.getPos(), BlockRadio.RUNSTATE_BOOTINGUP));
             	}
         	}
         	

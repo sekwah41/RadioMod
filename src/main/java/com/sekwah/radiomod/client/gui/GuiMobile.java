@@ -4,17 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 import com.sekwah.radiomod.RadioMod;
-import com.sekwah.radiomod.blocks.RadioBlock;
+import com.sekwah.radiomod.blocks.BlockRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 
 import com.sekwah.radiomod.music.song.*;
 import com.sekwah.radiomod.network.packets.server.ServerPlaySongPacket;
 import com.sekwah.radiomod.network.packets.server.ServerStopSongPacket;
 
-import org.apache.logging.log4j.Level;
-import org.lwjgl.opengl.GL11;
-
-import com.sekwah.radiomod.client.gui.GuiComputer.Tab;
 import com.sekwah.radiomod.client.sound.RadioSounds;
 import com.sekwah.radiomod.music.FileManager;
 import com.sekwah.radiomod.music.MobileManager;
@@ -465,7 +461,7 @@ public class GuiMobile extends GuiScreen {
 		}
 		
 		switch(this.getRunState()) {
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 				if(this.currentTab == TAB_BUILTIN) {
 					this.guiSongList.mouseClicked(mouseX, mouseY, mouseButton);
 				}else if(this.currentTab == TAB_PRIVATE) {
@@ -482,7 +478,7 @@ public class GuiMobile extends GuiScreen {
 					openTab(this.currentTab+1);
 				}
 			break;
-			case RadioBlock.RUNSTATE_PLAYING:
+			case BlockRadio.RUNSTATE_PLAYING:
 				if(mouseX >= this.getScreenX()+1 && mouseX <= this.getScreenX()+17 && mouseY >= this.getScreenY() && mouseY <= this.getScreenY()+16) {
 					this.stopSong();
 				}
@@ -513,7 +509,7 @@ public class GuiMobile extends GuiScreen {
 		this.confirmButtonDown = false;
 
 		switch(this.getRunState()) {
-			case RadioBlock.RUNSTATE_ON:
+			case BlockRadio.RUNSTATE_ON:
 				if(this.currentTab == 0) {
 					this.guiSongList.mouseReleased(mouseX, mouseY, state);
 				}
