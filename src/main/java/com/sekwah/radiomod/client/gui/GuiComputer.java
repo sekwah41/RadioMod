@@ -293,11 +293,11 @@ public class GuiComputer extends GuiScreen {
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
 
-				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
+				/*for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
 					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
 					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
 				}
-				this.guiVisualizer.draw();
+				this.guiVisualizer.draw();*/
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 				if(getCurrentPlayedSong() != null) {

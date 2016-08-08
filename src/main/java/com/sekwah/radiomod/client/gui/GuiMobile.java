@@ -100,7 +100,7 @@ public class GuiMobile extends GuiScreen {
 		super.initGui();
 		this.buttonList.clear();
 		
-		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25, (int)90, (int)50);
+		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25, (int)120, (int)50);
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
 		this.openTab(0);
 		
@@ -292,13 +292,18 @@ public class GuiMobile extends GuiScreen {
 			case MobileManager.MOBILESTATE_PLAYING:
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), this.bgColor[0], this.bgColor[1], this.bgColor[2], 1);
 				Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-80, this.getScreenWidth(), 80, this.bgColor[0], this.bgColor[1], this.bgColor[2], 1, this.bgColor[0]*0.7f, this.bgColor[1]*0.7f, this.bgColor[2]*0.7f, 1);
-
-				for(int i = 0; i < this.guiVisualizer.getBands(); i++) {
-					float ticks = Minecraft.getMinecraft().thePlayer.ticksExisted+partialTicks;
-					this.guiVisualizer.buffer[i] = Math.min(Math.abs((float) Math.sin(ticks*0.1f + i*0.2)), 1);
+				
+				//TODO Make proper visualizer
+				if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
+					if(this.getMusicSource().getPlayer().getRawData() != null){
+						int dataLength = this.getMusicSource().getPlayer().getRawData().length;
+						this.guiVisualizer.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
+						this.guiVisualizer.populate(this.getMusicSource().getPlayer().getRawData());
+					}
+					this.guiVisualizer.setLocation((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25);
+					this.guiVisualizer.calculateBands();
+					this.guiVisualizer.draw();
 				}
-				this.guiVisualizer.setLocation((int)this.getScreenCenterX()-45, (int)this.getScreenCenterY()-25);
-				this.guiVisualizer.draw();
 
 				Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), 18, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 				if(getCurrentPlayedSong() != null) {
