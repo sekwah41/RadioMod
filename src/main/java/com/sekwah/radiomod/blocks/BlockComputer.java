@@ -30,7 +30,7 @@ import net.minecraft.world.World;
  *
  * @author sekwah41
  */
-public class ComputerBlock extends BlockContainer implements ITileEntityProvider {
+public class BlockComputer extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -41,7 +41,7 @@ public class ComputerBlock extends BlockContainer implements ITileEntityProvider
     public static final int RUNSTATE_ON = 1;
     public static final int RUNSTATE_PLAYING = 2;
 
-    public ComputerBlock() {
+    public BlockComputer() {
         super(Material.ROCK);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
