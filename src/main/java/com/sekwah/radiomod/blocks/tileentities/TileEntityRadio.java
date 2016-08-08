@@ -90,8 +90,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public NBTTagCompound getUpdateTag()
     {
-
-
         return this.writeToNBT(new NBTTagCompound());
     }
 
@@ -101,13 +99,18 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         this.uuid = compound.getString("RadioID");
         this.framePaused = compound.getInteger("FramePaused");
         this.setupRadio();
+        if(RadioMod.proxy.isClient()){
+            RadioMod.packetNetwork.sendToServer(new ServerLoadPlayerPacket(uuid));
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         compound.setInteger("RunState", this.runState);
-        compound.setString("RadioID", this.uuid);
+        if(this.uuid != null && !this.uuid.equals("")){
+            compound.setString("RadioID", this.uuid);
+        }
 
         return compound;
     }
@@ -151,16 +154,12 @@ public class TileEntityRadio extends TileEntity implements ITickable {
      */
     public void onChunkUnload()
     {
-        RadioMod.logger.info("Unload");
+        //RadioMod.logger.info("Unload");
         RadioMod.instance.musicManager.radioSources.get(this.uuid).stopMusic();
     }
 
     public void onLoad()
     {
-        if(RadioMod.proxy.isClient()){
-            RadioMod.logger.info("Send check");
-            RadioMod.packetNetwork.sendToServer(new ServerLoadPlayerPacket(uuid));
-        }
         RadioMod.instance.musicManager.createMusicSource(this.uuid);
         //RadioMod.logger.info("Spawned");
     }

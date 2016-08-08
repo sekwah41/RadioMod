@@ -33,7 +33,7 @@ public class EventHook {
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent event) {
         //RadioMod.logger.info(FMLClientHandler.instance().getWorldClient());
-        if(FMLClientHandler.instance().getWorldClient() != null){
+        if(FMLClientHandler.instance().getWorldClient() != null && !Minecraft.getMinecraft().isGamePaused()){
             if(event.phase == TickEvent.Phase.START){
                 RadioMod.instance.musicManager.sourceDistances.clear();
             }

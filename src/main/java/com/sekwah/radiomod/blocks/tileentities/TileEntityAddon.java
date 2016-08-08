@@ -14,13 +14,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityAddon extends TileEntity implements ITickable {
-	private String ownerUUID = null;
-	
-	@Override
+    protected String ownerUUID = null;
+
+    @Override
     public void update() {
     }
 
-	public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         this.ownerUUID = compound.getString("OwnerUUID");
     }
@@ -28,19 +28,21 @@ public class TileEntityAddon extends TileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        compound.setString("OwnerUUID", this.ownerUUID);
+        if(this.ownerUUID != null && !this.ownerUUID.equals("")){
+            compound.setString("OwnerUUID", this.ownerUUID);
+        }
         return compound;
     }
-    
+
     public void setOwner(String ownerUUIDIn) {
-    	this.ownerUUID = ownerUUIDIn;
-    	this.markDirty();
+        this.ownerUUID = ownerUUIDIn;
+        this.markDirty();
     }
-    
+
     public String getOwnerUUID(){
         return this.ownerUUID;
     }
-    
+
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         return new SPacketUpdateTileEntity(this.pos, 1, this.getUpdateTag());
@@ -50,7 +52,7 @@ public class TileEntityAddon extends TileEntity implements ITickable {
     {
         return this.writeToNBT(new NBTTagCompound());
     }
-    
+
     public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
     {
         this.readFromNBT(pkt.getNbtCompound());

@@ -33,7 +33,7 @@ import net.minecraftforge.fml.relauncher.Side;
  *
  * @author sekwah41
  */
-@Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version, acceptedMinecraftVersions="[1.10.2]")
+@Mod(modid = RadioMod.modid, name = "RadioMod", version = RadioMod.version)
 public class RadioMod {
 
     @Instance
