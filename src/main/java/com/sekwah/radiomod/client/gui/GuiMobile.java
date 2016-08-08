@@ -69,16 +69,16 @@ public class GuiMobile extends GuiScreen {
 	public Tab[] tabs = new Tab[]{
 			new Tab("Chef's Specials"),
 			new Tab("Private Collection"),
-			new Tab("Playlists"),
-			new Tab("Bookmarked"),
+			/*new Tab("Playlists"),
+			new Tab("Bookmarked"),*/
 			new Tab("Radio Stations"),
-			new Tab("SoundCloud"),
+			/*new Tab("SoundCloud"),*/
 	};
 	public static final int TAB_BUILTIN = 0;
 	public static final int TAB_PRIVATE = 1;
 	public static final int TAB_PLAYLISTS = 2;
 	public static final int TAB_BOOKMARKED = 3;
-	public static final int TAB_RADIO = 4;
+	public static final int TAB_RADIO = 2;
 	public static final int TAB_SOUNDCLOUD = 5;
 
 	public TileEntityRadio tileEntity;
@@ -97,11 +97,11 @@ public class GuiMobile extends GuiScreen {
 		
 		if(currentSong != null){
 			if(currentSong instanceof SongBuiltIn) {
-				currentTab = 0;
+				currentTab = TAB_BUILTIN;
 			}else if(currentSong instanceof SongPrivate) {
-				currentTab = 1;
+				currentTab = TAB_PRIVATE;
 			}else if(currentSong instanceof SongSoundCloud) {
-				currentTab = 5;
+				currentTab = TAB_SOUNDCLOUD;
 			}
 			this.playedSong = currentSong.getID();
 		}
@@ -191,7 +191,7 @@ public class GuiMobile extends GuiScreen {
 		this.playedSong = index;
 		
 		switch(this.currentTab) {
-			case 0:
+			case TAB_BUILTIN:
 				if(this.isInHand()){
 					this.getMusicSource().playBuiltInSongCollection(index, frame, false);
 				}else{
@@ -199,7 +199,7 @@ public class GuiMobile extends GuiScreen {
 							new TrackingData(TrackingData.BUILTIN, String.valueOf(index), frame)));
 				}
 			break;
-			case 1:
+			case TAB_PRIVATE:
 				if(this.isInHand()){
 					this.getMusicSource().playPrivateSongCollection(index, frame, false);
 				}else{
@@ -587,7 +587,7 @@ public class GuiMobile extends GuiScreen {
 
 		switch(this.getRunState()) {
 			case BlockRadio.RUNSTATE_ON:
-				if(this.currentTab == 0) {
+				if(this.currentTab == TAB_BUILTIN) {
 					this.guiSongList.mouseReleased(mouseX, mouseY, state);
 				}
 			break;
@@ -697,9 +697,9 @@ public class GuiMobile extends GuiScreen {
 	
 	public Song getCurrentPlayedSong() {
 		switch(this.currentTab) {
-			case 0:
+			case TAB_BUILTIN:
 				return SongBuiltIn.builtInSongCollection.get(this.playedSong);
-			case 1:
+			case TAB_PRIVATE:
 				return SongPrivate.privateSongCollection.get(this.playedSong);
 			case TAB_RADIO:
 				return new Song(0, null, "Radio Station");
@@ -709,9 +709,9 @@ public class GuiMobile extends GuiScreen {
 	
 	public List<? extends Song> getSongCollection() {
 		switch(this.currentTab) {
-			case 0:
+			case TAB_BUILTIN:
 				return SongBuiltIn.builtInSongCollection;
-			case 1:
+			case TAB_PRIVATE:
 				return SongPrivate.privateSongCollection;
 		}
 		return null;

@@ -20,7 +20,7 @@ import net.minecraft.util.ResourceLocation;
 public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEntitySpeaker> {
     public static final ModelSpeaker MODEL = new ModelSpeaker();
     public static final ResourceLocation TEXTURE = new ResourceLocation(RadioMod.modid + ":textures/blocks/speaker.png");
-    
+    public static final ResourceLocation TEXTURE_ON = new ResourceLocation(RadioMod.modid + ":textures/blocks/speaker_on.png");
     //This method is called when minecraft renders a tile entity
     public void renderTileEntityAt(TileEntitySpeaker te, double x, double y, double z, float partialTicks, int destroyStage)
     {
@@ -49,7 +49,7 @@ public class TileEntitySpeakerRenderer extends TileEntitySpecialRenderer<TileEnt
                 rotation = 90.0F;
         }
         
-        this.bindTexture(TEXTURE);
+        this.bindTexture((par1TileEntity != null && par1TileEntity.getOwnerUUID() != null) ? TEXTURE_ON : TEXTURE);
 
         GlStateManager.enableRescaleNormal();
         this.MODEL.render(x,y,z,rotation);

@@ -9,7 +9,10 @@ public class ModelSpeaker extends ModelBase
 {
     ModelRenderer RootNode;
     ModelRenderer SpeakerBox;
-
+    ModelRenderer Light;
+    
+    public float bassAmp = 0;
+    
     public ModelSpeaker()
     {
         this( 0.0f );
@@ -25,6 +28,11 @@ public class ModelSpeaker extends ModelBase
         SpeakerBox.setTextureSize( 64, 64 );
         SpeakerBox.addBox( -7.5F, -12F, -7.5F, 15, 24, 15);
         SpeakerBox.setRotationPoint( 0F, 12F, 0F );
+        
+        Light = new ModelRenderer( this, 0, 42);
+        Light.setTextureSize( 64, 64 );
+        Light.addBox( -6.5F, -11F, -7.51F, 15, 24, 0);
+        Light.setRotationPoint( 0F, 12F, 0F);
     }
 
    public void render(double x, double y, double z, float rotation)
@@ -52,7 +60,21 @@ public class ModelSpeaker extends ModelBase
         SpeakerBox.rotateAngleY = 0F;
         SpeakerBox.rotateAngleZ = 0F;
         SpeakerBox.renderWithRotation(par1);
-
+        
+        GlStateManager.color(1, 1, 1, Math.min(this.bassAmp, 1));
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(7425);
+	        Light.rotateAngleX = 0F;
+	        Light.rotateAngleY = 0F;
+	        Light.rotateAngleZ = 0F;
+	        Light.renderWithRotation(par1);
+        GlStateManager.enableLighting();
+        GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
     }
 
