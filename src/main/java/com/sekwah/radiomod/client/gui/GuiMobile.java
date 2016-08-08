@@ -91,8 +91,6 @@ public class GuiMobile extends GuiScreen {
 		}else{
 			currentSong = MobileManager.getSongPlaying();
 		}
-
-		RadioMod.logger.info(tileEntity.getUUID());
 		
 		if(currentSong != null){
 			if(currentSong instanceof SongBuiltIn) {
