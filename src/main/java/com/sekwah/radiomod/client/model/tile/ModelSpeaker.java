@@ -74,8 +74,8 @@ public class ModelSpeaker extends ModelBase
         GlStateManager.enableLighting();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.popMatrix();*/
+        GlStateManager.enableAlpha();*/
+        GlStateManager.popMatrix();
     }
 
 }
