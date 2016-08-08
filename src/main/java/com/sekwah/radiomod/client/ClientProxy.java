@@ -8,6 +8,7 @@ import com.sekwah.radiomod.RadioSettings;
 import com.sekwah.radiomod.blocks.RadioBlocks;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.blocks.tileentities.TileEntitySpeaker;
+import com.sekwah.radiomod.blocks.tileentities.TileEntityVisualizer;
 import com.sekwah.radiomod.client.gui.GuiComputer;
 import com.sekwah.radiomod.client.gui.GuiMobile;
 import com.sekwah.radiomod.client.renderer.layers.LayerHeadphones;
@@ -66,6 +67,7 @@ public class ClientProxy extends CommonProxy {
 
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.RADIOBLOCK), 0, TileEntityRadio.class);
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.SPEAKERBLOCK), 0, TileEntitySpeaker.class);
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(RadioBlocks.VISUALIZERBLOCK), 0, TileEntityVisualizer.class);
         ItemModelMesher itemModelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
         itemModelMesher.register(RadioItems.MOBILE, 0, new ModelResourceLocation("radiomod:mobile_player", "inventory"));
         itemModelMesher.register(RadioItems.JACK, 0, new ModelResourceLocation("radiomod:wireless_jack", "inventory"));
@@ -78,6 +80,9 @@ public class ClientProxy extends CommonProxy {
         
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpeaker.class, new TileEntitySpeakerRenderer());
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.SPEAKERBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":speaker_block", "inventory"));
+        
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySpeaker.class, new TileEntitySpeakerRenderer());
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(RadioBlocks.VISUALIZERBLOCK), 0, new ModelResourceLocation(RadioMod.modid + ":visualizer_block", "inventory"));
     }
 
     @Override

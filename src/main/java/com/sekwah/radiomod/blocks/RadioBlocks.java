@@ -20,7 +20,7 @@ public class RadioBlocks {
     // Radio block
     public static BlockRadio RADIOBLOCK;
     public static BlockSpeaker SPEAKERBLOCK;
-    public static BlockSpeaker VISUALIZERBLOCK;
+    public static BlockVisualizer VISUALIZERBLOCK;
 
     public static void registerBlocks() {
         RADIOBLOCK = new BlockRadio();
@@ -29,7 +29,7 @@ public class RadioBlocks {
         SPEAKERBLOCK = new BlockSpeaker();
         registerTileBlock(SPEAKERBLOCK, "speaker_block", TileEntitySpeaker.class);
         
-        VISUALIZERBLOCK = new BlockSpeaker();
+        VISUALIZERBLOCK = new BlockVisualizer();
         registerTileBlock(VISUALIZERBLOCK, "visualizer_block", TileEntityVisualizer.class);
     }
 
