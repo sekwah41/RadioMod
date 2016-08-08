@@ -117,6 +117,7 @@ public class RadioMod {
         packetNetwork.registerMessage(ServerPlaySongPacket.Handler.class, ServerPlaySongPacket.class, 101, Side.SERVER);
         packetNetwork.registerMessage(ServerStopSongPacket.Handler.class, ServerStopSongPacket.class, 102, Side.SERVER);
         packetNetwork.registerMessage(ServerLoadPlayerPacket.Handler.class, ServerLoadPlayerPacket.class, 103, Side.SERVER);
+        packetNetwork.registerMessage(ServerUpdatePlayerLocalRunstate.Handler.class, ServerUpdatePlayerLocalRunstate.class, 104, Side.SERVER);
     }
 
 }

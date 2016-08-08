@@ -120,8 +120,8 @@ public class GuiMobile extends GuiScreen {
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25, (int)120, (int)50);
 		this.guiVisualizerFullSize = new GuiVisualizer((int)this.getScreenX(), (int) ((int)this.getScreenY()+this.getScreenHeight()-100), (int)this.getScreenWidth(), (int)100);
 		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.getScreenHeight()-18, (int) ((int) this.getScreenY()+18-this.getYOffset()), (int) (this.getScreenY()+this.getScreenHeight()-this.getYOffset()));
-		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+18), (int) (this.getScreenWidth()-20), 19);
-        this.guiTextField.setText("Song URL");
+		this.guiTextField = new GuiTextField(10, this.fontRendererObj, (int) (this.getScreenX()), (int) (this.getScreenY()+85), (int) (this.getScreenWidth()-20), 18);
+        this.guiTextField.setText("Stream URL");
         this.guiTextField.setMaxStringLength(100000000);
         Keyboard.enableRepeatEvents(true);
         
@@ -330,13 +330,15 @@ public class GuiMobile extends GuiScreen {
 				}else if(this.currentTab == TAB_PRIVATE) {
 					this.guiSongList.drawScreen(mouseX, mouseY, partialTicks);
 				}else if(this.currentTab == TAB_RADIO) {
-					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
+					this.guiTextField.yPosition = (int) (this.getScreenY()+79);
 					this.guiTextField.drawTextBox();
 					GlStateManager.color(1.0f, 1.0f, 1.0f);
 					
 					//Drawing the confirmation button
 					this.mc.renderEngine.bindTexture(GuiComputer.computerBg);
-					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+18, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
+					Draw.drawTexture(this.getScreenX()+this.getScreenWidth()-20, this.getScreenY()+78, (64F+(this.confirmButtonDown?20F:0F))/256, 1-20F/256, 20F/256, 20F/256, 20, 20);
+				
+					this.drawCenteredString(this.fontRendererObj, "Connect to a radio station:", (int)this.getScreenCenterX(), (int)this.getScreenY()+64, 0xffffff);
 				}else if(this.currentTab == TAB_SOUNDCLOUD) {
 					this.guiTextField.yPosition = (int) (this.getScreenY()+18);
 					this.guiTextField.drawTextBox();
@@ -385,6 +387,10 @@ public class GuiMobile extends GuiScreen {
 						Draw.drawYGradient(this.getScreenX(), this.getScreenY()+this.getScreenHeight()-100*average, this.getScreenWidth(), 100*average, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 0, 1-this.bgColor[0], 1-this.bgColor[1], 1-this.bgColor[2], 1.0f*average);
 						
 						this.guiVisualizerFullSize.draw();
+					}
+					
+					if(!this.getMusicSource().getIsPlaying()) {
+						this.drawCenteredString(this.fontRendererObj, "PAUSED", (int) this.getScreenCenterX(), (int) this.getScreenCenterY(), 0xffffff);
 					}
 				}else{
 					if(this.getMusicSource() != null && this.getMusicSource().getPlayer() != null){
@@ -522,7 +528,7 @@ public class GuiMobile extends GuiScreen {
 			}
 
 			if(mouseX >= this.getScreenX()+this.getScreenWidth()-20 && mouseX <= this.getScreenX()+this.getScreenWidth() &&
-			   mouseY >= this.getScreenY()+18 && mouseY <= this.getScreenY()+18+20) {
+			   mouseY >= this.getScreenY()+78 && mouseY <= this.getScreenY()+78+20) {
 				this.confirmButtonDown = true;
 				
 				this.playSong(0);
