@@ -4,6 +4,8 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.TimingData;
 import com.sekwah.radiomod.music.song.TrackingData;
+import com.sekwah.radiomod.network.packets.client.ClientPlaySongBroadcastPacket;
+import com.sekwah.radiomod.network.packets.client.ClientStopSongBroadcastPacket;
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Header;
@@ -39,6 +41,7 @@ public class MusicTracker {
     public void stopSong(String uuid){
         if(trackingMap.containsKey(uuid)){
             // TODO add code to send stop packet.
+            RadioMod.packetNetwork.sendToAll(new ClientStopSongBroadcastPacket(uuid));
             trackingMap.remove(uuid);
         }
     }
@@ -82,6 +85,8 @@ public class MusicTracker {
         this.stopSong(uuid);
         // TODO send packet to users
         this.trackingMap.put(uuid, data);
+
+        RadioMod.packetNetwork.sendToAll(new ClientPlaySongBroadcastPacket(uuid,data));
     }
 
     public TimingData getTimingData(String file){

@@ -30,13 +30,12 @@ public class CustomPlayer extends AdvancedPlayer {
 	public CustomPlayer(InputStream stream) throws JavaLayerException {
 		super(stream);
 		this.firstFrameHeader = this.bitstream.readFrame();
-		RadioMod.logger.info(firstFrameHeader.ms_per_frame());
-		try {
+		/*try {
 			RadioMod.logger.info(firstFrameHeader.max_number_of_frames(stream.available()));
 		} catch (IOException e) {
 			RadioMod.logger.info("Error getting stream size");
 			e.printStackTrace();
-		}
+		}*/
 		this.bitstream.unreadFrame();
 	}
 
@@ -84,6 +83,10 @@ public class CustomPlayer extends AdvancedPlayer {
 		if (h == null) return false;
 		bitstream.closeFrame();
 		return true;
+	}
+
+	public Header getFirstFrameHeader(){
+		return firstFrameHeader;
 	}
 
 	/**

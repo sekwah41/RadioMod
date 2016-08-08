@@ -168,10 +168,10 @@ public class GuiComputer extends GuiScreen {
 
 		switch(this.currentTab) {
 			case 0:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playBuiltInSongCollection(index, frame);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playBuiltInSongCollection(index, frame, false);
 			break;
 			case 1:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playPrivateSongCollection(index, frame);
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playPrivateSongCollection(index, frame, false);
 			break;
 		}
 	}

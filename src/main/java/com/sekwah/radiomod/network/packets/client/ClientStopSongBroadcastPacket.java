@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.network.packets.client;
 
+import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.music.MusicSource;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -34,7 +36,12 @@ public class ClientStopSongBroadcastPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ClientStopSongBroadcastPacket message, MessageContext ctx) {
-
+            if(RadioMod.instance.musicManager.radioSources.containsKey(message.uuid)){
+                MusicSource source = RadioMod.instance.musicManager.radioSources.get(message.uuid);
+                if(source != null){
+                    source.stopMusic();
+                }
+            }
             return null; // no response in this case
         }
     }

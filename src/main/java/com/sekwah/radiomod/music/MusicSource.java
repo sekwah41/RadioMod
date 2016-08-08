@@ -3,12 +3,9 @@ package com.sekwah.radiomod.music;
 import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.music.player.CustomPlayer;
-import com.sekwah.radiomod.music.song.Song;
-import com.sekwah.radiomod.music.song.SongBuiltIn;
-import com.sekwah.radiomod.music.song.SongPrivate;
+import com.sekwah.radiomod.music.song.*;
 import com.sekwah.radiomod.util.FastFourierTransform;
 
-import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -54,9 +51,9 @@ public class MusicSource {
     private CustomPlayer player = null;
     private List<double[]> frequencyData = new ArrayList<double[]>();
     private int lastFrameFrequencyAnalizedOn = 0;
-    
+
     public MusicSource(){
-    	this.volume = 0.4f;
+        this.volume = 0.4f;
     }
 
     /**
@@ -72,24 +69,40 @@ public class MusicSource {
         return true;
     }
 
-    public void playPrivateSongCollection(int songID){
-        this.playPrivateSongCollection(songID, 0);
+    public void startFromTrackData(TrackingData trackingData) {
+        switch (trackingData.type){
+            case TrackingData.BUILTIN:
+                this.playBuiltInSongCollection(Integer.parseInt(trackingData.source), trackingData.currentTick, true);
+                break;
+            case TrackingData.ONLINE:
+                this.playStreamUrl(trackingData.source,trackingData.currentTick, true);
+                break;
+            case TrackingData.STREAM:
+                this.playStreamUrl(trackingData.source);
+                break;
+        }
     }
 
-    public void playPrivateSongCollection(int songID, int frame){
+    public void playPrivateSongCollection(int songID){
+        this.playPrivateSongCollection(songID, 0, false);
+    }
+
+    public void playPrivateSongCollection(int songID, int frame, boolean ticks){
         if(songID > SongPrivate.privateSongCollection.size() || songID < 0){
             return;
         }
         this.currentSong = SongPrivate.privateSongCollection.get(songID);
         this.stopMusic();
-        Thread musicPlayer = new Thread(new PrivateMusicRunnable(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName(), frame));
-        musicPlayer.start();
-    }
-
-    public void playAssetsSound(String songName, int frame){
-        this.stopMusic();
-        Thread musicPlayer = new Thread(new MusicRunnable(songName, frame));
-        musicPlayer.start();
+        Thread musicPlayer = null;
+        try {
+            musicPlayer = new Thread(new MusicRunnable(
+                    new FileInputStream(
+                            new File(FileManager.privateSongsDir.getAbsolutePath() + File.separator + SongPrivate.privateSongCollection.get(songID).getFileName()))
+                    , frame, ticks));
+            musicPlayer.start();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setVolume(float volume) {
@@ -100,26 +113,33 @@ public class MusicSource {
     }
 
     public void playBuiltInSongCollection(int songID){
-        this.playBuiltInSongCollection(songID, 0);
+        this.playBuiltInSongCollection(songID, 0, false);
     }
 
-    public void playBuiltInSongCollection(int songID, int frame){
+    public void playBuiltInSongCollection(int songID, int frame, boolean ticks){
         if(songID > SongBuiltIn.builtInSongCollection.size() || songID < 0){
             return;
         }
         this.currentSong = SongBuiltIn.builtInSongCollection.get(songID);
         this.stopMusic();
-        Thread musicPlayer = new Thread(new MusicRunnable(SongBuiltIn.builtInSongCollection.get(songID).getFileName(), frame));
+        String songLocation = SongBuiltIn.builtInSongCollection.get(songID).getFileName();
+        RadioMod.logger.info("Song");
+        Thread musicPlayer = new Thread(new MusicRunnable(this.getClass().getResourceAsStream("/assets/radiomod/sounds/songs/" + songLocation + ".mp3"), frame, ticks));
         musicPlayer.start();
     }
 
     public void playStreamUrl(String streamUrl){
-        this.playStreamUrl(streamUrl,0);
+        this.playStreamUrl(streamUrl,0, false);
     }
 
-    public void playStreamUrl(String streamUrl, int frame){
+    public void playStreamUrl(String streamUrl, int frame, boolean ticks){
         this.stopMusic();
-        Thread musicPlayer = new Thread(new RadioRunnable(streamUrl));
+        Thread musicPlayer = null;
+        try {
+            musicPlayer = new Thread(new MusicRunnable(new URL(streamUrl).openConnection().getInputStream(), frame, ticks));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         musicPlayer.start();
     }
 
@@ -134,52 +154,93 @@ public class MusicSource {
     public CustomPlayer getPlayer(){
         return player;
     }
-    
+
     public double[] getFrequencyData(int index) {
-    	if(this.player != null && this.player.getFrame() > this.lastFrameFrequencyAnalizedOn) {
-    		this.calculateFrequencyData();
-    		this.lastFrameFrequencyAnalizedOn = this.player.getFrame();
-    	}
-    	
-    	return this.frequencyData.get(index);
+        if(this.player != null && this.player.getFrame() > this.lastFrameFrequencyAnalizedOn) {
+            this.calculateFrequencyData();
+            this.lastFrameFrequencyAnalizedOn = this.player.getFrame();
+        }
+
+        return this.frequencyData.get(index);
     }
-    
+
     public double[] getFrequencyData() {
-    	return this.getFrequencyData(this.frequencyData.size()-1);
+        return this.getFrequencyData(this.frequencyData.size()-1);
     }
-    
+
     public boolean hasFrequencyData() {
-    	return this.frequencyData.size() > 0;
+        return this.frequencyData.size() > 0;
     }
-    
+
     public void calculateFrequencyData() {
-    	if(this.player == null) return;
-    	int sampleRate = this.getSampleRatePow2();
-    	if(sampleRate == 0) return;
-    	
-    	while(this.frequencyData.size() > 3) this.frequencyData.remove(0);
-    	this.frequencyData.add(FastFourierTransform.transform(Arrays.copyOf(this.player.getRawData(), sampleRate), true));
+        if(this.player == null) return;
+        int sampleRate = this.getSampleRatePow2();
+        if(sampleRate == 0) return;
+
+        while(this.frequencyData.size() > 3) this.frequencyData.remove(0);
+        this.frequencyData.add(FastFourierTransform.transform(Arrays.copyOf(this.player.getRawData(), sampleRate), true));
     }
-    
+
     public int getSampleRate() {
-    	return this.player.getRawData() != null ? this.player.getRawData().length : 0;
+        return this.player.getRawData() != null ? this.player.getRawData().length : 0;
     }
-    
+
     public int getSampleRatePow2() {
-    	int sampleRate = getSampleRate();
-    	sampleRate = sampleRate >= 2048 ? 2048 : sampleRate >= 1028 ? 1028 : 0;
-    	return sampleRate;
+        int sampleRate = getSampleRate();
+        sampleRate = sampleRate >= 2048 ? 2048 : sampleRate >= 1028 ? 1028 : 0;
+        return sampleRate;
     }
-    
-    class PrivateMusicRunnable implements Runnable {
+
+
+    class MusicRunnable implements Runnable {
+
+        private final boolean isTicks;
+
+        private InputStream stream;
+
+        private final int frames;
+
+        public MusicRunnable(InputStream stream, int startFrame, boolean isTicks){
+            this.stream = stream;
+            this.frames = startFrame;
+            this.isTicks = isTicks;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                player = new CustomPlayer(stream, volume);
+                player.setPlayBackListener(new PlaybackListener() {
+                    @Override
+                    public void playbackFinished(PlaybackEvent event) {
+                        //currentFrame = event.getFrame();
+                        player = null;
+                    }
+                });
+                if(isTicks){
+                    int frame = (int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame());
+                    player.play(frame);
+                }
+                else{
+                    player.play(frames);
+                }
+            } catch (JavaLayerException e) {
+                player = null;
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*class PrivateMusicRunnable implements Runnable {
 
         private final String location;
 
-        private final int startFrame;
+        private final int frames;
 
         public PrivateMusicRunnable(String location, int startFrame){
             this.location = location;
-            this.startFrame = startFrame;
+            this.frames = startFrame;
         }
 
         @Override
@@ -192,8 +253,6 @@ public class MusicSource {
             try {
                 InputStream resourseStream = new FileInputStream(new File(location));
 
-                Bitstream bitstream = new Bitstream(resourseStream);
-
                 player = new CustomPlayer(resourseStream, volume);
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
@@ -202,7 +261,7 @@ public class MusicSource {
                         player = null;
                     }
                 });
-                player.playFrom(startFrame);
+                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();
@@ -216,11 +275,11 @@ public class MusicSource {
     class MusicRunnable implements Runnable {
 
         private final String songName;
-        private final int startFrame;
+        private final int frames;
 
         public MusicRunnable(String songName, int frame){
             this.songName = songName;
-            this.startFrame = frame;
+            this.frames = frame;
         }
 
 
@@ -228,8 +287,6 @@ public class MusicSource {
         @Override
         public void run() {
             InputStream resourseStream = this.getClass().getResourceAsStream("/assets/radiomod/sounds/songs/" + songName + ".mp3");
-
-            Bitstream bitstream = new Bitstream(resourseStream);
 
             try {
                 player = new CustomPlayer(resourseStream, volume);
@@ -240,7 +297,7 @@ public class MusicSource {
                         player = null;
                     }
                 });
-                player.playFrom(startFrame);
+                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();
@@ -251,9 +308,11 @@ public class MusicSource {
     class RadioRunnable implements Runnable {
 
         private final String streamString;
+        private final int frames;
 
-        public RadioRunnable(String streamString){
+        public RadioRunnable(String streamString, int frames){
             this.streamString = streamString;
+            this.frames = frames;
         }
 
         @Override
@@ -265,10 +324,9 @@ public class MusicSource {
                 e.printStackTrace();
             }
 
-            Bitstream bitstream = new Bitstream(resourseStream);
-
             try {
                 player = new CustomPlayer(resourseStream, volume);
+
                 player.setPlayBackListener(new PlaybackListener() {
                     @Override
                     public void playbackFinished(PlaybackEvent event) {
@@ -276,15 +334,15 @@ public class MusicSource {
                         player = null;
                     }
                 });
-                player.play();
+                player.play((int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame()));
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
-	public Song getCurrentSong() {
-		return this.currentSong;
-	}
+    public Song getCurrentSong() {
+        return this.currentSong;
+    }
 }

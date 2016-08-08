@@ -1,5 +1,6 @@
 package com.sekwah.radiomod.network.packets.server;
 
+import com.sekwah.radiomod.RadioMod;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -21,11 +22,13 @@ public class ServerStopSongPacket implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
     	NBTTagCompound tag = ByteBufUtils.readTag(buf);
+    	this.uuid = tag.getString("uuid");
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
     	NBTTagCompound tag = new NBTTagCompound();
+    	tag.setString("uuid", this.uuid);
         ByteBufUtils.writeTag(buf, tag);
     }
 
@@ -33,8 +36,7 @@ public class ServerStopSongPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ServerStopSongPacket message, MessageContext ctx) {
-
-
+            RadioMod.instance.musicTracker.stopSong(message.uuid);
             return null; // no response in this case
         }
     }

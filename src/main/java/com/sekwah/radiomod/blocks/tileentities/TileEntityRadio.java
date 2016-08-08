@@ -39,7 +39,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int musicTick = 0;
 
     public TileEntityRadio(){
-        this.createMusicSource();
         //RadioMod.instance.musicManager. = new MusicSource();
     }
 
@@ -142,7 +141,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         RadioMod.instance.musicManager.radioSources.remove(this.uuid);
         RadioMod.instance.musicManager.radioSources.put(uuid, source);
         RadioMod.logger.info("UUID for radio set as: " + uuid);
-        this.createMusicSource();
+        RadioMod.instance.musicManager.createMusicSource(uuid);
         this.uuid = uuid;
     }
 
@@ -171,7 +170,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
 
     public void onLoad()
     {
-        this.createMusicSource();
+        RadioMod.instance.musicManager.createMusicSource(this.uuid);
         //RadioMod.logger.info("Spawned");
     }
 
@@ -198,13 +197,6 @@ public class TileEntityRadio extends TileEntity implements ITickable {
         }
         this.runState = runStateIn;
         this.markDirty();
-    }
-
-    public void createMusicSource(){
-        if(!RadioMod.instance.musicManager.radioSources.containsKey(this.uuid)){
-            RadioMod.logger.info("Radio source created");
-            RadioMod.instance.musicManager.radioSources.put(this.uuid, new MusicSource());
-        }
     }
 
 	public MusicSource getMusicSource() {

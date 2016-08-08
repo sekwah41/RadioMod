@@ -1,5 +1,7 @@
 package com.sekwah.radiomod.network.packets.client;
 
+import com.sekwah.radiomod.RadioMod;
+import com.sekwah.radiomod.music.MusicSource;
 import com.sekwah.radiomod.music.song.TrackingData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,14 +24,18 @@ public class ClientPlaySongBroadcastPacket implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-    	NBTTagCompound tag = ByteBufUtils.readTag(buf);
-    	this.uuid = tag.getString("uuid");
+        NBTTagCompound tag = ByteBufUtils.readTag(buf);
+        this.uuid = tag.getString("uuid");
+        this.trackingData = new TrackingData(tag.getInteger("Type"), tag.getString("Source"), tag.getInteger("CurrentTick"));
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-    	NBTTagCompound tag = new NBTTagCompound();
-    	tag.setString("uuid", this.uuid);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("uuid", this.uuid);
+        tag.setInteger("Type", this.trackingData.type);
+        tag.setString("Source", this.trackingData.source);
+        tag.setInteger("CurrentTick", this.trackingData.currentTick);
         ByteBufUtils.writeTag(buf, tag);
     }
 
@@ -37,7 +43,11 @@ public class ClientPlaySongBroadcastPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ClientPlaySongBroadcastPacket message, MessageContext ctx) {
+            if(RadioMod.instance.musicManager.sourceDistances.containsKey(message.uuid)){
+                RadioMod.instance.musicManager.createMusicSource(message.uuid);
+                RadioMod.instance.musicManager.radioSources.get(message.uuid).startFromTrackData(message.trackingData);
 
+            }
             return null; // no response in this case
         }
     }

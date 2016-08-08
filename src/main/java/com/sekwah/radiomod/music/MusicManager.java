@@ -88,11 +88,18 @@ public class MusicManager {
             }
             else{
                 MusicSource source = radioSources.get(uuid);
-                if(source.getIsPlaying()){
+                if(source != null && source.getIsPlaying()){
                     RadioMod.logger.info(uuid + ": stopped");
                     source.stopMusic();
                 }
             }
+        }
+    }
+
+    public void createMusicSource(String uuid) {
+        if(!RadioMod.instance.musicManager.radioSources.containsKey(uuid)){
+            RadioMod.logger.info("Radio source created");
+            RadioMod.instance.musicManager.radioSources.put(uuid, new MusicSource());
         }
     }
 }
