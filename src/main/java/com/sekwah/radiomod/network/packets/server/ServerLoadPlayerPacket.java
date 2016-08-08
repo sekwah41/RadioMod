@@ -40,7 +40,7 @@ public class ServerLoadPlayerPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ServerLoadPlayerPacket message, MessageContext ctx) {
-            RadioMod.logger.info("Reload packet");
+            System.out.println("Reload packet");
             synchronized(RadioMod.instance.musicTracker.sync){
                 if(RadioMod.instance.musicTracker.trackingMap.containsKey(message.uuid)){
                     TrackingData data = RadioMod.instance.musicTracker.trackingMap.get(message.uuid);

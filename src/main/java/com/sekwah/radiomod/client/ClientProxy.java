@@ -15,11 +15,13 @@ import com.sekwah.radiomod.client.renderer.tileentity.TileEntityRadioRenderer;
 import com.sekwah.radiomod.client.renderer.tileentity.TileEntitySpeakerRenderer;
 import com.sekwah.radiomod.generic.CommonProxy;
 import com.sekwah.radiomod.items.RadioItems;
+import com.sekwah.radiomod.music.MobileManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -91,5 +93,16 @@ public class ClientProxy extends CommonProxy {
         this.settings = new RadioSettings();
         this.settings.setupConfigVariables(event);
     }
-
+    
+    @Override
+    public void setPlayerLocalRunstate(int state) {
+    	EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		player.getDataManager().set(MobileManager.PARAMETER_LOCALSTATE, state);
+    }
+    
+    @Override
+    public int getPlayerLocalRunstate() {
+    	EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		return player.getDataManager().get(MobileManager.PARAMETER_LOCALSTATE);
+    }
 }

@@ -43,7 +43,7 @@ public class ClientLoadPlayerPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ClientLoadPlayerPacket message, MessageContext ctx) {
-            RadioMod.logger.info("Data recieved");
+            System.out.println("Data recieved");
             RadioMod.instance.musicManager.createMusicSource(message.uuid);
 
             MusicSource musicManager = RadioMod.instance.musicManager.radioSources.get(message.uuid);

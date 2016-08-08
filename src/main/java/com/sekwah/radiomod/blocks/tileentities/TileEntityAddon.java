@@ -6,6 +6,7 @@ import com.sekwah.radiomod.RadioMod;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -38,5 +39,20 @@ public class TileEntityAddon extends TileEntity implements ITickable {
     
     public String getOwnerUUID(){
         return this.ownerUUID;
+    }
+    
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        return new SPacketUpdateTileEntity(this.pos, 1, this.getUpdateTag());
+    }
+
+    public NBTTagCompound getUpdateTag()
+    {
+        return this.writeToNBT(new NBTTagCompound());
+    }
+    
+    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
+    {
+        this.readFromNBT(pkt.getNbtCompound());
     }
 }

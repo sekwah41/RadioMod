@@ -41,4 +41,11 @@ public class CommonProxy {
         this.settings = new RadioSettings();
         this.settings.setupConfigVariables(event);
     }
+
+	public void setPlayerLocalRunstate(int state) {
+	}
+
+	public int getPlayerLocalRunstate() {
+		return 0;
+	}
 }

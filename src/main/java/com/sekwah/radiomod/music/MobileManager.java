@@ -1,8 +1,8 @@
 package com.sekwah.radiomod.music;
 
+import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.music.song.Song;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -30,13 +30,11 @@ public class MobileManager {
 	}
 	
 	public static void setMobileState(int state) {
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-		player.getDataManager().set(PARAMETER_LOCALSTATE, state);
+		RadioMod.proxy.setPlayerLocalRunstate(state);
 	}
 	
 	public static int getMobileState() {
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-		return player.getDataManager().get(PARAMETER_LOCALSTATE);
+		return RadioMod.proxy.getPlayerLocalRunstate();
 	}
 	
 	public static int getFramePaused() {

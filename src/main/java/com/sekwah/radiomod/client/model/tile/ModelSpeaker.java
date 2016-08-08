@@ -35,11 +35,11 @@ public class ModelSpeaker extends ModelBase
 
         //GlStateManager.translate((float) x + 0.5F, (float) y + 0.245f, (float) z + 0.61F);
         GlStateManager.rotate(180, 1F, 0F, 0F);
-        GlStateManager.translate(0.5F, -0.245f, -0.5F);
+        GlStateManager.translate(0.5F, 0.245f, -0.5F);
 
         GlStateManager.rotate(rotation, 0F, 1F, 0F);
         GlStateManager.translate(0f,-1.24f,0f);
-        GlStateManager.scale(1,1,1);
+        GlStateManager.scale(0.66f,0.66f,0.66f);
 
 
         float par1 = 0.0625F;

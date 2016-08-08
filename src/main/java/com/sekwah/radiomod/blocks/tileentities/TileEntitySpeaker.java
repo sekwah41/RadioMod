@@ -47,7 +47,6 @@ public class TileEntitySpeaker extends TileEntityAddon {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
-        return compound;
+        return super.writeToNBT(compound);
     }
 }

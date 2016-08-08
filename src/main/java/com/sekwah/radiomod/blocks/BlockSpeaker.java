@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 public class BlockSpeaker extends BlockContainer implements ITileEntityProvider {
 	public static final PropertyDirection FACING = BlockDirectional.FACING;
 
-    private final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.05D, 0.0D, 0.05D, 0.95D, 1.5D, 0.95D);
+    private final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0.19D, 0.0D, 0.19D, 0.81D, 1.0D, 0.81D);
 	
     protected BlockSpeaker() {
         super(Material.IRON);
