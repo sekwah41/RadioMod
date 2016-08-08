@@ -123,7 +123,6 @@ public class MusicSource {
         this.currentSong = SongBuiltIn.builtInSongCollection.get(songID);
         this.stopMusic();
         String songLocation = SongBuiltIn.builtInSongCollection.get(songID).getFileName();
-        RadioMod.logger.info("Song");
         Thread musicPlayer = new Thread(new MusicRunnable(this.getClass().getResourceAsStream("/assets/radiomod/sounds/songs/" + songLocation + ".mp3"), frame, ticks));
         musicPlayer.start();
     }
@@ -220,11 +219,12 @@ public class MusicSource {
                 });
                 if(isTicks){
                     int frame = (int) ((float) (frames) / 20f * 1000f / player.getFirstFrameHeader().ms_per_frame());
-                    player.play(frame);
+                    player.playFrom(frame);
                 }
                 else{
-                    player.play(frames);
+                    player.playFrom(frames);
                 }
+                RadioMod.logger.info(volume);
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();

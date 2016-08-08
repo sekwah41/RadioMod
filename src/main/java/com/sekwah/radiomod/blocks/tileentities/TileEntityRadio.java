@@ -38,6 +38,7 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     private int musicTick = 0;
 
     public TileEntityRadio(){
+        RadioMod.instance.musicManager.createMusicSource(this.uuid);
         //RadioMod.instance.musicManager. = new MusicSource();
     }
 
