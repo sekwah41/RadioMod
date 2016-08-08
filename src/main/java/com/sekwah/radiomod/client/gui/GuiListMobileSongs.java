@@ -111,12 +111,12 @@ public class GuiListMobileSongs extends GuiListExtended
             VertexBuffer vertexbuffer = tessellator.getBuffer();
             // Forge: background rendering moved into separate method.
             int k = this.getX();
-            int l = this.top + 4 - (int)this.amountScrolled;
+            int l = this.getY() + 4 - (int)this.amountScrolled;
 
             this.drawSelectionBox(k, l, mouseXIn, mouseYIn);
             
             float shadowOpacity = Math.min(this.amountScrolled*0.02f, 1);
-            Draw.drawYGradient(this.getMobileGui().getScreenX(), this.top, this.width, 20, 0, 0, 0, shadowOpacity*0.3f, 0, 0, 0, 0);
+            Draw.drawYGradient(this.getMobileGui().getScreenX(), this.getY(), this.width, 20, 0, 0, 0, shadowOpacity*0.3f, 0, 0, 0, 0);
             
             GlStateManager.disableDepth();
             GlStateManager.enableBlend();
@@ -129,20 +129,20 @@ public class GuiListMobileSongs extends GuiListExtended
             
             if (j1 > 0)
             {
-                int k1 = (this.bottom - this.top) * (this.bottom - this.top) / this.getContentHeight();
-                k1 = MathHelper.clamp_int(k1, 32, this.bottom - this.top - 8);
-                int l1 = (int)this.amountScrolled * (this.bottom - this.top - k1) / j1 + this.top;
+                int k1 = this.getY()-this.top + (this.bottom - this.top) * (this.bottom - this.top) / this.getContentHeight();
+                k1 = MathHelper.clamp_int(k1, this.getY()-this.top + 32, this.getY()-this.top + this.bottom - this.top - 8);
+                int l1 = this.getY()-this.top + (int)this.amountScrolled * (this.bottom - this.top - k1) / j1 + this.top;
 
-                if (l1 < this.top)
+                if (l1 < this.getY())
                 {
-                    l1 = this.top;
+                    l1 = this.getY();
                 }
 
                 vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                vertexbuffer.pos((double)i, (double)this.bottom, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-                vertexbuffer.pos((double)j, (double)this.bottom, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
-                vertexbuffer.pos((double)j, (double)this.top, 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
-                vertexbuffer.pos((double)i, (double)this.top, 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+                vertexbuffer.pos((double)i, (double)this.getY()+this.height, 0.0D).tex(0.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+                vertexbuffer.pos((double)j, (double)this.getY()+this.height, 0.0D).tex(1.0D, 1.0D).color(0, 0, 0, 255).endVertex();
+                vertexbuffer.pos((double)j, (double)this.getY(), 0.0D).tex(1.0D, 0.0D).color(0, 0, 0, 255).endVertex();
+                vertexbuffer.pos((double)i, (double)this.getY(), 0.0D).tex(0.0D, 0.0D).color(0, 0, 0, 255).endVertex();
                 tessellator.draw();
                 vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
                 vertexbuffer.pos((double)i, (double)(l1 + k1), 0.0D).tex(0.0D, 1.0D).color(128, 128, 128, 255).endVertex();
@@ -195,6 +195,10 @@ public class GuiListMobileSongs extends GuiListExtended
     
     public int getX() {
     	return (int) (this.getMobileGui().getScreenX()+10);
+    }
+    
+    public int getY() {
+    	return (int) (this.getMobileGui().getScreenY()+18);
     }
     
     public int getSelectedIndex() {

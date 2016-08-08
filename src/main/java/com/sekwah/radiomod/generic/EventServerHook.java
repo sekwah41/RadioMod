@@ -28,10 +28,10 @@ public class EventServerHook {
 
     @SubscribeEvent
     public void userLoggedIn(EntityJoinWorldEvent event){
-        if(event.getEntity() instanceof EntityPlayerMP){
+        /*if(event.getEntity() instanceof EntityPlayerMP){
             EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
             RadioMod.packetNetwork.sendTo(new ClientConfigPacket(RadioMod.proxy.settings.soundRadius, RadioMod.proxy.settings.soundDropoff), player);
-        }
+        }*/
     }
 
     @SubscribeEvent

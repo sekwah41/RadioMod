@@ -6,13 +6,18 @@ import com.sekwah.radiomod.music.player.CustomPlayer;
 import com.sekwah.radiomod.music.song.Song;
 import com.sekwah.radiomod.music.song.SongBuiltIn;
 import com.sekwah.radiomod.music.song.SongPrivate;
+import com.sekwah.radiomod.util.FastFourierTransform;
+
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
+import scala.actors.threadpool.Arrays;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by on 05/08/2016.
@@ -47,7 +52,9 @@ public class MusicSource {
      * Used for playing the current song
      */
     private CustomPlayer player = null;
-
+    private List<double[]> frequencyData = new ArrayList<double[]>();
+    private int lastFrameFrequencyAnalizedOn = 0;
+    
     public MusicSource(){
     	this.volume = 0.4f;
     }
@@ -61,6 +68,7 @@ public class MusicSource {
             player.stop();
         }
         songState = States.PAUSED;
+        this.lastFrameFrequencyAnalizedOn = -1;
         return true;
     }
 
@@ -126,7 +134,43 @@ public class MusicSource {
     public CustomPlayer getPlayer(){
         return player;
     }
-
+    
+    public double[] getFrequencyData(int index) {
+    	if(this.player != null && this.player.getFrame() > this.lastFrameFrequencyAnalizedOn) {
+    		this.calculateFrequencyData();
+    		this.lastFrameFrequencyAnalizedOn = this.player.getFrame();
+    	}
+    	
+    	return this.frequencyData.get(index);
+    }
+    
+    public double[] getFrequencyData() {
+    	return this.getFrequencyData(this.frequencyData.size()-1);
+    }
+    
+    public boolean hasFrequencyData() {
+    	return this.frequencyData.size() > 0;
+    }
+    
+    public void calculateFrequencyData() {
+    	if(this.player == null) return;
+    	int sampleRate = this.getSampleRatePow2();
+    	if(sampleRate == 0) return;
+    	
+    	while(this.frequencyData.size() > 3) this.frequencyData.remove(0);
+    	this.frequencyData.add(FastFourierTransform.transform(Arrays.copyOf(this.player.getRawData(), sampleRate), true));
+    }
+    
+    public int getSampleRate() {
+    	return this.player.getRawData() != null ? this.player.getRawData().length : 0;
+    }
+    
+    public int getSampleRatePow2() {
+    	int sampleRate = getSampleRate();
+    	sampleRate = sampleRate >= 2048 ? 2048 : sampleRate >= 1028 ? 1028 : 0;
+    	return sampleRate;
+    }
+    
     class PrivateMusicRunnable implements Runnable {
 
         private final String location;

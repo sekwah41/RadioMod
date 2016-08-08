@@ -101,7 +101,7 @@ public class GuiMobile extends GuiScreen {
 		this.buttonList.clear();
 		
 		this.guiVisualizer = new GuiVisualizer((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25, (int)120, (int)50);
-		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.height, (int) this.getScreenY()+18, (int) (this.getScreenY()+this.getScreenHeight()));
+		this.guiSongList = new GuiListMobileSongs(this, this.mc, (int) this.getScreenWidth(), (int) this.getScreenHeight()-18, (int) ((int) this.getScreenY()+18-this.getYOffset()), (int) (this.getScreenY()+this.getScreenHeight()-this.getYOffset()));
 		this.openTab(0);
 		
 		if(this.getRunState() == MobileManager.MOBILESTATE_BOOTINGUP) {
@@ -298,7 +298,7 @@ public class GuiMobile extends GuiScreen {
 					if(this.getMusicSource().getPlayer().getRawData() != null){
 						int dataLength = this.getMusicSource().getPlayer().getRawData().length;
 						this.guiVisualizer.setSampleRate(dataLength >= 2048 ? 2048 : dataLength >= 1024 ? 1024 : 0);
-						this.guiVisualizer.populate(this.getMusicSource().getPlayer().getRawData());
+						this.guiVisualizer.populate(this.getMusicSource());
 					}
 					this.guiVisualizer.setLocation((int)this.getScreenCenterX()-60, (int)this.getScreenCenterY()-25);
 					this.guiVisualizer.calculateBands();
@@ -328,7 +328,7 @@ public class GuiMobile extends GuiScreen {
 						float newLength = this.fontRendererObj.getStringWidth(songTitle);
 
 						for(int i = songTitle.length()-1; i >= 0; i--) {
-							if(newLength > 170) {
+							if(newLength > 150) {
 								newLength -= this.fontRendererObj.getCharWidth(songTitle.charAt(i));
 								songTitle = songTitle.substring(0, songTitle.length()-1);
 							}else{
@@ -336,11 +336,11 @@ public class GuiMobile extends GuiScreen {
 							}
 						}
 
-						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-85 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenY()+5), 0xffffff);
+						this.drawString(this.fontRendererObj, songTitle, (int)this.getScreenCenterX()-65 + (int)offset - (int)this.songTitleScroll, (int)(this.getScreenY()+5), 0xffffff);
 
-						Draw.drawXGradient(this.getScreenCenterX()-85-1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
-						Draw.drawXGradient(this.getScreenCenterX()+85-40+1, this.getScreenY(), 40, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
-						Draw.drawRect(this.getScreenCenterX()+85, this.getScreenY(), 20, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+						Draw.drawXGradient(this.getScreenCenterX()-65-1, this.getScreenY(), 30, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0);
+						Draw.drawXGradient(this.getScreenCenterX()+65-30+1, this.getScreenY(), 30, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 0, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
+						Draw.drawRect(this.getScreenCenterX()+65, this.getScreenY(), 20, 16, this.bgColor[0]*1.5f, this.bgColor[1]*1.5f, this.bgColor[2]*1.5f, 1);
 
 						this.songTitleScroll+=0.5f;
 						while(this.songTitleScroll >= titleWidth) {
@@ -376,7 +376,7 @@ public class GuiMobile extends GuiScreen {
 		if(alpha < 0) alpha = 0;
 		if(alpha > 1) alpha = 1;
 		Draw.drawRect(this.getScreenX(), this.getScreenY(), this.getScreenWidth(), this.getScreenHeight(), 0, 0, 0, alpha);
-		
+
 		this.mc.renderEngine.bindTexture(this.mobileBg);
 		Draw.drawTexture(this.width/2-this.bgWidth/2, this.getYOffset()+this.height/2-this.bgHeight/2, 0, 0, ((float)this.bgWidth)/256, 1, this.bgWidth, this.bgHeight);
 		

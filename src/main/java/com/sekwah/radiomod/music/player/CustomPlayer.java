@@ -16,7 +16,6 @@ import java.io.InputStream;
  * @author sekwah41
  */
 public class CustomPlayer extends AdvancedPlayer {
-
 	private float volume = 0.4f;
 
 	private int currentFrame = 1;

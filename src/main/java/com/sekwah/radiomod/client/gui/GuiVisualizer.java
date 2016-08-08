@@ -17,12 +17,13 @@ import scala.actors.threadpool.Arrays;
  * @author GoblinBob
  */
 public class GuiVisualizer {
-	public short[] buffer;
+	public double[] buffer;
 	public int sampleRate = 2048;
 	private int minFreq = 0;
 	private int maxFreq = 20000;
-	private int bands = 30;
+	private int bands = 20;
 	public float[] bandValues;
+	public float[] bandSmoothValues;
 	
 	private int x;
 	private int y;
@@ -37,15 +38,18 @@ public class GuiVisualizer {
 		this.y = yIn;
 		this.width = widthIn;
 		this.height = heightIn;
-		this.buffer = new short[0];
+		this.buffer = new double[0];
 		this.sampleRate = 0;
 		this.bandValues = new float[this.bands];
+		this.bandSmoothValues = new float[this.bands];
 	}
 	
 	public void draw() {
 		for(int i = 0; i < this.bands; i++) {
+			bandSmoothValues[i] += (bandValues[i]-bandSmoothValues[i])*0.5f;
+			
 			float bandWidth = ((float)this.width)/this.bands;
-			Draw.drawRect(this.x+i*bandWidth, this.y+this.height-bandValues[i]*this.height, bandWidth-2, bandValues[i]*this.height, 1, 1, 1, 1);
+			Draw.drawRect(this.x+i*bandWidth, this.y+this.height-bandSmoothValues[i]*this.height, bandWidth-2, bandSmoothValues[i]*this.height, 1, 1, 1, 1);
 		}
 	}
 
@@ -58,8 +62,8 @@ public class GuiVisualizer {
 		this.y = yIn;
 	}
 	
-	public void populate(short[] bufferIn) {
-		this.buffer = bufferIn;
+	public void populate(MusicSource source) {
+		this.buffer = source.getFrequencyData(0);
 	}
 	
 	public void setSampleRate(int sampleRateIn) {
@@ -67,14 +71,13 @@ public class GuiVisualizer {
 	}
 	
 	public void calculateBands() {
-		if(this.sampleRate == 0) return;
-		
-		double[] output = FastFourierTransform.transform(Arrays.copyOf(this.buffer, this.sampleRate), true);
-		
-		if(output != null){
+		if(buffer != null && buffer.length > 0){
 			for(int i = 0; i < this.bands; i++) {
-				int freq = (int) (0+(512*((double)i)/this.bands));
-				this.bandValues[i] = (float) Math.min(Math.max(Math.abs(output[freq]*0.003f), 0), 1);
+				double f = Math.pow(((double)i)/this.bands, 3);
+				int freq = (int) (0+(buffer.length*0.3*f));
+				this.bandValues[i] = (float) Math.abs(buffer[freq]*0.003f);
+				this.bandValues[i] *= (0.2f+freq*0.1f);
+				this.bandValues[i] = Math.min(Math.max(this.bandValues[i]*0.2f, 0), 1);
 			}
 		}
 	}
