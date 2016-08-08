@@ -15,6 +15,8 @@ public class ClientStopSongPacket implements IMessage {
 
     public String uuid;
 
+    public ClientStopSongPacket(){}
+
     public ClientStopSongPacket(String uuid) {
         this.uuid = uuid;
     }

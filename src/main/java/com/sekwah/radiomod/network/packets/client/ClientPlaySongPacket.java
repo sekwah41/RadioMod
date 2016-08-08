@@ -17,6 +17,8 @@ public class ClientPlaySongPacket implements IMessage {
     public TrackingData trackingData;
     public String uuid;
 
+    public ClientPlaySongPacket(){}
+
     public ClientPlaySongPacket(String uuid, TrackingData trackingData) {
         this.uuid = uuid;
         this.trackingData = trackingData;
