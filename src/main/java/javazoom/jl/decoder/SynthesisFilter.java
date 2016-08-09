@@ -1620,26 +1620,10 @@ private void compute_pcm_samples(Obuffer buffer)
 			Class elemType = Float.TYPE;
 			Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
 			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
-			System.out.println("Data:" + o.toString());
 			String all = "";
 			for(float val : (float[])o){
 				all += val;
 			}
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
-			System.out.println("All:" + all);
 			System.out.println("All:" + all);
 			return (float[])o;
 		}
