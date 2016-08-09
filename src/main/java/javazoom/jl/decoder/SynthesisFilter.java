@@ -1607,7 +1607,7 @@ private void compute_pcm_samples(Obuffer buffer)
    * more faster access by allowing a block of 16 to be addressed
    * with constant offset. 
    **/
-  private static float d16[][] = null;	
+  private static float d16[][] = null;
   
   /**
    * Loads the data for the d[] from the resource SFd.ser. 
@@ -1615,20 +1615,18 @@ private void compute_pcm_samples(Obuffer buffer)
    */
 	static private float[] load_d()
 	{
-		try
+		return d_data;
+		/*try
 		{
 			Class elemType = Float.TYPE;
 			Object o = JavaLayerUtils.deserializeArrayResource("sfd.ser", elemType, 512);
-			System.out.println("Data:" + o.toString());
-			for(float val : (float[])o){
-				System.out.println(val);
-			}
 			return (float[])o;
 		}
 		catch (IOException ex)
 		{
+
 			throw new ExceptionInInitializerError(ex);
-		}		
+		}	*/
 	}
 	
 	/**
@@ -1685,7 +1683,6 @@ private void compute_pcm_samples(Obuffer buffer)
 	
 	// The original data for d[]. This data is loaded from a file
 	// to reduce the overall package size and to improve performance. 
-/*  
   static final float d_data[] = {
   	0.000000000f, -0.000442505f,  0.003250122f, -0.007003784f,
   	0.031082153f, -0.078628540f,  0.100311279f, -0.572036743f,
@@ -1816,6 +1813,5 @@ private void compute_pcm_samples(Obuffer buffer)
   	0.600219727f, -0.090927124f,  0.084182739f, -0.030517578f,
 	0.007919312f, -0.003326416f,  0.000473022f,  0.000015259f
 	};
-  */
-  
+
 }
