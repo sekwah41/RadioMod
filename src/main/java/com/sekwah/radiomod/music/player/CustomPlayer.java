@@ -56,8 +56,7 @@ public class CustomPlayer extends SAdvancedPlayer {
 	 * @param start	The first frame to play
 	 * @return true if the last frame was played, or false if there are more frames.
 	 */
-	public void playFrom(final int start) throws JavaLayerException
-	{
+	public void playFrom(final int start) throws JavaLayerException, IOException {
 		boolean ret = true;
 		int offset = start;
 		while (offset-- > 0 && ret) {
@@ -88,7 +87,7 @@ public class CustomPlayer extends SAdvancedPlayer {
 	 *
 	 * @return true if there are no more frames to decode, false otherwise.
 	 */
-	protected boolean decodeFrame() throws JavaLayerException
+	protected boolean decodeFrame() throws JavaLayerException, IOException
 	{
 		try
 		{

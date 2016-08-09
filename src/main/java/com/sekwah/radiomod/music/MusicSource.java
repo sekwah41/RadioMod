@@ -237,6 +237,9 @@ public class MusicSource {
             } catch (JavaLayerException e) {
                 player = null;
                 e.printStackTrace();
+            } catch (IOException e) {
+                player = null;
+                e.printStackTrace();
             }
         }
     }

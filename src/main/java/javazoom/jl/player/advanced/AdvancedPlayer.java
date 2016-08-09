@@ -19,6 +19,7 @@
 
 package javazoom.jl.player.advanced;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javazoom.jl.decoder.Bitstream;
@@ -67,8 +68,7 @@ public class AdvancedPlayer
 		audio.open(decoder = new Decoder());
 	}
 
-	public void play() throws JavaLayerException
-	{
+	public void play() throws JavaLayerException, IOException {
 		play(Integer.MAX_VALUE);
 	}
 
@@ -79,8 +79,7 @@ public class AdvancedPlayer
 	 * @return	true if the last frame was played, or false if there are
 	 *			more frames.
 	 */
-	public boolean play(int frames) throws JavaLayerException
-	{
+	public boolean play(int frames) throws JavaLayerException, IOException {
 		boolean ret = true;
 
 		// report to listener
@@ -142,8 +141,7 @@ public class AdvancedPlayer
 	 *
 	 * @return true if there are no more frames to decode, false otherwise.
 	 */
-	protected boolean decodeFrame() throws JavaLayerException
-	{
+	protected boolean decodeFrame() throws JavaLayerException, IOException {
 		try
 		{
 			AudioDevice out = audio;
@@ -191,8 +189,7 @@ public class AdvancedPlayer
 	 * @param end		The last frame to play
 	 * @return true if the last frame was played, or false if there are more frames.
 	 */
-	public boolean play(final int start, final int end) throws JavaLayerException
-	{
+	public boolean play(final int start, final int end) throws JavaLayerException, IOException {
 		boolean ret = true;
 		int offset = start;
 		while (offset-- > 0 && ret) ret = skipFrame();
