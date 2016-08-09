@@ -1,0 +1,8 @@
+itemGroup.radiomod=Radio Mod
+
+tile.radio_block.name=Stacja dokowania
+tile.speaker_block.name=G³oœnik
+tile.visualizer_block.name=Wizualizer
+
+item.mobile_player.name=Przenoœny odtwarzacz
+item.wireless_jack.name=Bezprzewodowy £¹cznik
