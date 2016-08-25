@@ -63,7 +63,7 @@ public class MusicSource {
      * @return returns true if the music stops or is already stopped.
      */
     public boolean stopMusic(){
-        if(player != null && !player.getClosed()){
+        if(player != null){
             player.stop();
         }
         songState = States.PAUSED;
