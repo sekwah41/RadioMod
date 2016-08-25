@@ -119,24 +119,26 @@ public class TileEntityRadio extends TileEntity implements ITickable {
     }
 
     public void setupRadio(){
-        MusicSource source = RadioMod.instance.musicManager.radioSources.get(this.uuid);
-        if(RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)){
-            try {
-                float dist = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
-                RadioMod.instance.musicManager.sourceDistances.remove(this.uuid);
-                RadioMod.instance.musicManager.sourceDistances.put(uuid, dist);
-            }catch(NullPointerException e) {
-                throw(e);
+        synchronized (RadioMod.instance.musicManager.sync) {
+            MusicSource source = RadioMod.instance.musicManager.radioSources.get(this.uuid);
+            if (RadioMod.instance.musicManager.sourceDistances.containsKey(this.uuid)) {
+                try {
+                    float dist = RadioMod.instance.musicManager.sourceDistances.get(this.uuid);
+                    RadioMod.instance.musicManager.sourceDistances.remove(this.uuid);
+                    RadioMod.instance.musicManager.sourceDistances.put(uuid, dist);
+                } catch (NullPointerException e) {
+                    throw (e);
+                }
             }
-        }
-        if(RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)){
+            if (RadioMod.instance.musicManager.sourceDistances.containsKey(uuid)) {
 
+            }
+            if(!RadioMod.instance.musicManager.radioSources.containsKey(this.uuid)){
+                RadioMod.instance.musicManager.radioSources.put(uuid, source);
+            }
+            RadioMod.logger.info("Radio setup on UUID: " + uuid);
+            RadioMod.instance.musicManager.createMusicSource(uuid);
         }
-        RadioMod.instance.musicManager.radioSources.remove(this.uuid);
-        RadioMod.instance.musicManager.radioSources.put(uuid, source);
-        RadioMod.logger.info("Radio setup on UUID: " + uuid);
-        RadioMod.instance.musicManager.createMusicSource(uuid);
-        this.uuid = uuid;
     }
 
     public String getUUID(){

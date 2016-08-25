@@ -140,9 +140,13 @@ public class GuiComputer extends GuiScreen {
 	public void shutdownComputer() {
 		this.computerState = BlockRadio.RUNSTATE_OFF;
 
-		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
+		synchronized (RadioMod.instance.musicManager.sync) {
 
-		RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(false, this.tileEntity.getPos()));
+			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
+
+			RadioMod.packetNetwork.sendToServer(new ServerShutdownComputerPacket(false, this.tileEntity.getPos()));
+
+		}
 
 		if(this.startupFinishSoundRecord != null){
 			Minecraft.getMinecraft().getSoundHandler().stopSound(this.startupFinishSoundRecord);
@@ -166,13 +170,15 @@ public class GuiComputer extends GuiScreen {
 
 		RadioMod.logger.info(this.tileEntity.getUUID());
 
-		switch(this.currentTab) {
-			case 0:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playBuiltInSongCollection(index, frame, false);
-			break;
-			case 1:
-				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playPrivateSongCollection(index, frame, false);
-			break;
+		synchronized (RadioMod.instance.musicManager.sync) {
+			switch (this.currentTab) {
+				case 0:
+					RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playBuiltInSongCollection(index, frame, false);
+					break;
+				case 1:
+					RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playPrivateSongCollection(index, frame, false);
+					break;
+			}
 		}
 	}
 
@@ -181,13 +187,17 @@ public class GuiComputer extends GuiScreen {
 
 		RadioMod.logger.info(this.tileEntity.getUUID());
 
-		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playStreamUrl(url);
+		synchronized (RadioMod.instance.musicManager.sync) {
+			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).playStreamUrl(url);
+		}
 	}
 
 	private void stopSong() {
 		this.pauseFrame = 0;
 		this.songID = -1;
-		RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
+		synchronized (RadioMod.instance.musicManager.sync) {
+			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
+		}
 		this.computerState = BlockRadio.RUNSTATE_ON;
 	}
 	
@@ -210,12 +220,13 @@ public class GuiComputer extends GuiScreen {
 	}
 
 	private void togglePlay(){
-		if(RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getIsPlaying()){
-			pauseFrame = RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getCurrentFrame();
-			RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
-		}
-		else{
-			this.playSong(songID, pauseFrame);
+		synchronized (RadioMod.instance.musicManager.sync) {
+			if (RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getIsPlaying()) {
+				pauseFrame = RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).getCurrentFrame();
+				RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()).stopMusic();
+			} else {
+				this.playSong(songID, pauseFrame);
+			}
 		}
 	}
 

@@ -36,10 +36,12 @@ public class ClientStopSongBroadcastPacket implements IMessage {
 
         @Override
         public IMessage onMessage(ClientStopSongBroadcastPacket message, MessageContext ctx) {
-            if(RadioMod.instance.musicManager.radioSources.containsKey(message.uuid)){
-                MusicSource source = RadioMod.instance.musicManager.radioSources.get(message.uuid);
-                if(source != null){
-                    source.stopMusic();
+            synchronized (RadioMod.instance.musicManager.sync) {
+                if (RadioMod.instance.musicManager.radioSources.containsKey(message.uuid)) {
+                    MusicSource source = RadioMod.instance.musicManager.radioSources.get(message.uuid);
+                    if (source != null) {
+                        source.stopMusic();
+                    }
                 }
             }
             return null; // no response in this case

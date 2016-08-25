@@ -737,7 +737,9 @@ public class GuiMobile extends GuiScreen {
 	}
 
 	public MusicSource getMusicSource() {
-		return this.tileEntity != null ? RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()) : MobileManager.getLocalMusicSource();
+		synchronized (RadioMod.instance.musicManager.sync) {
+			return this.tileEntity != null ? RadioMod.instance.musicManager.radioSources.get(this.tileEntity.getUUID()) : MobileManager.getLocalMusicSource();
+		}
 	}
 
 	private boolean isInHand() {

@@ -50,7 +50,6 @@ public class BlockComputer extends BlockContainer implements ITileEntityProvider
      * Returns a new instance of a block's tile entity class. Called on placing the block.
      */
     public TileEntity createNewTileEntity(World par1World, int meta) {
-        RadioMod.logger.info("Test");
         return new TileEntityRadio();
     }
 

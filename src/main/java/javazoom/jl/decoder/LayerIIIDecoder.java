@@ -877,14 +877,14 @@ final class LayerIIIDecoder implements FrameDecoder
 
 		if ((gr_info.window_switching_flag !=0 ) && (gr_info.block_type == 2) ) {
 			if (gr_info.mixed_block_flag != 0)
-				next_cb_boundary=sfBandIndex[sfreq].l[1];  // LONG block: 0,1,3
+				next_cb_boundary=sfBandIndex[sfreq].l[1];  // LONG blocks: 0,1,3
 			else {
 	         cb_width = sfBandIndex[sfreq].s[1];
 			   next_cb_boundary = (cb_width << 2) - cb_width;
 		 	   cb_begin = 0;
 			}
 		} else {
-			next_cb_boundary=sfBandIndex[sfreq].l[1];  // LONG block: 0,1,3
+			next_cb_boundary=sfBandIndex[sfreq].l[1];  // LONG blocks: 0,1,3
 	   }
 
 	   // Compute overall (global) scaling.
@@ -968,7 +968,7 @@ final class LayerIIIDecoder implements FrameDecoder
 	               cb_begin = (cb_begin << 2) - cb_begin;
 	            }
 
-	         } else  { // long block
+	         } else  { // long blocks
 
 						next_cb_boundary = sfBandIndex[sfreq].l[(++cb)+1];
 
@@ -992,7 +992,7 @@ final class LayerIIIDecoder implements FrameDecoder
 
 				xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
 
-			} else {   // LONG block types 0,1,3 & 1st 2 subbands of switched block
+			} else {   // LONG block types 0,1,3 & 1st 2 subbands of switched blocks
 	/*				xr[sb][ss] *= pow(2.0, -0.5 * (1.0+gr_info.scalefac_scale)
 														 * (scalefac[ch].l[cb]
 														 + gr_info.preflag * pretab[cb])); */
@@ -1097,7 +1097,7 @@ final class LayerIIIDecoder implements FrameDecoder
 	        }
 			}
 		}
-		else {   // long block
+		else {   // long blocks
 	      for(index=0; index<576; index++)
 	      {
             // Modif E.B 02/22/99

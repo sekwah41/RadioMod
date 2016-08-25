@@ -21,11 +21,13 @@ public class EventHook {
     @SubscribeEvent
     public void worldUnload(WorldEvent.Unload world)
     {
-        RadioMod.logger.info("Stopping all radio's");
-        RadioMod.instance.musicManager.stopAllPlayers();
-        RadioMod.instance.musicManager.radioSources.clear();
-        RadioMod.instance.musicManager.sourceDistances.clear();
-        synchronized (RadioMod.instance.musicTracker.sync){
+        synchronized (RadioMod.instance.musicManager.sync) {
+            RadioMod.logger.info("Stopping all radio's");
+            RadioMod.instance.musicManager.stopAllPlayers();
+            RadioMod.instance.musicManager.radioSources.clear();
+            RadioMod.instance.musicManager.sourceDistances.clear();
+        }
+        synchronized (RadioMod.instance.musicTracker.sync) {
             RadioMod.instance.musicTracker.trackingMap.clear();
         }
     }

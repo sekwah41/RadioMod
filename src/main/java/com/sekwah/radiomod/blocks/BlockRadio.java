@@ -4,7 +4,6 @@ import com.sekwah.radiomod.RadioMod;
 import com.sekwah.radiomod.blocks.tileentities.TileEntityRadio;
 import com.sekwah.radiomod.generic.guihandler.GuiHandlerRadio;
 import com.sekwah.radiomod.items.CreativeTabRadio;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
@@ -35,8 +34,8 @@ public class BlockRadio extends BlockContainer implements ITileEntityProvider {
 
     public static final PropertyDirection FACING = BlockDirectional.FACING;
 
-    private final AxisAlignedBB NS_BOUNDING_BOX = new AxisAlignedBB(0.26D, 0.0D, 0.36D, 0.74D, 0.3D, 0.64D);
-    private final AxisAlignedBB EW_BOUNDING_BOX = new AxisAlignedBB(0.36D, 0.0D, 0.26D, 0.64D, 0.3D, 0.74D);
+    private final AxisAlignedBB NS_BOUNDING_BOX = new AxisAlignedBB(0.06D, 0.0D, 0.28D, 0.94D, 0.4D, 0.72D);
+    private final AxisAlignedBB EW_BOUNDING_BOX = new AxisAlignedBB(0.28D, 0.0D, 0.06D, 0.72D, 0.4D, 0.94D);
 
     public static final int RUNSTATE_OFF = -1;
     public static final int RUNSTATE_BOOTINGUP = 0;
@@ -118,13 +117,17 @@ public class BlockRadio extends BlockContainer implements ITileEntityProvider {
         {
             TileEntityRadio radioTileEntity = (TileEntityRadio)tileEntity;
             if(worldIn.isRemote){
-                if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
-                    RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+                synchronized (RadioMod.instance.musicManager.sync){
+                    if(RadioMod.instance.musicManager.radioSources.containsKey(radioTileEntity.getUUID())) {
+                        RadioMod.instance.musicManager.radioSources.get(radioTileEntity.getUUID()).stopMusic();
+                    }
                 }
             }
             else{
-                if(RadioMod.instance.musicTracker.trackingMap.containsKey(radioTileEntity.getUUID())) {
-                    RadioMod.instance.musicTracker.trackingMap.remove(radioTileEntity.getUUID());
+                synchronized (RadioMod.instance.musicManager.sync) {
+                    if (RadioMod.instance.musicTracker.trackingMap.containsKey(radioTileEntity.getUUID())) {
+                        RadioMod.instance.musicTracker.trackingMap.remove(radioTileEntity.getUUID());
+                    }
                 }
             }
 

@@ -30,13 +30,17 @@ public class MusicManager {
 
     public Map<String,Float> sourceDistances = new HashMap<String,Float>();
 
+    public Object sync = new Object();
+
     public MusicManager(){
     }
 
     public void stopAllPlayers() {
-        for(MusicSource source: this.radioSources.values()){
-            if(source != null){
-                source.stopMusic();
+        synchronized (RadioMod.instance.musicManager.sync) {
+            for (MusicSource source : this.radioSources.values()) {
+                if (source != null) {
+                    source.stopMusic();
+                }
             }
         }
     }
@@ -61,50 +65,51 @@ public class MusicManager {
     public void updateSources() {
         float recordVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
         float masterVol = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER);
+        synchronized (RadioMod.instance.musicManager.sync) {
+            for (String uuid : radioSources.keySet()) {
 
-        for(String uuid : radioSources.keySet()){
+                if (sourceDistances.containsKey(uuid)) {
+                    try {
+                        float distance = sourceDistances.get(uuid);
+                        float volume = 1f;
+                        if (distance > RadioMod.proxy.settings.soundRadius) {
+                            volume = (float) (1f - (Math.sqrt(distance) / RadioMod.proxy.settings.soundDropoff));
+                            ;
+                        }
+                        //RadioMod.logger.info(volume);
+                        if (volume > 1f) {
+                            volume = 1f;
+                        } else if (volume < 0f) {
+                            volume = 0;
+                        }
+                        /**
+                         * This value is to make it so the max volume is about the volume of the music discs
+                         */
+                        volume *= 0.4;
+                        volume *= recordVol;
+                        volume *= masterVol;
+                        radioSources.get(uuid).setVolume(volume);
+                    } catch (NullPointerException e) {
 
-            if(sourceDistances.containsKey(uuid)){
-                try{
-                    float distance = sourceDistances.get(uuid);
-                    float volume = 1f;
-                    if(distance > RadioMod.proxy.settings.soundRadius){
-                        volume = (float) (1f - (Math.sqrt(distance) / RadioMod.proxy.settings.soundDropoff));;
                     }
-                    //RadioMod.logger.info(volume);
-                    if(volume > 1f){
-                        volume = 1f;
-                    }
-                    else if(volume < 0f){
-                        volume = 0;
-                    }
-                    /**
-                     * This value is to make it so the max volume is about the volume of the music discs
-                     */
-                    volume *= 0.4;
-                    volume *= recordVol;
-                    volume *= masterVol;
-                    radioSources.get(uuid).setVolume(volume);
-                }
-                catch(NullPointerException e){
 
-                }
-
-            }
-            else{
-                MusicSource source = radioSources.get(uuid);
-                if(source != null && source.getIsPlaying()){
-                    RadioMod.logger.info(uuid + ": stopped");
-                    source.stopMusic();
+                } else {
+                    MusicSource source = radioSources.get(uuid);
+                    if (source != null && source.getIsPlaying()) {
+                        RadioMod.logger.info(uuid + ": stopped");
+                        source.stopMusic();
+                    }
                 }
             }
         }
     }
 
     public void createMusicSource(String uuid) {
-        if(!RadioMod.instance.musicManager.radioSources.containsKey(uuid) || RadioMod.instance.musicManager.radioSources.get(uuid) == null){
-            RadioMod.logger.info("Radio source created");
-            RadioMod.instance.musicManager.radioSources.put(uuid, new MusicSource());
+        synchronized (RadioMod.instance.musicManager.sync) {
+            if (!RadioMod.instance.musicManager.radioSources.containsKey(uuid) || RadioMod.instance.musicManager.radioSources.get(uuid) == null) {
+                RadioMod.logger.info("Radio source created");
+                RadioMod.instance.musicManager.radioSources.put(uuid, new MusicSource());
+            }
         }
     }
 }
